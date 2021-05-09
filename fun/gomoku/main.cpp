@@ -10,6 +10,7 @@ struct pr{
 	inline pr operator + (const pr &b)const{return pr(x+b.x,y+b.y);}
 	inline pr operator - (const pr &b)const{return pr(x-b.x,y-b.y);}
 	inline pr operator * (const int &b)const{return pr(x*b,y*b);}
+	inline void prt(){printf("(%d,%d) ",x,y);}
 };
 const pr GO[8]={pr(1,0),pr(-1,0),pr(0,1),pr(0,-1),pr(1,1),pr(1,-1),pr(-1,1),pr(-1,-1)};
 
@@ -36,10 +37,41 @@ struct board{
 
 
 //Assess
+//用于维护防守点的集合，暴力实现
+struct myset{
+	bool inf;
+	vector<pr> st;
+	inline myset(){inf=0;}
+	inline void setinf(){
+		st.clear();
+		inf=1;
+	}
+	inline int size()return st.size();}
+	inline bool has(pr va)const{
+		if(inf)return 1;
+		for(pr x:st)if(va==x)return 1;
+		return 0;
+	}
+	inline void insert(pr x){if(!has(x))st.push_back(x);}
+	inline myset operator & (const myset &b)const{
+		if(inf)return b;
+		if(b.inf)return *this;
+		myset res;
+		for(pr x:st)if(b.has(x))res.st.push_back(x);
+		return res;
+	}
+	inline void prt(){
+		if(inf)printf("inf\n");
+		else{
+			for(pr x:st)x.prt();
+			putchar('\n');
+		}
+	}
+};
 //棋形匹配
-struct pattern{
+struct pat{
 	int match,len;
-	vector<int> arr,pre,defend;
+	vector<int> arr,pre,def;
 	inline int find(int ind,int va){
 		while(~ind && arr[ind+1]!=va)
 			ind=pre[ind];
@@ -47,8 +79,8 @@ struct pattern{
 	}
 	inline void reset(){match=0;}
 	inline bool insert(int va){return (match=find(match,va)+1)==len;}
-	inline pattern(vector<int> tarr,vector<int> tdefend){
-		defend=tdefend;
+	inline pat(vector<int> tarr,vector<int> tdef){
+		def=tdef;
 		len=tarr.size();
 		arr.push_back(0);
 		pre.push_back(-1);
@@ -59,30 +91,19 @@ struct pattern{
 	}
 };
 
-//用于维护防守点的集合暴力实现
-struct intersec{
-	bool inf;
-	vector<pr> st;
-	inline intersec(){inf=0;}
-	inline void setinf(){
-		st.clear();
-		inf=1;
-	}
-	inline bool has(pr va)const{
-		if(inf)return 1;
-		for(pr x:st)if(va==x)return 1;
-		return 0;
-	}
-	inline void insert(pr x){if(!has(x))st.push_back(x);}
-	inline intersec operator & (const intersec &b)const{
-		intersec res;
-		for(pr x:st)
-			if(b.has(x))
-				res.st.push_back(x);
-		return res;
+//棋盘数据
+struct state{
+	myset def4,def3;
+	int r3,a2,r2;
+	inline state(){
+		def4.setinf();
+		def3.setinf();
+		r3=a2=r2=0;
 	}
 };
+
 //防守点数&地势得分
+
 
 
 
