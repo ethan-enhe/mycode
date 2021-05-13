@@ -11,16 +11,12 @@ const ll INF=2e9+5;
 namespace segt{
 	struct node{
 		ll cnt,ls,rs;
+		node(){cnt=ls=rs=0;}
 	}t[MXN*50];
 	ll nodec,rt[MXN];
-	inline ll nnode(){
-		++nodec;
-		t[nodec].ls=t[nodec].rs=0;
-		return nodec;
-	}
 	inline void push_up(ll p){t[p].cnt=t[t[p].ls].cnt+t[t[p].rs].cnt;}
 	inline void mod(ll &p,ll l,ll r,ll mi,ll mx){
-		if(!p)p=nnode();
+		if(!p)p=++nodec;
 		if(l==r){
 			t[p].cnt+=mx;
 			return;
@@ -38,7 +34,7 @@ namespace segt{
 		return pl;
 	}
 	inline ll getmin(ll p,ll l,ll r){
-		if(!p)return -1;
+		if(!t[p].cnt)return -1;
 		if(l==r)return l;
 		ll mid=(l+r)>>1;
 		if(t[t[p].ls].cnt)return getmin(t[p].ls,l,mid);
@@ -53,6 +49,7 @@ namespace dsu{
 }
 ll n,m;
 int main(){
+	freopen("test.in","r",stdin);
 	scanf("%lld%lld",&n,&m);
 	for(ll i=1,tmp;i<=n;i++){
 		dsu::fa[i]=i;
