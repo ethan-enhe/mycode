@@ -29,11 +29,20 @@ struct board{
 	}
 	inline void prt(){
 		printf("Turn: %s\n",(turn==1?"Black":"White"));
-		for(int i=1;i<=SZ;i++,putchar('\n'))
+		printf("  ");
+		for(int j=1;j<=SZ;j++)
+			printf("%3d",j);
+		for(int i=1;i<=SZ;i++){
+			putchar('\n');
+			printf("%2d ",i);
 			for(int j=1;j<=SZ;j++)
-				printf(arr[i][j]?(arr[i][j]==1?"x ":"o "):". ");
+				printf(arr[i][j]?(arr[i][j]==1?" ● ":" ○ "):" . ");
+		}
 	}
 };
+
+
+
 
 
 //Assess
@@ -46,7 +55,7 @@ struct myset{
 		st.clear();
 		inf=1;
 	}
-	inline int size()return st.size();}
+	inline int size(){return st.size();}
 	inline bool has(pr va)const{
 		if(inf)return 1;
 		for(pr x:st)if(va==x)return 1;
@@ -60,18 +69,19 @@ struct myset{
 		for(pr x:st)if(b.has(x))res.st.push_back(x);
 		return res;
 	}
-	inline void prt(){
-		if(inf)printf("inf\n");
-		else{
-			for(pr x:st)x.prt();
-			putchar('\n');
-		}
+	inline myset operator | (const myset &b)const{
+		if(inf)return *this;
+		if(b.inf)return b;
+		myset res;
+		for(pr x:st)res.st.push_back(x);
+		for(pr x:b.st)res.st.push_back(x);
+		return res;
 	}
 };
 //棋形匹配
 struct pat{
 	int match,len;
-	vector<int> arr,pre,def;
+	vector<int> arr,pre,def,att;
 	inline int find(int ind,int va){
 		while(~ind && arr[ind+1]!=va)
 			ind=pre[ind];
@@ -79,30 +89,111 @@ struct pat{
 	}
 	inline void reset(){match=0;}
 	inline bool insert(int va){return (match=find(match,va)+1)==len;}
-	inline pat(vector<int> tarr,vector<int> tdef){
-		def=tdef;
+	inline pat(vector<int> tarr,vector<int> tatt){
+		att=tatt;
 		len=tarr.size();
 		arr.push_back(0);
 		pre.push_back(-1);
 		for(int i=0;i<len;i++){
+			if(!tarr[i])def.push_back(i+1);
 			arr.push_back(tarr[i]);
 			pre.push_back(find(pre[i],tarr[i])+1);
 		}
 	}
 };
 
+
+
 //棋盘数据
 struct state{
-	myset def4,def3;
-	int r3,a2,r2;
+	//att表示冲的位置
+	//def表示防守点
+	myset att5,att4,att3,def4,def3;
 	inline state(){
 		def4.setinf();
 		def3.setinf();
-		r3=a2=r2=0;
 	}
 };
 
-//防守点数&地势得分
+//成五点数
+vector<pat> ar4={
+	pat({1,1,1,1,0},{5}),
+	pat({1,1,1,0,1},{4}),
+	pat({1,1,0,1,1},{3}),
+	pat({1,0,1,1,1},{2}),
+	pat({0,1,1,1,1},{1})
+};
+//3->活4
+vector<pat> a3={
+	pat({0,1,1,1,0,0},{5}),
+	pat({0,0,1,1,1,0},{2}),
+	pat({0,1,1,0,1,0},{4}),
+	pat({0,1,0,1,1,0},{3})
+};
+
+//3->冲4
+vector<pat> r3={
+	pat({1,1,1,0,0},{4,5}),
+	pat({1,1,0,1,0},{3,5}),
+	pat({1,0,1,1,0},{2,5}),
+	pat({0,1,1,1,0},{1,5}),
+	pat({1,1,0,0,1},{3,4}),
+	pat({1,0,1,0,1},{2,4}),
+	pat({0,1,1,0,1},{1,4}),
+	pat({1,0,0,1,1},{2,3}),
+	pat({0,1,0,1,1},{1,3}),
+	pat({0,0,1,1,1},{1,2})
+};
+
+//2->活3
+vector<pat> a2={
+	pat({0,1,1,0,0,0},{4,5}),
+	pat({0,1,0,1,0,0},{3,5}),
+	pat({0,1,0,0,1,0},{3,4}),
+	pat({0,0,1,1,0,0},{2,5}),
+	pat({0,0,1,0,1,0},{2,4}),
+	pat({0,0,0,1,1,0},{2,3})
+};
+
+state cal(board cbd,int side){
+	state res;
+	pr move=pr(0,1);
+	for(int i=1;i<=SZ;i++){
+		for(pat &p:ar4)p.reset();
+		for(pat &p:a3) p.reset();
+		for(pat &p:r3) p.reset();
+		for(pat &p:a2) p.reset();
+		for(pr curpos(i,1);inbrd(curpos);curpos=curpos+move){
+			int cur=cbd.arr[curpos.x][curpos.y]*side;
+			for(pat &p:ar4)
+				if(p.insert(cur)){
+					for(int ind:p.att)
+						res.att5.insert(curpos+move*(ind-p.len));
+					for(int ind:p.def)
+						res.def4.insert(curpos+move*(ind-p.len));
+				}
+			for(pat &p:a3)
+				if(p.insert(cur)){
+					for(int ind:p.att)
+						res.att4.insert(curpos+move*(ind-p.len));
+					for(int ind:p.def)
+						res.def3.insert(curpos+move*(ind-p.len));
+				}
+			for(pat &p:r3)
+				if(p.insert(cur))
+					for(int ind:p.att)
+						res.att4.insert(curpos+move*(ind-p.len));
+
+			for(pat &p:a2)
+				if(p.insert(cur))
+					for(int ind:p.att)
+						res.att3.insert(curpos+move*(ind-p.len));
+		}
+	}
+
+	return res;
+
+}
 
 
 
@@ -110,6 +201,14 @@ struct state{
 
 
 int main(){
+	board tmp;
+	tmp.put(pr(8,8));
+	tmp.put(pr(7,7));
+	tmp.put(pr(9,7));
+	tmp.put(pr(7,9));
+	tmp.prt();
+
+	
 
 	return 0;
 }
