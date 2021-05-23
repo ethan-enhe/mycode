@@ -186,7 +186,7 @@ int main(){
 	tmp.put(pr(9,8));
 	tmp.put(pr(7,5));
 	int res=0;
-	for(int i=1;i<=20000;i++){
+	for(int i=1;i<=2000000;i++){
 		state x=cal(tmp,-1);
 		res+=x.defa3.size();
 	}
