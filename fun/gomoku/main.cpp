@@ -100,7 +100,7 @@ struct state{
 	}
 };
 struct boarddata{state bst,wst;};
-unordered_map<ull,boarddata> saved;
+map<ull,boarddata> saved;
 
 inline void matchline(const board &cbd,state &res,pr start,pr move,int side){
 	int va[SZ<<1|1],cnt[SZ<<1|1],blank[SZ<<1|1],blankcnt=0,lastenemy=0;
@@ -169,7 +169,7 @@ inline void hashinit(){
 	for(int i=0;i<3;i++)
 		for(int j=1;j<=SZ;j++)
 			for(int k=1;k<=SZ;k++)
-				hashtable[i][j][k]=((ull)rand()<<33)^((ull)rand()<<10)^(ull)rand();
+				hashtable[i][j][k]=((ull)rand()<<33)^((ull)rand()<<16)^(ull)rand();
 }
 
 
