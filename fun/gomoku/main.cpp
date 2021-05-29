@@ -131,11 +131,10 @@ struct state{
 	//att表示冲的位置
 	//def表示防守点
 	bool notcal;
-	myset att5,atta4,attar4,atta3,defa3;
+	myset att5,attar4,atta3,defa3;
 	inline state(){notcal=1;defa3.setinf();}
 	inline void prt(){
 		cout<<"\n att5:";att5.prt();
-		cout<<"\n atta4:";atta4.prt();
 		cout<<"\n attar4:";attar4.prt();
 		cout<<"\n atta3:";atta3.prt();
 		cout<<"\n defa3:";atta3.prt();
@@ -158,21 +157,10 @@ inline void matchline(const board &cbd,state &res,pr start,pr move,int side){
 			continue;
 		}
 		if(va[i]==0){
-			if(lastenemy+6<=i && va[i-5]==0){
-				//活4点
-				if(cnt[i-1]-cnt[i-5]==3){
-					res.atta4.insert(start+move*(blank[blankcnt]-1));
-					tmp=myset();
-					tmp.insert(start+move*(blank[blankcnt]-1));
-					tmp.insert(curpos);
-					tmp.insert(start+move*(i-6));
-					res.defa3=res.defa3&tmp;
-				}
-				//活3点
-				else if(cnt[i-1]-cnt[i-5]==2){
-					res.atta3.insert(start+move*(blank[blankcnt]-1));
-					res.atta3.insert(start+move*(blank[blankcnt-1]-1));
-				}
+			//活3点
+			if(lastenemy+6<=i && va[i-5]==0 && cnt[i-1]-cnt[i-5]==2){
+				res.atta3.insert(start+move*(blank[blankcnt]-1));
+				res.atta3.insert(start+move*(blank[blankcnt-1]-1));
 			}
 			blank[++blankcnt]=i;
 		}
