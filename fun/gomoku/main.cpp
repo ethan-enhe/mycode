@@ -141,8 +141,8 @@ struct state{
 		puts("\n----");
 	}
 };
-struct boarddata{state bst,wst;};
-map<ull,boarddata> saved;
+struct boarddata{state curst,enmst;};
+unordered_map<ull,boarddata> saved;
 
 inline void matchline(const board &cbd,state &res,pr start,pr move,int side){
 	int va[SZ<<1|1],cnt[SZ<<1|1],blank[SZ<<1|1],blankcnt=0,lastenemy=0;
@@ -178,7 +178,7 @@ inline void matchline(const board &cbd,state &res,pr start,pr move,int side){
 
 
 inline state cal(const board &cbd,int side){
-	//state &res=side==1?saved[cbd.hsh].bst:saved[cbd.hsh].wst;
+	//state &res=(side==cbd.turn?saved[cbd.hsh].curst:saved[cbd.hsh].enmst);
 	state res;
 	if(!res.notcal)return res;
 	res.notcal=0;
