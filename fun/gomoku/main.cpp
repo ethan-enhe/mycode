@@ -67,8 +67,8 @@ struct board{
 	inline board(){
 		turn=1;memset(arr,0,sizeof(arr));
 		hsh=0;
-		for(int i=1;i<=SZ;i++)
-			for(int j=1;j<=SZ;j++)
+		for(register int i=1;i<=SZ;i++)
+			for(register int j=1;j<=SZ;j++)
 				hsh^=hashtable[1][i][j];
 	}
 
@@ -89,12 +89,12 @@ struct board{
 		printf("Hash: %llu\n",hsh);
 		printf("Turn: %s\n",(turn==1?"Black":"White"));
 		printf("  ");
-		for(int j=1;j<=SZ;j++)
+		for(register int j=1;j<=SZ;j++)
 			printf("%3d",j);
-		for(int i=1;i<=SZ;i++){
+		for(register int i=1;i<=SZ;i++){
 			putchar('\n');
 			printf("%2d ",i);
-			for(int j=1;j<=SZ;j++)
+			for(register int j=1;j<=SZ;j++)
 				printf(arr[i][j]?(arr[i][j]==1?" ● ":" ○ "):" . ");
 		}
 		putchar('\n');
@@ -182,7 +182,7 @@ inline state cal(const board &cbd,int side){
 	state res;
 	if(!res.notcal)return res;
 	res.notcal=0;
-	for(int i=1;i<=SZ;i++){
+	for(register int i=1;i<=SZ;i++){
 		matchline(cbd,res,pr(i,1),pr(0,1),side);
 		matchline(cbd,res,pr(1,i),pr(1,0),side);
 		matchline(cbd,res,pr(1,i),pr(1,1),side);
@@ -198,9 +198,9 @@ inline state cal(const board &cbd,int side){
 //Hash
 inline void hashinit(){
 	srand(time(NULL));
-	for(int i=0;i<3;i++)
-		for(int j=1;j<=SZ;j++)
-			for(int k=1;k<=SZ;k++)
+	for(register int i=0;i<3;i++)
+		for(register int j=1;j<=SZ;j++)
+			for(register int k=1;k<=SZ;k++)
 				hashtable[i][j][k]=((ull)rand()<<33)^((ull)rand()<<16)^(ull)rand();
 }
 
@@ -218,7 +218,7 @@ int main(){
 	tmp.put(pr(9,8));
 	tmp.put(pr(7,5));
 	int res=0;
-	for(int i=1;i<=200000;i++){
+	for(register int i=1;i<=200000;i++){
 		state x=cal(tmp,-1);
 		res+=x.defa3.size();
 	}
