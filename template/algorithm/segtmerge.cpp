@@ -1,75 +1,83 @@
-//P3377
+//子树重数
 #include<bits/stdc++.h>
+#define mp make_pair
 #define fi first
 #define se second
-#define mp make_pair
+#define pb push_back
+
 using namespace std;
-typedef long long ll;
-const ll MXN=1e5+5;
-const ll INF=2e9+5;
 
-namespace segt{
-	struct node{
-		ll cnt,ls,rs;
-		node(){cnt=ls=rs=0;}
-	}t[MXN*50];
-	ll nodec,rt[MXN];
-	inline void push_up(ll p){t[p].cnt=t[t[p].ls].cnt+t[t[p].rs].cnt;}
-	inline void mod(ll &p,ll l,ll r,ll mi,ll mx){
-		if(!p)p=++nodec;
-		if(l==r){
-			t[p].cnt+=mx;
-			return;
-		}
-		ll mid=(l+r)>>1;
-		if(mi<=mid)mod(t[p].ls,l,mid,mi,mx);
-		else mod(t[p].rs,mid+1,r,mi,mx);
-		push_up(p);
-	}
-	inline ll merge(ll pl,ll pr){
-		if(!pl || !pr)return pl|pr;
-		t[pl].cnt+=t[pr].cnt;
-		t[pl].ls=merge(t[pl].ls,t[pr].ls);
-		t[pl].rs=merge(t[pl].rs,t[pr].rs);
-		return pl;
-	}
-	inline ll getmin(ll p,ll l,ll r){
-		if(!t[p].cnt)return -1;
-		if(l==r)return l;
-		ll mid=(l+r)>>1;
-		if(t[t[p].ls].cnt)return getmin(t[p].ls,l,mid);
-		else return getmin(t[p].rs,mid+1,r);
-	}
+#define gc() (bl==br && (br=(bl=buf)+fread(buf,1,1<<20,stdin),bl==br)?EOF:*bl++)
+char buf[1<<20],*bl=buf,*br=buf;
+template<class T>
+inline void read(T &x){
+	T f=1;x=0;char c;
+	while(c=gc(),(c<'0' || c>'9'))if(c=='-')f=-1;
+	while(c>='0' && c<='9')x=(x<<3)+(x<<1)+(c^48),c=gc();
+	x*=f;
 }
 
-namespace dsu{
-	ll fa[MXN];
-	inline ll find(ll x){return x==fa[x]?x:fa[x]=find(fa[x]);}
-	inline void merge(ll x,ll y){fa[find(y)]=find(x);}
+typedef pair<int,int> pi;
+const int MXN=1e5+5;
+
+int n,c[MXN],pool[MXN],ans[MXN];
+vector<int> e[MXN];
+
+int rt[MXN],nodec;
+struct node{
+	int ls,rs,va;
+	node(int ls=0,int rs=0,int va=0):ls(ls),rs(rs),va(va){}
+}t[MXN*40];
+inline void pu(int p){t[p].va=max(t[t[p].ls].va,t[t[p].rs].va);}
+inline void mod(int &p,int l,int r,int mx,int mv){
+	if(!p)p=++nodec;
+	if(l==r){
+		t[p].va+=mv;
+		return;
+	}
+	int mid=(l+r)>>1;
+	if(mx<=mid)mod(t[p].ls,l,mid,mx,mv);
+	else mod(t[p].rs,mid+1,r,mx,mv);
+	pu(p);
 }
-ll n,m;
+inline int merge(int lp,int rp,int l,int r){
+	if(!lp || !rp)return lp|rp;
+	if(l==r){
+		t[lp].va+=t[rp].va;
+		return lp;
+	}
+	int mid=(l+r)>>1;
+	t[lp].ls=merge(t[lp].ls,t[rp].ls,l,mid);
+	t[lp].rs=merge(t[lp].rs,t[rp].rs,mid+1,r);
+	return pu(lp),lp;
+}
+
+
+inline void dfs(int p,int fa){
+	for(int nx:e[p]){
+		if(nx==fa)continue;
+		dfs(nx,p);
+		rt[p]=merge(rt[p],rt[nx],1,n);
+	}
+	ans[p]=t[rt[p]].va;
+}
+
 int main(){
-	freopen("test.in","r",stdin);
-	scanf("%lld%lld",&n,&m);
-	for(ll i=1,tmp;i<=n;i++){
-		dsu::fa[i]=i;
-		scanf("%lld",&tmp);
-		segt::mod(segt::rt[i],-INF,INF,tmp,1);
+	read(n);
+	for(int i=1;i<=n;i++)read(c[i]),pool[i]=c[i];
+	for(int i=1,ts,tt;i<n;i++){
+		read(ts),read(tt);
+		e[ts].pb(tt);
+		e[tt].pb(ts);
 	}
-	while(m--){
-		ll a,b,c;
-		scanf("%lld%lld",&a,&b);
-		if(a==1){
-			scanf("%lld",&c);
-			segt::merge(segt::rt[dsu::find(b)],segt::rt[dsu::find(c)]);
-			dsu::merge(b,c);
-		}
-		else{
-			ll res=segt::getmin(segt::rt[dsu::find(b)],-INF,INF);
-			printf("%lld\n",res);
-			if(res!=-1)segt::mod(segt::rt[dsu::find(b)],-INF,INF,res,-1);
-		}
+	sort(pool+1,pool+1+n);
+	for(int i=1;i<=n;i++){
+		c[i]=lower_bound(pool+1,pool+1+n,c[i])-pool;
+		mod(rt[i],1,n,c[i],1);
 	}
+	dfs(1,0);
+	for(int i=1;i<=n;i++)printf("%d\n",ans[i]);
 
 	return 0;
 }
+
