@@ -86,9 +86,9 @@ func! RunCode()
 		endif
     elseif &filetype == 'python'
 		if has('nvim')
-			exec "bel 10sp term://python %"
+			exec "bel 10sp term://python3 %"
 		else
-			exec "!python %"
+			exec "!python3 %"
 		endif
     endif
 endfunction
