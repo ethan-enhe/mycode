@@ -35,13 +35,11 @@ inline void prt(char *x){while(*x)pc(*x++);}
 
 
 typedef long long ll;
-typedef long long 
 const ll P=1e9+7;
 const ll MXN=5e4+5;
 const ll MXK=205;
 ll t,n,a,b;
-ll fac[MXN],ifac[MXN],s[MXK];
-ll head
+ll fac[MXK],ifac[MXK],s[MXN][MXK];
 
 inline ll qpow(ll x,ll y){
 	ll res=1;
@@ -55,19 +53,19 @@ inline ll qpow(ll x,ll y){
 inline ll c(ll x,ll y){return (y>x||y<0)?0:fac[x]*ifac[x-y]%P*ifac[y]%P;}
 int main(){
 	fac[0]=1;
-	for(ll i=1;i<MXN;i++)fac[i]=fac[i-1]*i%P;
-	ifac[MXN-1]=qpow(ifac[MXN-1],P-2);
-	for(ll i=MXN-1;i;i--)fac[i-1]=fac[i]*i%P;
-	read(t);
-	for(ll i=1;i<=t;i++){
-	}
-
-
-
+	for(ll i=1;i<MXK;i++)fac[i]=fac[i-1]*i%P;
+	ifac[MXK-1]=qpow(fac[MXK-1],P-2);
+	for(ll i=MXK-1;i;i--)ifac[i-1]=ifac[i]*i%P;
+	s[0][0]=1;
 	for(ll i=1;i<MXN;i++)
-		for(ll j=1;j<MXK;j++)
-			s[i][j]=s[i-1][j-1]+s[i-1][j]*j;
+		for(ll j=1;j<MXK && j<=i;j++)
+			s[i][j]=(s[i-1][j-1]+s[i-1][j]*(i-1))%P;
 
+	read(t);
+	while(t--){
+		read(n),read(a),read(b);
+		prt(s[n-1][a+b-2]*c(a+b-2,a-1)%P),pc('\n');
+	}
 
 
 	
