@@ -9,13 +9,11 @@ struct vec{
 	inline T &operator [] (const int &x){return arr[x];}
 	inline void pb(const T &x){
 		if(sz==top)
-			arr=(T*)realloc(arr,sizeof(T)*(top=top<<1|1));
+			arr=(T*)realloc(arr,sizeof(T)*(top=max(top<<1,1)));
 		arr[sz++]=x;
 	}
 };
 int main(){
-
-
 	return 0;
 }
 
