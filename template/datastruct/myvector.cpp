@@ -6,6 +6,7 @@ struct vec{
 	T *arr;int sz,top;
 	inline vec(){arr=NULL,sz=top=0;}
 	inline ~vec(){free(arr);}
+	inline void clear(){free(arr),sz=top=0;}
 	inline T &operator [] (const int &x){return arr[x];}
 	inline void pb(const T &x){
 		if(sz==top)
