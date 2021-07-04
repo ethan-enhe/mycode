@@ -1,21 +1,29 @@
 #include<bits/stdc++.h>
 using namespace std;
-const int SZ=1<<24;
+const int SZ=12582917;
 const int DSZ=1.3e7;
 template<class T>
 struct hmap{
 	typedef unsigned long long ull;
-	int head[SZ],nx[DSZ],cnt;ull h[DSZ];T data[DSZ];
-	inline hmap(){memset(head,0,sizeof(head)),cnt=0;}
+	int h[SZ],nx[DSZ],cnt;ull u[DSZ];T v[DSZ];
+	inline hmap(){memset(h,0,sizeof(h)),cnt=0;}
 	inline T &operator [] (const ull &x){
-		int ind=(x^(x>>23)^(x>>46))&(SZ-1);
-		for(int i=head[ind];i;i=nx[i])
-			if(h[i]==x)
-				return data[i];
-		return nx[++cnt]=head[ind],head[ind]=cnt,h[cnt]=x,data[cnt];
+		int ind=x%SZ;
+		for(int i=h[ind];i;i=nx[i])if(u[i]==x)return v[i];
+		return nx[++cnt]=h[ind],h[ind]=cnt,u[cnt]=x,v[cnt];
 	}
 };
+hmap<int> x;
+inline bool chk(int x){
+	int mx=sqrt(x);
+	for(int i=2;i<=mx;i++)
+		if(x%i==0)
+			return 0;
+	return 1;
+}
 int main(){
-
+	int t=clock();
+	for(long long i=1;i<=10000000;i++)x[i*i]=1;
+	cout<<(double)(clock()-t)/CLOCKS_PER_SEC;
 	return 0;
 }
