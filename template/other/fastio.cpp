@@ -30,6 +30,7 @@ inline void prt(T x){
 	pc(x%10^48);
 }
 inline void prt(char *x){while(*x)pc(*x++);}
+inline void prt(const char x[]){for(int i=0;x[i];i++)pc(x[i]);}
 
 
 
