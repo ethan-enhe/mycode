@@ -6,7 +6,7 @@ typedef long long ll;
 typedef long double ld;
 const ll MXN=1e10;
 const ll LG=max(1.,log(MXN)-2);
-const ll PROG=(1ll<<24)-1;
+const ll PROG=(1ll<<20)-1;
 bitset<MXN> isc;
 ll *pri,cnt;
 ld mn=1e9;ll s,m;
