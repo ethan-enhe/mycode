@@ -15,8 +15,8 @@ inline void dfs(int p,int rt,bool f){
 			dp[p][0]+=max(dp[nx][0],dp[nx][1]);
 			dp[p][1]=max(dp[p][1],dp[nx][0]-max(dp[nx][0],dp[nx][1]));
 		}
-	if(p==rt || p!=fa[rt] || !f)dp[p][1]+=dp[p][0]+1;
-	else dp[p][1]=-INF;
+	if(p==fa[rt] && !f)dp[p][1]=dp[p][0]+1;
+	else dp[p][1]+=dp[p][0]+1;
 }
 inline int solve(int x){
 	while(!vis[fa[x]]){
@@ -28,8 +28,6 @@ inline int solve(int x){
 	dfs(x,x,0),ans=max(ans,dp[x][0]);
 	return ans;
 }
-
-
 int main(){
 	scanf("%d",&n);
 	for(int i=1;i<=n;i++){
@@ -38,9 +36,8 @@ int main(){
 	}
 	int ans=0;
 	for(int i=1;i<=n;i++)
-		if(!vis[i]){
+		if(!vis[i])
 			ans+=solve(i);
-		}
 	printf("%d",ans);
 	return 0;
 }

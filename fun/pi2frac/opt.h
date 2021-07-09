@@ -1,3 +1,5 @@
+#ifndef OPT_H
+#define OPT_H
 #pragma GCC optimize(3)
 #pragma GCC target("avx,sse2,sse3,sse4,mmx")
 #pragma GCC optimize("Ofast")
@@ -19,16 +21,13 @@
 #pragma GCC optimize("-fcrossjumping")
 #pragma GCC optimize("-fthread-jumps")
 #pragma GCC optimize("-funroll-loops")
-#pragma GCC optimize("-fwhole-program")
 #pragma GCC optimize("-freorder-blocks")
 #pragma GCC optimize("-fschedule-insns")
 #pragma GCC optimize("inline-functions")
 #pragma GCC optimize("-ftree-tail-merge")
 #pragma GCC optimize("-fschedule-insns2")
 #pragma GCC optimize("-fstrict-aliasing")
-#pragma GCC optimize("-fstrict-overflow")
 #pragma GCC optimize("-falign-functions")
-#pragma GCC optimize("-fcse-skip-blocks")
 #pragma GCC optimize("-fcse-follow-jumps")
 #pragma GCC optimize("-fsched-interblock")
 #pragma GCC optimize("-fpartial-inlining")
@@ -42,6 +41,6 @@
 #pragma GCC optimize("-ftree-switch-conversion")
 #pragma GCC optimize("-foptimize-sibling-calls")
 #pragma GCC optimize("-fexpensive-optimizations")
-#pragma GCC optimize("-funsafe-loop-optimizations")
 #pragma GCC optimize("inline-functions-called-once")
 #pragma GCC optimize("-fdelete-null-pointer-checks")
+#endif
