@@ -52,9 +52,9 @@ int main(){
 
 	for(ll i=1;i<MXN;i++,r.nx()){
 		if(!(i&PROG)){
-	        printf("%.18LF\n%lld %lld %.18Lf %.18Lf\n",(ld)M_PI,s,m,(ld)s/m,mn);
-            printf("%.3LfSecs %.2lf\%\n",ld(clock()-start)/CLOCKS_PER_SEC,100.*i/MXN);
-        }
+			printf("%.18LF\n%lld %lld %.18Lf %.18Lf\n",(ld)M_PI,s,m,(ld)s/m,mn);
+			printf("%.3LfSecs %.2lf\%\n",ld(clock()-start)/CLOCKS_PER_SEC,100.*i/MXN);
+		}
 		if(r.ispri()){
 			while(err(i,nx)<=err(i,cur)){
 				cur=nx;
