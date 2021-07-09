@@ -67,7 +67,7 @@ int main(){
 			}
 		}
 	}
-	printf("%.18LF\n%lld %lld %.18Lf %.18Lf\n",(ld)M_PI,s,m,(ld)s/m,mn);
+	printf("%.18Lf\n%lld %lld %.18Lf %.18Lf\n",(ld)M_PI,s,m,(ld)s/m,mn);
 	printf("Time: %.3Lf",ld(clock()-start)/CLOCKS_PER_SEC);
 	return 0;
 }
