@@ -45,13 +45,12 @@ set autowrite
 set autoread
 set hlsearch
 set incsearch
-
 " MAP
-inoremap ' ''<LEFT>
-inoremap " ""<LEFT>
-inoremap ( ()<LEFT>
-inoremap [ []<LEFT>
-inoremap { {}<LEFT>
+"inoremap ' ''<LEFT>
+"inoremap " ""<LEFT>
+"inoremap ( ()<LEFT>
+"inoremap [ []<LEFT>
+"inoremap { {}<LEFT>
 inoremap jj <ESC>
 tnoremap jj <c-\><c-n>
 tnoremap <ESC> <c-\><c-n>
@@ -100,6 +99,7 @@ Plug 'https://hub.fastgit.org/itchyny/lightline.vim'
 Plug 'https://hub.fastgit.org/scrooloose/nerdtree'
 Plug 'https://hub.fastgit.org/morhetz/gruvbox'
 Plug 'https://hub.fastgit.org/tomasr/molokai'
+Plug 'https://hub.fastgit.org/jiangmiao/auto-pairs'
 call plug#end()
 
 
