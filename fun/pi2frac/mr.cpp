@@ -2,14 +2,12 @@
 using namespace std;
 typedef long long ll;
 typedef long double ld;
-const ll chk[]={2,3,5,7,11,13,17,19};
 inline ll qmul(ll x,ll y,ll mod){
 	ll res=x*y-mod*ll((ld)x/mod*y);
 	if(res<0)return res+mod;
 	if(res<mod)return res;
 	return res-mod;
 }
-
 inline ll qpow(ll x,ll y,ll mod){
 	ll res=1;
 	while(y){
@@ -18,17 +16,17 @@ inline ll qpow(ll x,ll y,ll mod){
 	}
 	return res;
 }
+mt19937_64 myrand(time(NULL));
 inline bool ispri(ll x){
-	if(x==1)return 0;
+	if(x<3)return x==2;
 	ll y=x-1,h=0;
 	while(!(y&1))y>>=1,h++;
 	for(ll i=0;i<8;i++){
-		if(x==chk[i])return 1;
-		ll v=qpow(chk[i],y,x),th=h;
-		if(v==1 || v==x-1)continue;
+		ll v=qpow(myrand()%(x-2)+2,y,x),th=h;
+		if(v==1)continue;
 		while(th--){
-			v=qmul(v,v,x);
 			if(v==x-1)break;
+			v=qmul(v,v,x);
 		}
 		if(th==-1)return 0;
 	}
@@ -43,10 +41,9 @@ inline ll getpri(ll x){
 	}
 }
 int main(){
-	mt19937_64 myrand(time(NULL));
 	ll s,m,cnt=10000;ld mn=1e9;
 	while(cnt--){
-		ll a=getpri(myrand()%ll(1e18));
+		ll a=getpri(myrand()%ll(2e18));
 		ll b=getpri((ld)a/M_PI);
 		ld tmp=max((ld)a/b-M_PI,M_PI-(ld)a/b);
 		if(tmp<mn){
@@ -59,3 +56,12 @@ int main(){
 	return 0;
 }
 
+/*
+613043192630995411/195137708872119817=3.141592653589793116 Err:0.000000000000000000
+631397569274452217/200980088412472979=3.141592653589793116 Err:0.000000000000000000
+813860434652029837/259059822323578033=3.141592653589793116 Err:0.000000000000000000
+224986885080687439/71615549782879213=3.141592653589793116 Err:0.000000000000000000
+686600437411430203/218551707086173247=3.141592653589793116 Err:0.000000000000000000
+784916431187176019/249846659874977171=3.141592653589793116 Err:0.000000000000000000
+1947305299551633323/619846528265372827=3.141592653589793116 Err:0.000000000000000000
+*/
