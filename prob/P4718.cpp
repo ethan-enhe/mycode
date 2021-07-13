@@ -54,24 +54,27 @@ inline ll rho(ll x){
 		if(g>1)return g;
 	}
 }
+ll mx;
 inline void fact(ll x){
-	if(x==1)return;
+	if(x<=mx)return;
 	if(ispri(x)){
-		printf("%lld ",x);
+		mx=x;
 		return;
 	}
 	ll p;
 	do p=rho(x);while(p==x);
-	fact(x/p),fact(p);
+	do x/=p;while(x%p==0);
+	fact(x),fact(p);
 }
-int main(int cnt,char **va){
-	srand(time(0));
-	for(int i=1;i<cnt;i++){
-		ll x;
-		sscanf(va[i],"%lld",&x);
-		printf("%lld:",x);
-		fact(x);
-		putchar('\n');
+int main(){
+	srand(time(NULL));
+	ll t,x;
+	scanf("%lld",&t);
+	while(t--){
+		scanf("%lld",&x);
+		mx=1,fact(x);
+		if(mx==x)puts("Prime");
+		else printf("%lld\n",mx;
 	}
 	return 0;
-}
+})
