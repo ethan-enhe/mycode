@@ -1,3 +1,4 @@
+//P3806 【模板】点分治1
 #include<bits/stdc++.h>
 #define fi first
 #define se second
