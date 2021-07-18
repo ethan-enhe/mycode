@@ -1,17 +1,16 @@
 set nu
-set cindent
 set ts=4
 set sw=4
-set hls
 set mouse=a
+set cindent
+set hls
+color evening
 
-map <f9> :! g++ -Wall -O2 %<.cpp -o %<<cr>
-map <f8> :! time ./%<<cr>
-
-inoremap jj <ESC>
+inoremap jj <esc>
 inoremap " ""<left>
 inoremap ( ()<left>
-inoremap [ []<left>
 inoremap { {}<left>
-color evening
-syntax enable
+inoremap [ []<left>
+
+map <f9> :!g++ -O2 -Wall -fsanitize=address % -o %<<cr>
+map <f8> :!time ./%<<cr>

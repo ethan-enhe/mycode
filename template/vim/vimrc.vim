@@ -59,7 +59,7 @@ map <c-c> "+y
 
 
 let mapleader=" "
-set makeprg=g++\ -Wall\ -std=c++11\ -O2\ %<.cpp\ -o\ %<
+set makeprg=g++\ -Wall\ -std=c++11\ -O2\ %\ -o\ %<
 map <leader>/ :bel 10sp term://curl cht.sh/cpp/
 map <leader>, :cp<CR>
 map <leader>. :cn<CR>
