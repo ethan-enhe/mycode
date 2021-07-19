@@ -9,8 +9,6 @@ const int MXN=1e5+5;
 
 char str[MXN];int q,ans[MXN];
 
-
-
 vector<pi> que[MXN];
 int t[MXN][26],fail[MXN],endp[MXN];
 int ind,strc,nodec;
@@ -22,6 +20,7 @@ inline void bldtrie(int p){
 			int tmp=str[ind]-'a';
 			if(!t[p][tmp])t[p][tmp]=++nodec;
 			bldtrie(t[p][tmp]);
+			if(!str[ind])return;
 		}
 	}
 }
@@ -48,11 +47,11 @@ inline void bldfail(){
 	}
 }
 
+int dfl[MXN],dfr[MXN],dfsc;
 int d[MXN];
-inline void mod(int x,int y){for(;x<=nodec;x+=x&(-x))d[x]+=y;}
+inline void mod(int x,int y){for(;x<=dfsc;x+=x&(-x))d[x]+=y;}
 inline int sum(int x){int r=0;for(;x;x^=x&(-x))r+=d[x];return r;}
 
-int dfl[MXN],dfr[MXN],dfsc;
 inline void dfsi(int p,int fa){
 	dfl[p]=++dfsc;
 	for(int nx:e[p])
@@ -74,7 +73,7 @@ int main(){
 	bldtrie(0);
 	for(int i=1,tx,ty;i<=q;i++){
 		scanf("%d%d",&tx,&ty);
-		que[endp[ty]].pb(mp(tx,i));
+		que[endp[ty]].pb(mp(endp[tx],i));
 	}
 	bldfail();
 	dfsi(0,-1);
