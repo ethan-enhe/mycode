@@ -28,7 +28,8 @@ inline void csa(){
 inline void ch(){
 	for(int i=1,lcp=0;i<=n;i++){
 		if(lcp)lcp--;
-		while(i+lcp<=n && sa[rk[i]-1]+lcp<=n && arr[i+lcp]==arr[sa[rk[i]-1]+lcp])
+        int j=sa[rk[i]-1];
+		while(i+lcp<=n && j+lcp<=n && arr[i+lcp]==arr[j+lcp])
             lcp++;
 		h[rk[i]]=lcp;
 	}
