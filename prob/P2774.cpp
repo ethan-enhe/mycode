@@ -65,16 +65,30 @@ struct mcmf{
 		return res;
 	}
 };
-mcmf<(ll)5e3+5> f;
+const int MXN=105;
+mcmf<MXN*MXN> f;
+int n,m;
+int id[MXN][MXN],cnt[2],sum;
 int main(){
-	ll n,m,s,t;
-	scanf("%lld%lld%lld%lld",&n,&m,&s,&t);
-	while(m--){
-		ll ts,tt,tcap,tcost;
-		scanf("%lld%lld%lld%lld",&ts,&tt,&tcap,&tcost);
-		f.adde(ts,tt,tcap,tcost);
-	}
-	pair<ll,ll> res=f.run(s,t);
-	printf("%lld %lld",res.first,res.second);
+	scanf("%d%d",&n,&m);
+	cnt[1]=(cnt[0]=2)+((n*m+1)>>1);
+	for(int i=1,tmp;i<=n;i++)
+		for(int j=1;j<=m;j++){
+			scanf("%d",&tmp);
+			sum+=tmp;
+			id[i][j]=++cnt[(i+j)&1];
+			if((i+j)&1)f.adde(1,id[i][j],tmp,0);
+			else f.adde(id[i][j],2,tmp,0);
+		}
+	for(int i=1;i<=n;i++)
+		for(int j=1;j<=m;j++)
+			if((i+j)&1){
+				if(i>1)f.adde(id[i][j],id[i-1][j],INF,0);
+				if(j>1)f.adde(id[i][j],id[i][j-1],INF,0);
+				if(i<n)f.adde(id[i][j],id[i+1][j],INF,0);
+				if(j<m)f.adde(id[i][j],id[i][j+1],INF,0);
+			}
+	printf("%d\n",sum-(int)f.run(1,2).first);
+
 	return 0;
 }

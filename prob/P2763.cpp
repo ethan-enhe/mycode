@@ -65,16 +65,43 @@ struct mcmf{
 		return res;
 	}
 };
-mcmf<(ll)5e3+5> f;
+const int MXN=2e3+5;
+mcmf<MXN> f;
+vector<int> ans[MXN];
+int k,n,m;
+inline int prob(int x){return 2+x;}
+inline int type(int x){return 2+n+x;}
 int main(){
-	ll n,m,s,t;
-	scanf("%lld%lld%lld%lld",&n,&m,&s,&t);
-	while(m--){
-		ll ts,tt,tcap,tcost;
-		scanf("%lld%lld%lld%lld",&ts,&tt,&tcap,&tcost);
-		f.adde(ts,tt,tcap,tcost);
+	scanf("%d%d",&k,&n);
+	for(int i=1,tmp;i<=k;i++){
+		scanf("%d",&tmp);
+		m+=tmp;
+		f.adde(type(i),2,tmp,0);
 	}
-	pair<ll,ll> res=f.run(s,t);
-	printf("%lld %lld",res.first,res.second);
+	for(int i=1,p,tmp;i<=n;i++){
+		scanf("%d",&p);
+		f.adde(1,prob(i),1,0);
+		while(p--){
+			scanf("%d",&tmp);
+			f.adde(prob(i),type(tmp),1,0);
+		}
+	}
+	if(f.run(1,2).first!=m)puts("No Solution!");
+	else{
+		for(int i=1;i<=n;i++){
+			int p=prob(i);
+			for(size_t j=0;j<f.e[p].size();j++)
+				if(f.e[p][j].cap==0 && f.e[p][j].ter>n+2){
+					ans[f.e[p][j].ter-n-2].push_back(i);
+					break;
+				}
+		}
+		for(int i=1;i<=k;i++){
+			printf("%d: ",i);
+			for(int j:ans[i])printf("%d ",j);
+			putchar('\n');
+		}
+	}
+
 	return 0;
 }
