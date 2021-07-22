@@ -1,87 +1,75 @@
-//普通平衡树
 #include<bits/stdc++.h>
 using namespace std;
 const int MXN=1e5+5;
 struct node{
-	int va,cnt,rnd,ls,rs;
-	node(){va=cnt=ls=rs=0;}
+	int v,sz,rnd,ls,rs;
+	inline node(int v=0,int sz=0,int rnd=0):
+		v(v),sz(sz),rnd(rnd),ls(0),rs(0){}
 }t[MXN];
-int rt,nodec;
-inline int newnode(int va){
-	++nodec;
-	t[nodec].va=va;
-	t[nodec].cnt=1;
-	t[nodec].rnd=rand();
-	return nodec;
-}
-inline void pushu(int p){if(p)t[p].cnt=t[t[p].ls].cnt+1+t[t[p].rs].cnt;}
-int merge(int lr,int rr){
+int nodec;
+inline int nnode(int x){return t[++nodec]=node(x,1,rand()),nodec;}
+inline void pushu(int p){t[p].sz=t[t[p].ls].sz+t[t[p].rs].sz+1;}
+inline int merge(int px,int py){
 	int p;
-	if(!lr || !rr)return lr|rr;
-	if(t[lr].rnd<t[rr].rnd)p=lr,t[lr].rs=merge(t[lr].rs,rr);
-	else p=rr,t[rr].ls=merge(lr,t[rr].ls);
+	if(!px || !py)return px|py;
+	if(t[px].rnd>t[py].rnd)t[p=px].rs=merge(t[px].rs,py);
+	else t[p=py].ls=merge(px,t[py].ls);
 	return pushu(p),p;
 }
-void split(int p,int &lr,int &rr,int va){
-	if(!p){
-		lr=rr=0;
-		return;
-	}
-	if(t[p].va<=va)lr=p,split(t[p].rs,t[p].rs,rr,va);
-	else rr=p,split(t[p].ls,lr,t[p].ls,va);
-	pushu(lr);
-	pushu(rr);
+inline void split(int p,int va,int &rx,int &ry){
+	if(!p){rx=ry=0;return;}
+	if(t[p].v<=va)split(t[rx=p].rs,va,t[p].rs,ry);
+	else split(t[ry=p].ls,va,rx,t[p].ls);
+	pushu(p);
 }
-void splitrk(int p,int &lr,int &rr,int k){
-	if(!p){
-		lr=rr=0;
-		return;
-	}
-	int tmp=t[t[p].ls].cnt+1;
-	if(tmp<=k)lr=p,splitrk(t[p].rs,t[p].rs,rr,k-tmp);
-	else rr=p,splitrk(t[p].ls,lr,t[p].ls,k);
-	pushu(lr);
-	pushu(rr);
+inline void splitrk(int p,int rk,int &rx,int &ry){
+	if(!p){rx=ry=0;return;}
+	int tsz=t[t[p].ls].sz+1;
+	if(rk>=tsz)splitrk(t[rx=p].rs,rk-tsz,t[p].rs,ry);
+	else splitrk(t[ry=p].ls,rk,rx,t[p].ls);
+	pushu(p);
 }
-inline int getrk(int va){
-	int x,y,z;
-	split(rt,x,y,va-1);
-	z=t[x].cnt+1;
-	rt=merge(x,y);
-	return z;
+
+int rt;
+inline void ins(int x){
+	int a,b=nnode(x),c;
+	split(rt,x,a,c);
+	rt=merge(a,merge(b,c));
 }
-inline int getva(int k){
-	int x,y,z;
-	splitrk(rt,y,z,k);
-	splitrk(y,x,y,k-1);
-	k=t[y].va;
-	y=merge(x,y);
-	rt=merge(y,z);
-	return k;
+inline int grk(int x){
+	int a,b,r;
+	split(rt,x-1,a,b);
+	r=t[a].sz+1;
+	rt=merge(a,b);
+	return r;
 }
-int n;
+inline void del(int x){
+	int a,b,c;
+	split(rt,x-1,a,b);
+	split(b,x,b,c);
+	rt=merge(a,merge(merge(t[b].ls,t[b].rs),c));
+}
+inline int gva(int rk){
+	int a,b,c,r;
+	splitrk(rt,rk,b,c);
+	splitrk(b,rk-1,a,b);
+	r=t[b].v;
+	rt=merge(merge(a,b),c);
+	return r;
+}
+
 int main(){
-	srand(time(NULL));
+	int n;
 	scanf("%d",&n);
 	while(n--){
-		int op,va,x,y,z;
-		scanf("%d%d",&op,&va);
-		if(op==1){
-			split(rt,x,y,va);
-			x=merge(x,newnode(va));
-			rt=merge(x,y);
-		}
-		else if(op==2){
-			split(rt,y,z,va);
-			split(y,x,y,va-1);
-			y=merge(t[y].ls,t[y].rs);
-			y=merge(x,y);
-			rt=merge(y,z);
-		}
-		else if(op==3)printf("%d\n",getrk(va));
-		else if(op==4)printf("%d\n",getva(va));
-		else if(op==5)printf("%d\n",getva(getrk(va)-1));
-		else printf("%d\n",getva(getrk(va+1)));
+		int op,x;
+		scanf("%d%d",&op,&x);
+		if(op==1)ins(x);
+		else if(op==2)del(x);
+		else if(op==3)printf("%d\n",grk(x));
+		else if(op==4)printf("%d\n",gva(x));
+		else if(op==5)printf("%d\n",gva(grk(x)-1));
+		else printf("%d\n",gva(grk(x+1)));
 	}
 	return 0;
 }
