@@ -7,7 +7,7 @@ struct edge{int ter,wei;};
 vector<edge> e[MXN];
 int n,k,ans;
 bool vis[MXN];
-int sz[MXN],mncnt[MXN];
+int sz[MXN],mncnt[MXK];
 inline void dfssz(int p,int fa){
 	sz[p]=1;
 	for(edge nx:e[p])
