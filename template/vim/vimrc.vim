@@ -46,11 +46,11 @@ set autoread
 set hlsearch
 set incsearch
 " MAP
-"inoremap ' ''<LEFT>
-"inoremap " ""<LEFT>
-"inoremap ( ()<LEFT>
-"inoremap [ []<LEFT>
-"inoremap { {}<LEFT>
+inoremap ' ''<LEFT>
+inoremap " ""<LEFT>
+inoremap ( ()<LEFT>
+inoremap [ []<LEFT>
+inoremap { {}<LEFT>
 inoremap jj <ESC>
 tnoremap jj <c-\><c-n>
 tnoremap <ESC> <c-\><c-n>
@@ -59,7 +59,7 @@ map <c-c> "+y
 
 
 let mapleader=" "
-set makeprg=g++\ -Wall\ -std=c++11\ -O2\ %\ -o\ %<
+set makeprg=g++\ -Wall\ -fsanitize=address\ -std=c++11\ -fsanitize=address\ %\ -o\ %<
 map <leader>/ :bel 10sp term://curl cht.sh/cpp/
 map <leader>, :cp<CR>
 map <leader>. :cn<CR>
@@ -98,8 +98,7 @@ call plug#begin('~/.vim/plugged')
 Plug 'https://hub.fastgit.org/itchyny/lightline.vim'
 Plug 'https://hub.fastgit.org/scrooloose/nerdtree'
 Plug 'https://hub.fastgit.org/morhetz/gruvbox'
-Plug 'https://hub.fastgit.org/tomasr/molokai'
-Plug 'https://hub.fastgit.org/jiangmiao/auto-pairs'
+Plug 'https://hub.fastgit.org/luochen1990/rainbow'
 call plug#end()
 
 
@@ -107,6 +106,7 @@ call plug#end()
 " COLOR
 syntax enable
 let g:gruvbox_invert_indent_guides = '1'
+let g:rainbow_active = 1
 color gruvbox
 set background=dark
 set noshowmode
