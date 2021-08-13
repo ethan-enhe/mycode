@@ -4,7 +4,7 @@ const int MXN=305;
 char mp[MXN][MXN];
 int main(){
 	srand(time(0));
-	int n=200,m=200,k=15;
+	int n=10,m=10,k=15;
 	cout<<n<<" "<<m<<" "<<k<<endl;
 	memset(mp,'.',sizeof(mp));
 	while(k--){
