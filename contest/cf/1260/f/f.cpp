@@ -18,7 +18,7 @@ inline ll mod(ll x){
 inline ll qpow(ll x,ll y){ll res=1;while(y){if(y&1)res=res*x%P;x=x*x%P;y>>=1;}return res;}
 
 
-const ll MXN=1e5+5;
+const ll MXN=1e5+5,MNMEM=5e4;
 
 ll n,ans,all=1,arr[MXN],lh[MXN],rh[MXN];
 struct tarr{
@@ -39,6 +39,10 @@ struct tarr{
 		return (s*(l+1)-si)%P;
 	}
 	inline void clr(ll x){for(;x<MXN;x+=x&(-x))d[x]=di[x]=0;}
+	inline void mem(){
+		memset(d,0,sizeof(d));
+		memset(di,0,sizeof(di));
+	}
 }c,v;
 
 vector<ll> t[MXN];
@@ -84,7 +88,8 @@ inline void dfsq(ll p,ll fa,ll dpth){
 
 inline void dfz(ll p){
 	dfssz(p,0);
-	vis[p=dfsrt(p,0,sz[p])]=1;
+	ll tsz=sz[p];
+	vis[p=dfsrt(p,0,tsz)]=1;
 
 	c.suf(lh[p],arr[p]),c.suf(rh[p]+1,-arr[p]);
 	for(ll &nx:t[p])
@@ -92,7 +97,8 @@ inline void dfz(ll p){
 			dfsq(nx,0,1);
 			dfsm(nx,0,1);
 		}
-	dfsm(p,0,-INF);
+	if(tsz>MNMEM)c.mem(),v.mem();
+	else dfsm(p,0,-INF);
 	for(ll &nx:t[p])
 		if(!vis[nx])
 			dfz(nx);
