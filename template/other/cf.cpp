@@ -60,8 +60,7 @@ il void solve(){
 int main(){
 	//freopen(".in","r",stdin);
     //freopen(".out","w",stdout);
-	ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);
-	//cin>>t;while(t--)
+    //ll t;scanf("%lld",&t);while(t--)
 	solve();
 
 	return 0;
