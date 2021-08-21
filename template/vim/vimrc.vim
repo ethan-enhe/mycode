@@ -37,7 +37,7 @@ set foldenable
 " diff      对没有更改的文本进行折叠
 " marker    使用标记进行折叠, 默认标记是 {{{ 和 }}}
 set foldmethod=marker
-set foldlevel=99
+"set foldlevel=99
 
 " AUTO
 set autochdir
@@ -99,15 +99,17 @@ Plug 'https://hub.fastgit.org/itchyny/lightline.vim'
 Plug 'https://hub.fastgit.org/scrooloose/nerdtree'
 Plug 'https://hub.fastgit.org/morhetz/gruvbox'
 Plug 'https://hub.fastgit.org/luochen1990/rainbow'
+Plug 'https://hub.fastgit.org/overcache/NeoSolarized'
 call plug#end()
 
 
 
 " COLOR
 syntax enable
-let g:gruvbox_invert_indent_guides = '1'
 let g:rainbow_active = 1
 color gruvbox
+
+set termguicolors
 set background=dark
 set noshowmode
 let g:lightline = {
@@ -118,4 +120,4 @@ let g:lightline = {
       \ 'separator':    { 'left': '', 'right': '' },
       \ 'subseparator': { 'left': '', 'right': '' },
       \ }
-highlight Normal guibg=NONE ctermbg=None
+"highlight Normal guibg=NONE ctermbg=None
