@@ -5,15 +5,14 @@ using namespace std;
 #define il inline
 #define fi first
 #define se second
-#define mp make_pair
 #define pb push_back
 #define dbg(x) cerr<<#x<<"="<<(x)<<endl;
 #define inv(x) qpow(x,P-2)
 
-typedef double db;
-typedef long double ld;
 typedef long long ll;
 typedef unsigned long long ull;
+typedef double db;
+typedef long double ld;
 typedef pair<ll,ll> pi;
 typedef vector<ll> vi;
 //}}}
@@ -50,16 +49,17 @@ template<class T>il void cmn(T &x,T y){x=min(x,y);}
 
 
 const ll MXN=5e5+5;
-ll n,m,k;
+ll n,m;
 ll arr[MXN];
 
 il void solve(){
-
+	
 }
 
 
 int main(){
-	//freopen(".in","r",stdin),freopen(".out","w",stdout);
+	//freopen(".in","r",stdin);
+    //freopen(".out","w",stdout);
 	ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);
 	//cin>>t;while(t--)
 	solve();
