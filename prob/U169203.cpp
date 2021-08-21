@@ -60,7 +60,30 @@ namespace comb{
 	}
 }
 //}}}
-//{{{ BIT
+//}}}
+
+
+
+const ll MXN=1e5+5;
+ll n,m;
+ll arr[MXN],brr[MXN];
+
+stack<ll> stk;
+il bool chk1(bool f){
+	while(!stk.empty())stk.pop();
+	if(f)cout<<1<<nl<<n*2<<nl;
+	for(int i=n,ind=1;i;i--){
+		stk.push(arr[i]);
+		if(f)cout<<"1 1 1\n";
+		while(!stk.empty() && stk.top()==brr[ind]){
+			ind++;
+			stk.pop();
+			if(f)cout<<"2 1\n";
+		}
+	}
+	return stk.empty();
+}
+
 struct tarr{
 	ll *v,sz;
 	il void rsz(ll x){v=(ll*)realloc(v,sizeof(ll)*((sz=x)+1));}
@@ -68,16 +91,52 @@ struct tarr{
 	il void mod(ll x,ll y){for(;x<=sz;x+=x&(-x))v[x]+=y;}
 	il ll sum(ll x){ll r=0;for(;x;x^=x&(-x))r+=v[x];return r;}
 };
-//}}}
-//}}}
 
+tarr s;
+vi app[MXN];
+ll lines;
+il void prt2(bool f){
+	s.resize(n);
+	s.clr();
+	for(int i=1;i<=n;i++){
+		s.mod(i,1);
+		app[arr[i]].push_back(i);
+	}
+	if(f)cout<<2<<nl<<lines<<nl;
+	//操作次数！！！
+	if(f)cout<<"1 1 "<<n<<nl;
+	else lines++;
+	for(int i=1;i<=n;i++){
+		vi &tv=app[brr[i]];
+		ll id=tv[tv.size()-1],pl=s.sum(id)-1;
+		if(pl){
+			if(f)cout<<"3 1 2 "<<pl<<nl;
+			else lines++;
+		}
+		if(f)cout<<"2 1\n";
+		else lines++;
+		if(pl){
+			if(f)cout<<"3 2 1 "<<pl<<nl;
+			else lines++;
+		}
+		s.mod(id,-1);
+		tv.pop_back();
+	}
+	for(int i=1;i<=n;i++)app[arr[i]].clear();
+}
 
-
-const ll MXN=5e5+5;
-ll n,m;
-ll arr[MXN];
 
 il void solve(){
+	cin>>n;
+	for(int i=1;i<=n;i++)
+		cin>>arr[i],brr[i]=arr[i];
+	sort(brr+1,brr+1+n);
+	if(chk1(0))chk1(1);
+	else{
+		lines=0;
+		prt2(0);
+		prt2(1);
+	}
 	
 }
 
@@ -85,9 +144,10 @@ il void solve(){
 int main(){
 	//freopen(".in","r",stdin);
 	//freopen(".out","w",stdout);
-	//ios::sync_with_stdio(0);cin.tie(0);cout.tie(0);
-	//ll t;cin>>t;while(t--)
+	ios::sync_with_stdio(0);cin.tie(0);cout.tie(0);
+	ll t;cin>>t;while(t--)
 	solve();
 
 	return 0;
 }
+

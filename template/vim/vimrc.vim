@@ -59,7 +59,7 @@ map <c-c> "+y
 
 
 let mapleader=" "
-set makeprg=g++\ -Wall\ -fsanitize=address\ -std=c++11\ -g\ -fsanitize=address\ %\ -o\ %<
+set makeprg=g++\ -Wall\ -fsanitize=address\ -std=c++11\ %\ -o\ %<
 map <leader>/ :bel 10sp term://curl cht.sh/cpp/
 map <leader>, :cp<CR>
 map <leader>. :cn<CR>
@@ -105,15 +105,15 @@ call plug#end()
 
 
 " COLOR
-syntax enable
 let g:rainbow_active = 1
-color gruvbox
+color NeoSolarized
+syntax enable
 
 set termguicolors
-set background=dark
+set background=light
 set noshowmode
 let g:lightline = {
-      \ 'colorscheme': 'gruvbox',
+      "\ 'colorscheme': 'gruvbox',
 	  \ 'component': {
       \   'readonly': '%{&readonly?"":""}',
       \ },
@@ -121,3 +121,4 @@ let g:lightline = {
       \ 'subseparator': { 'left': '', 'right': '' },
       \ }
 "highlight Normal guibg=NONE ctermbg=None
+autocmd BufNewFile *.cpp 0 r ~/code/template/other/cf.cpp
