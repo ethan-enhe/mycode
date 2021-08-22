@@ -6,7 +6,6 @@ using namespace std;
 #define fi first
 #define se second
 #define pb push_back
-#define rsz resize
 #define dbg(x) cerr<<#x<<"="<<(x)<<endl;
 #define inv(x) qpow(x,P-2)
 
@@ -38,9 +37,10 @@ il ll mod(ll x){
 	if(x<0)return x+P;
 	return x;
 }
-il void add(ll &x,ll y){x=mod(x+y);}
-template<class T>il void cmx(T &x,T y){x=max(x,y);}
-template<class T>il void cmn(T &x,T y){x=min(x,y);}
+il void madd(ll &x,ll y){x=mod(x+y);}
+il void add(ll &x,ll y){x=x+y;}
+il void cmx(ll &x,ll y){x=max(x,y);}
+il void cmn(ll &x,ll y){x=min(x,y);}
 //}}}
 //{{{ Algo
 //{{{ COMB
@@ -61,12 +61,15 @@ namespace comb{
 }
 //}}}
 //{{{ BIT
+template<void (*f)(ll&,ll)>
 struct tarr{
 	ll *v,sz;
+	il tarr(){v=NULL,sz=0;}
+	il ~tarr(){free(v);}
+	il void set(ll x=0){fill(v,v+sz,x);}
 	il void rsz(ll x){v=(ll*)realloc(v,sizeof(ll)*((sz=x)+1));}
-	il void clr(){for(int i=1;i<=sz;i++)v[i]=0;}
-	il void mod(ll x,ll y){for(;x<=sz;x+=x&(-x))v[x]+=y;}
-	il ll sum(ll x){ll r=0;for(;x;x^=x&(-x))r+=v[x];return r;}
+	il void mod(ll x,ll y){for(;x<=sz;x+=x&(-x))f(v[x],y);}
+	il ll pre(ll x){ll r=0;for(;x;x^=x&(-x))f(r,v[x]);return r;}
 };
 //}}}
 //}}}
@@ -78,6 +81,7 @@ ll n,m;
 ll arr[MXN];
 
 il void solve(){
+
 	
 }
 
