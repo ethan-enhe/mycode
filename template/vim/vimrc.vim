@@ -13,6 +13,21 @@ endif
 
 set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
 set termencoding=utf-8
+"set runtimepath^=~/.vim runtimepath+=~/.vim/after
+"let &packpath = &runtimepath
+"source ~/.vimrc
+
+
+" Basic
+
+if has("gui_running")
+	set guifont=Consolas:h14
+	set backspace=indent,eol,start
+	set guioptions=
+endif
+
+set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
+set termencoding=utf-8
 set encoding=utf-8
 set number
 set ruler
@@ -114,6 +129,7 @@ set background=light
 set noshowmode
 let g:lightline = {
       "\ 'colorscheme': 'gruvbox',
+      \ 'colorscheme': 'solarized',
 	  \ 'component': {
       \   'readonly': '%{&readonly?"":""}',
       \ },
