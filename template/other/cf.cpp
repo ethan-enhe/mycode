@@ -2,6 +2,11 @@
 using namespace std;
 
 //{{{ Def
+#define fastio ios::sync_with_stdio(0),cin.tie(0),cout.tie(0)
+#define fileio \
+	freopen(".in","r",stdin),\
+	freopen(".out","w",stdout)
+
 #define il inline
 #define fi first
 #define se second
@@ -20,7 +25,8 @@ typedef vector<ll> vi;
 const char nl='\n';
 const db EPS=1e-9;
 const ull B=131;
-const ll INF=1e18,P=1e9+7;
+const ll INF=1e18;
+ll P=1e9+7;
 //}}}
 //{{{ Func
 il ll qpow(ll x,ll y){
@@ -87,9 +93,10 @@ il void solve(){
 
 
 int main(){
-	//freopen(".in","r",stdin);
-	//freopen(".out","w",stdout);
-	//ios::sync_with_stdio(0);cin.tie(0);cout.tie(0);
+#ifndef ONLINE_JUDGE
+	fileio;
+#endif
+	fastio;
 	//ll t;cin>>t;while(t--)
 	solve();
 
