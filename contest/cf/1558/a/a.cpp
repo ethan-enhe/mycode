@@ -2,11 +2,6 @@
 using namespace std;
 
 //{{{ Def
-#define fastio ios::sync_with_stdio(0),cin.tie(0),cout.tie(0)
-#define fileio \
-	freopen(".in","r",stdin),\
-	freopen(".out","w",stdout)
-
 #define il inline
 #define fi first
 #define se second
@@ -25,8 +20,7 @@ typedef vector<ll> vi;
 const char nl='\n';
 const db EPS=1e-9;
 const ull B=131;
-const ll INF=1e18;
-ll P=1e9+7;
+const ll INF=1e18,P=1e9+7;
 //}}}
 //{{{ Func
 il ll qpow(ll x,ll y){
@@ -86,19 +80,39 @@ const ll MXN=5e5+5;
 ll n,m;
 ll arr[MXN];
 
+inline bool chk(ll x){
+	ll tmp=x+n-((n+m)>>1);
+	if(tmp&1 || tmp<0)return 0;
+	tmp>>=1;
+	return tmp<=n && (tmp<=(n+m+1)>>1) && (n-tmp<=(n+m)>>1);
+}
 il void solve(){
-
-	
+	cin>>n>>m;
+	ll cnt=0;
+	for(int i=0;i<=n+m;i++){
+		bool f=chk(i);
+		swap(n,m);
+		f|=chk(i);
+		cnt+=f;
+	}
+	cout<<cnt<<endl;
+	for(int i=0;i<=n+m;i++){
+		bool f=chk(i);
+		swap(n,m);
+		f|=chk(i);
+		if(f)cout<<i<<" ";
+	}
+	cout<<endl;
 }
 
 
 int main(){
-#ifndef ONLINE_JUDGE
-	//fileio;
-#endif
-	fastio;
-	//ll t;cin>>t;while(t--)
+	//freopen(".in","r",stdin);
+	//freopen(".out","w",stdout);
+	//ios::sync_with_stdio(0);cin.tie(0);cout.tie(0);
+	ll t;cin>>t;while(t--)
 	solve();
 
 	return 0;
 }
+

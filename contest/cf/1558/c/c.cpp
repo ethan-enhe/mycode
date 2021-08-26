@@ -2,11 +2,6 @@
 using namespace std;
 
 //{{{ Def
-#define fastio ios::sync_with_stdio(0),cin.tie(0),cout.tie(0)
-#define fileio \
-	freopen(".in","r",stdin),\
-	freopen(".out","w",stdout)
-
 #define il inline
 #define fi first
 #define se second
@@ -25,8 +20,7 @@ typedef vector<ll> vi;
 const char nl='\n';
 const db EPS=1e-9;
 const ull B=131;
-const ll INF=1e18;
-ll P=1e9+7;
+const ll INF=1e18,P=1e9+7;
 //}}}
 //{{{ Func
 il ll qpow(ll x,ll y){
@@ -84,21 +78,55 @@ struct tarr{
 
 const ll MXN=5e5+5;
 ll n,m;
-ll arr[MXN];
+ll arr[MXN],pos[MXN];
+queue<int> q;
 
 il void solve(){
+	while(!q.empty())q.pop();
+	cin>>n;
+	for(int i=1;i<=n;i++){
+		cin>>arr[i];
+		pos[arr[i]]=i;
+	}
+	for(int i=1;i<=n;i+=2){
+		if((pos[i]&1)==0){
+			cout<<"-1";
+			return;
+		}
+		ll tp=pos[i];
+		q.push(tp);
+		q.push(tp-i+1);
+		q.push(tp);
+		for(int j=i;(j<<1)<=i+tp;j++){
+			swap(arr[j],arr[i+tp-j]);
+			pos[arr[j]]=j;
+			pos[arr[i+tp-j]]=i+tp-j;
+		}
+	}
+	for(int i=1;i<=n;i++)
+		if(arr[i]!=i){
+			cout<<"-1";
+			return;
+		}
+	cout<<q.size()<<endl;
+	while(!q.empty()){
+		cout<<q.front()<<" ";
+		q.pop();
+	}
+	cout<<endl;
+
 
 	
 }
 
 
 int main(){
-#ifndef ONLINE_JUDGE
-	//fileio;
-#endif
-	fastio;
-	//ll t;cin>>t;while(t--)
+	//freqen(".in","r",stdin);
+	//freqen(".out","w",stdout);
+	//ios::sync_with_stdio(0);cin.tie(0);cout.tie(0);
+	ll t;cin>>t;while(t--)
 	solve();
 
 	return 0;
 }
+

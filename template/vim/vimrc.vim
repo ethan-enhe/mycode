@@ -13,21 +13,6 @@ endif
 
 set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
 set termencoding=utf-8
-"set runtimepath^=~/.vim runtimepath+=~/.vim/after
-"let &packpath = &runtimepath
-"source ~/.vimrc
-
-
-" Basic
-
-if has("gui_running")
-	set guifont=Consolas:h14
-	set backspace=indent,eol,start
-	set guioptions=
-endif
-
-set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
-set termencoding=utf-8
 set encoding=utf-8
 set number
 set ruler
@@ -60,6 +45,7 @@ set autowrite
 set autoread
 set hlsearch
 set incsearch
+
 " MAP
 inoremap ' ''<LEFT>
 inoremap " ""<LEFT>
@@ -115,21 +101,22 @@ Plug 'https://hub.fastgit.org/scrooloose/nerdtree'
 Plug 'https://hub.fastgit.org/morhetz/gruvbox'
 Plug 'https://hub.fastgit.org/luochen1990/rainbow'
 Plug 'https://hub.fastgit.org/overcache/NeoSolarized'
+Plug 'https://hub.fastgit.org/w0rp/ale'
+Plug 'https://hub.fastgit.org/maximbaz/lightline-ale'
 call plug#end()
 
 
 
 " COLOR
 let g:rainbow_active = 1
-color NeoSolarized
+color gruvbox
 syntax enable
 
 set termguicolors
-set background=light
+set background=dark
 set noshowmode
 let g:lightline = {
-      "\ 'colorscheme': 'gruvbox',
-      \ 'colorscheme': 'solarized',
+      \ 'colorscheme': 'gruvbox',
 	  \ 'component': {
       \   'readonly': '%{&readonly?"":""}',
       \ },
@@ -138,3 +125,51 @@ let g:lightline = {
       \ }
 "highlight Normal guibg=NONE ctermbg=None
 autocmd BufNewFile *.cpp 0 r ~/code/template/other/cf.cpp
+
+
+" ale-setting {{{
+let g:ale_set_highlights = 0
+"自定义error和warning图标
+let g:ale_sign_error = '>>'
+let g:ale_sign_warning = '--'
+"显示Linter名称,出错或警告等相关信息
+let g:ale_echo_msg_error_str = 'E'
+let g:ale_echo_msg_warning_str = 'W'
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+"打开文件时不进行检查
+"let g:ale_lint_on_enter = 0
+
+"普通模式下，sp前往上一个错误或警告，sn前往下一个错误或警告
+nmap sp <Plug>(ale_previous_wrap)
+nmap sn <Plug>(ale_next_wrap)
+"<Leader>s触发/关闭语法检查
+nmap <Leader>s :ALEToggle<CR>
+"<Leader>d查看错误或警告的详细信息
+nmap <Leader>d :ALEDetail<CR>
+"使用clang对c和c++进行语法检查，对python使用pylint进行语法检查
+let g:ale_linters = {
+\   'c++': ['clang'],
+\   'c': ['clang'],
+\}
+let g:lightline.component_expand = {
+      \  'linter_checking': 'lightline#ale#checking',
+      \  'linter_infos': 'lightline#ale#infos',
+      \  'linter_warnings': 'lightline#ale#warnings',
+      \  'linter_errors': 'lightline#ale#errors',
+      \  'linter_ok': 'lightline#ale#ok',
+      \ }
+let g:lightline.component_type = {
+      \     'linter_checking': 'right',
+      \     'linter_infos': 'right',
+      \     'linter_warnings': 'warning',
+      \     'linter_errors': 'error',
+      \     'linter_ok': 'right',
+      \ }
+let g:lightline.active = { 'right': [[ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_infos', 'linter_ok' ]] }
+
+let g:lightline.active = {
+		\ 'right': [ [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_infos', 'linter_ok' ],
+		\            [ 'lineinfo' ],
+	    \            [ 'percent' ],
+	    \            [ 'fileformat', 'fileencoding', 'filetype'] ] }
+" }}}

@@ -2,11 +2,6 @@
 using namespace std;
 
 //{{{ Def
-#define fastio ios::sync_with_stdio(0),cin.tie(0),cout.tie(0)
-#define fileio \
-	freopen(".in","r",stdin),\
-	freopen(".out","w",stdout)
-
 #define il inline
 #define fi first
 #define se second
@@ -43,7 +38,7 @@ il ll mod(ll x){
 	if(x<0)return x+P;
 	return x;
 }
-il void madd(ll &x,ll y){x=mod(x+y);}
+il void madd(ll &x,ll y){x=(x+y)%P;}
 il void add(ll &x,ll y){x=x+y;}
 il void cmx(ll &x,ll y){x=max(x,y);}
 il void cmn(ll &x,ll y){x=min(x,y);}
@@ -82,23 +77,36 @@ struct tarr{
 
 
 
-const ll MXN=5e5+5;
-ll n,m;
-ll arr[MXN];
+const ll MXN=4e6+5;
+ll n;
+ll arr[MXN],cf[MXN],pre;
 
 il void solve(){
+	cin>>n>>P;
+	arr[1]=1;
+	for(int i=1;i<=n;i++){
+		madd(cf[i],cf[i-1]);
+		madd(arr[i],cf[i]);
+		madd(arr[i],pre);
+		madd(pre,arr[i]);
+		for(int j=2;i*j<=n;j++){
+			madd(cf[i*j],arr[i]);
+			if((i+1)*j<=n)madd(cf[(i+1)*j],-arr[i]);
+		}
+	}
+	cout<<(arr[n]+P)%P;
 
 	
 }
 
 
 int main(){
-#ifndef ONLINE_JUDGE
-	//fileio;
-#endif
-	fastio;
+	//freopen(".in","r",stdin);
+	//freopen(".out","w",stdout);
+	//ios::sync_with_stdio(0);cin.tie(0);cout.tie(0);
 	//ll t;cin>>t;while(t--)
 	solve();
 
 	return 0;
 }
+
