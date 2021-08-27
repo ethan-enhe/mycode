@@ -1,12 +1,12 @@
-#include"opt.h"
+//#include"opt.h"
 #include<bits/stdc++.h>
 using namespace std;
 typedef long long ll;
 typedef long double ld;
 //const ll MXN=1e10;
 const ll PROG=(1ll<<30)-1;
-const ll MXN=1e12;
-const ll SQRT=sqrt(MXN)+5;
+const ll MXN=1e9;
+const ll SQRT=1e6+5;
 const ll BSZ=SQRT;
 inline ld lfabs(const ld &x){return x>0?x:-x;}
 inline ld err(const ll &i,const ll &j){return lfabs(M_PI*j-i);}
@@ -53,7 +53,7 @@ int main(){
 	for(ll i=1;i<MXN;i++,r.nx()){
 		if(!(i&PROG)){
 			printf("%.18LF\n%lld %lld %.18Lf %.18Lf\n",(ld)M_PI,s,m,(ld)s/m,mn);
-			printf("%.3LfSecs %.2lf\%\n",ld(clock()-start)/CLOCKS_PER_SEC,100.*i/MXN);
+			printf("%.3LfSecs %.2lf \n",ld(clock()-start)/CLOCKS_PER_SEC,100.*i/MXN);
 		}
 		if(r.ispri()){
 			while(err(i,nx)<=err(i,cur)){
