@@ -60,7 +60,7 @@ map <c-c> "+y
 
 
 let mapleader=" "
-set makeprg=g++\ -Wall\ -fsanitize=address\ -std=c++11\ %\ -o\ %<
+set makeprg=clang++\ -O2\ -fsanitize=address\ -std=c++11\ %\ -o\ %<
 map <leader>/ :bel 10sp term://curl cht.sh/cpp/
 map <leader>, :cp<CR>
 map <leader>. :cn<CR>
@@ -103,6 +103,7 @@ Plug 'https://hub.fastgit.org/luochen1990/rainbow'
 Plug 'https://hub.fastgit.org/overcache/NeoSolarized'
 Plug 'https://hub.fastgit.org/w0rp/ale'
 Plug 'https://hub.fastgit.org/maximbaz/lightline-ale'
+Plug 'https://hub.fastgit.org/octol/vim-cpp-enhanced-highlight'
 call plug#end()
 
 
