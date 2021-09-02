@@ -41,7 +41,7 @@ il ll gcd(ll x,ll y){return !y?x:gcd(y,x%y);}
 il ll mod(ll x){
 	if(abs(x)>=(P<<1))return x%P;
 	if(x>=P)return x-P;
-	if(x<=-P)return x+P;
+	if(x<0)return x+P;
 	return x;
 }
 il void madd(ll &x,ll y){x=mod(x+y);}
@@ -83,12 +83,23 @@ struct tarr{
 
 
 
-const ll MXN=5e5+5;
-ll n,m;
-ll arr[MXN];
+const ll MXN=1e6+5;
+ll n,m,ans=1,cnt=1;
+bool f[MXN];
 
 il void solve(){
-
+	scanf("%lld%lld",&n,&m);
+	for(ll i=1,tmp;i<=m;i++){
+		scanf("%lld",&tmp);
+		f[tmp]=1;
+	}
+	for(ll i=n;i;i--){
+		ans=ans*cnt%P;
+		if(f[i])cnt--;
+		else cnt++;
+	}
+	cout<<ans;
+		
 	
 }
 
@@ -103,3 +114,4 @@ int main(){
 
 	return 0;
 }
+

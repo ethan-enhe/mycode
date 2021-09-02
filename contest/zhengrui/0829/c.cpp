@@ -4,8 +4,7 @@ using namespace std;
 //{{{ Def
 #define fastio ios::sync_with_stdio(0),cin.tie(0),cout.tie(0)
 #define fileio \
-	freopen(".in","r",stdin),\
-	freopen(".out","w",stdout)
+	freopen("test.in","r",stdin)
 
 #define il inline
 #define fi first
@@ -39,9 +38,8 @@ il ll qpow(ll x,ll y){
 }
 il ll gcd(ll x,ll y){return !y?x:gcd(y,x%y);}
 il ll mod(ll x){
-	if(abs(x)>=(P<<1))return x%P;
 	if(x>=P)return x-P;
-	if(x<=-P)return x+P;
+	if(x<0)return x+P;
 	return x;
 }
 il void madd(ll &x,ll y){x=mod(x+y);}
@@ -83,11 +81,29 @@ struct tarr{
 
 
 
-const ll MXN=5e5+5;
+const ll MXN=10+5;
 ll n,m;
-ll arr[MXN];
+//前i次，有j次多余的，分成k个块
+ll dp[MXN*MXN][MXN*MXN][MXN];
 
 il void solve(){
+	cin>>n>>P;
+	memset(dp,0,sizeof(dp));
+	dp[0][0][n]=1;
+	for(ll i=0;i<=n*n;i++){
+		ll cnt=0;
+		for(ll j=0;j<=min(i,n*(n-1)/2);j++)
+			for(int k=1;k<=n;k++){
+				cerr<<i<<" "<<j<<" "<<k<<" "<<dp[i][j][k]<<endl;
+				cnt+=dp[i][j][k];
+				for(int l=1;l<=j && l<k;l++)
+					madd(dp[i+1][j-l][k-l],dp[i][j][k]);
+				madd(dp[i+1][j+1][k],dp[i][j][k]);
+			}
+		if(i)cout<<cnt<<" ";
+
+	}
+	cout<<endl;
 
 	
 }
@@ -95,11 +111,12 @@ il void solve(){
 
 int main(){
 #ifndef ONLINE_JUDGE
-	//fileio;
+	fileio;
 #endif
 	fastio;
-	//ll t;cin>>t;while(t--)
+	ll t;cin>>t;while(t--)
 	solve();
 
 	return 0;
 }
+

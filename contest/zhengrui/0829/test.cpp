@@ -3,9 +3,6 @@ using namespace std;
 
 //{{{ Def
 #define fastio ios::sync_with_stdio(0),cin.tie(0),cout.tie(0)
-#define fileio \
-	freopen(".in","r",stdin),\
-	freopen(".out","w",stdout)
 
 #define il inline
 #define fi first
@@ -39,9 +36,8 @@ il ll qpow(ll x,ll y){
 }
 il ll gcd(ll x,ll y){return !y?x:gcd(y,x%y);}
 il ll mod(ll x){
-	if(abs(x)>=(P<<1))return x%P;
 	if(x>=P)return x-P;
-	if(x<=-P)return x+P;
+	if(x<0)return x+P;
 	return x;
 }
 il void madd(ll &x,ll y){x=mod(x+y);}
@@ -88,6 +84,8 @@ ll n,m;
 ll arr[MXN];
 
 il void solve(){
+	cin>>n>>m;
+	cout<<n+1;
 
 	
 }
@@ -95,7 +93,8 @@ il void solve(){
 
 int main(){
 #ifndef ONLINE_JUDGE
-	//fileio;
+	//freopen("test.in","r",stdin);
+	//freopen("test.out","w",stdout);
 #endif
 	fastio;
 	//ll t;cin>>t;while(t--)
@@ -103,3 +102,4 @@ int main(){
 
 	return 0;
 }
+

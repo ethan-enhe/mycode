@@ -83,13 +83,34 @@ struct tarr{
 
 
 
-const ll MXN=5e5+5;
-ll n,m;
-ll arr[MXN];
+const int MXN=17;
+int n,all,cnt;
+int ban[MXN];
+char str[MXN];
+il void dfs(int line,int row,int lb,int rb){
+	if(line==n+1){
+		cnt++;
+		return;
+	}
+	int vld=~(lb|rb|row|ban[line])&all;
+	while(vld){
+		int tmp=vld&(-vld);
+		dfs(line+1,row|tmp,(lb|tmp)>>1,(rb|tmp)<<1);
+		vld^=tmp;
+	}
+}
 
 il void solve(){
-
-	
+	cin>>n;
+	all=(1<<n)-1;
+	for(int i=1;i<=n;i++){
+		cin>>str;
+		for(int j=0;j<n;j++)
+			if(str[j]=='.')
+				ban[i]|=1<<j;
+	}
+	dfs(1,0,0,0);
+	cout<<cnt;
 }
 
 
@@ -103,3 +124,4 @@ int main(){
 
 	return 0;
 }
+

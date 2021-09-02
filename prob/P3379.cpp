@@ -83,13 +83,49 @@ struct tarr{
 
 
 
-const ll MXN=5e5+5;
-ll n,m;
-ll arr[MXN];
+const ll MXN=1e6+5,LG=20;
+ll n,m,s;
+vi g[MXN];
+ll id[MXN][LG+1],dpth[MXN],lg[MXN],plc[MXN],idc;
+
+il void dfs(ll p,ll fa){
+	id[plc[p]=++idc][0]=p;
+	for(ll nx:g[p])
+		if(fa!=nx){
+			dpth[nx]=dpth[p]+1;
+			dfs(nx,p);
+			id[++idc][0]=p;
+		}
+}
+il void init(){
+	lg[0]=-1;
+	for(int i=1;i<=idc;i++)lg[i]=lg[i>>1]+1;
+	for(int j=idc;j;j--)
+		for(int i=1;j+(1<<i)<=idc+1;i++){
+			ll x=id[j][i-1],y=id[j+(1<<(i-1))][i-1];
+			id[j][i]=dpth[x]<dpth[y]?x:y;
+		}
+}
+il ll gmx(ll l,ll r){
+	ll tlg=lg[r-l+1],x=id[l][tlg],y=id[r-(1<<tlg)+1][tlg];
+	return dpth[x]<dpth[y]?x:y;
+}
 
 il void solve(){
-
-	
+	cin>>n>>m>>s;
+	for(int ts,tt,i=1;i<n;i++){
+		cin>>ts>>tt;
+		g[ts].pb(tt);
+		g[tt].pb(ts);
+	}
+	dfs(s,0);
+	init();
+	while(m--){
+		int x,y;
+		cin>>x>>y;
+		if(plc[x]>plc[y])swap(x,y);
+		cout<<gmx(plc[x],plc[y])<<endl;
+	}
 }
 
 
@@ -103,3 +139,4 @@ int main(){
 
 	return 0;
 }
+

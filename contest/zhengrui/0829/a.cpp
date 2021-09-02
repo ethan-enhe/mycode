@@ -39,9 +39,8 @@ il ll qpow(ll x,ll y){
 }
 il ll gcd(ll x,ll y){return !y?x:gcd(y,x%y);}
 il ll mod(ll x){
-	if(abs(x)>=(P<<1))return x%P;
 	if(x>=P)return x-P;
-	if(x<=-P)return x+P;
+	if(x<0)return x+P;
 	return x;
 }
 il void madd(ll &x,ll y){x=mod(x+y);}
@@ -83,11 +82,34 @@ struct tarr{
 
 
 
-const ll MXN=5e5+5;
-ll n,m;
-ll arr[MXN];
+const ll MXN=1e7+5,MXP=5e6;
+ll n,m,ans;
+ll phi[MXN],pri[MXP],pw[MXN],inv[MXN],pric;
 
 il void solve(){
+	cin>>n>>m;
+	//ll t0=clock();
+	inv[1]=phi[1]=1;
+	for(ll i=2;i<=n;i++){
+		if(!phi[i]){
+			phi[i]=i-1;
+			pri[++pric]=i;
+			pw[i]=qpow(i,m);
+			inv[i]=qpow(i,P-2);
+		}
+		ans=(ans+(pw[i]-1)*inv[i-1]%P*phi[i])%P;
+		for(ll j=1;i*pri[j]<=n;j++){
+			pw[i*pri[j]]=pw[i]*pw[pri[j]]%P;
+			inv[i*pri[j]]=inv[i]*inv[pri[j]]%P;
+			if(i%pri[j])phi[i*pri[j]]=phi[i]*phi[pri[j]];
+			else{
+				phi[i*pri[j]]=phi[i]*pri[j];
+				break;
+			}
+		}
+	}
+	cout<<(ans+m)%P;
+//	cerr<<endl<<double(clock()-t0)/CLOCKS_PER_SEC;
 
 	
 }
@@ -103,3 +125,4 @@ int main(){
 
 	return 0;
 }
+
