@@ -1,7 +1,6 @@
 "set runtimepath^=~/.vim runtimepath+=~/.vim/after
 "let &packpath = &runtimepath
 "source ~/.vimrc
-"20210909
 
 
 " Basic
@@ -10,10 +9,6 @@ if has("gui_running")
 	set guifont=Consolas:h14
 	set backspace=indent,eol,start
 	set guioptions=
-endif
-let g:iswindows = 0
-if(has("win32") || has("win64") || has("win95") || has("win16"))
-	let g:iswindows = 1
 endif
 
 set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
@@ -24,7 +19,6 @@ set ruler
 set showcmd
 set mouse=a
 set laststatus=2
-set scrolloff=2
 
 " Indent+Cursor
 set smartindent
@@ -68,27 +62,37 @@ map <c-c> "+y
 let mapleader=" "
 set makeprg=clang++\ -O2\ -fsanitize=address\ -std=c++11\ %\ -o\ %<
 map <leader>/ :bel 10sp term://curl cht.sh/cpp/
+map <leader>, :cp<CR>
+map <leader>. :cn<CR>
 map <F8> :call RunCode()<CR>
 map <F9> :call CompileCode()<CR>
 map <F10> :NERDTreeToggle<CR>
 
 func! CompileCode()
     exec "w"
+	"exec "ccl"
 	exec "make"
+	"exec "redraw!"
+	"exec "cw 8"
 endfunction
 func! RunCode()
     exec "w"
-	let s:pre=has("nvim")?"bel 10sp term://":"!"
     if &filetype == 'cpp'
-		let s:suf=g:iswindows?"\./%<":"%<.exe";
+		"exec "ccl"
+		if has('nvim')
+			exec "bel 10sp term://./%<"
+		else
+			exec "!./%<"
+		endif
     elseif &filetype == 'python'
-		let s:suf="python3 %"
+		if has('nvim')
+			exec "bel 10sp term://python3 %"
+		else
+			exec "!python3 %"
+		endif
     endif
-	exec s:pre.s:suf
 endfunction
-if empty(glob("~/.config/nvim/autoload/"))
-	exec "!curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://ethan_enhe.coding.net/p/code/d/code/git/raw/master/template/vim/plug.vim"
-endif
+
 
 " PLUG
 call plug#begin('~/.vim/plugged')
@@ -99,13 +103,12 @@ Plug 'https://hub.fastgit.org/luochen1990/rainbow'
 Plug 'https://hub.fastgit.org/overcache/NeoSolarized'
 Plug 'https://hub.fastgit.org/w0rp/ale'
 Plug 'https://hub.fastgit.org/maximbaz/lightline-ale'
-Plug 'https://hub.fastgit.org/SirVer/ultisnips'
+Plug 'https://hub.fastgit.org/octol/vim-cpp-enhanced-highlight'
 call plug#end()
 
 
 
 " COLOR
-let base16colorspace=256
 let g:rainbow_active = 1
 color gruvbox
 syntax enable
@@ -170,16 +173,4 @@ let g:lightline.active = {
 		\            [ 'lineinfo' ],
 	    \            [ 'percent' ],
 	    \            [ 'fileformat', 'fileencoding', 'filetype'] ] }
-" }}}
-" {{{ snippets
-
-" Trigger configuration. You need to change this to something other than <tab> if you use one of the following:
-" - https://github.com/Valloric/YouCompleteMe
-" - https://github.com/nvim-lua/completion-nvim
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsJumpBackwardTrigger="<S-tab>"
-
-" If you want :UltiSnipsEdit to split your window.
-let g:UltiSnipsEditSplit="vertical"
 " }}}
