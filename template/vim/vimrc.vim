@@ -11,6 +11,7 @@ if has("gui_running")
 	set backspace=indent,eol,start
 	set guioptions=
 endif
+
 let g:iswindows = 0
 if(has("win32") || has("win64") || has("win95") || has("win16"))
 	let g:iswindows = 1
@@ -91,7 +92,7 @@ if empty(glob("~/.config/nvim/autoload/"))
 endif
 
 " PLUG
-call plug#begin('~/.vim/plugged')
+call plug#begin()
 Plug 'https://hub.fastgit.org/itchyny/lightline.vim'
 Plug 'https://hub.fastgit.org/scrooloose/nerdtree'
 Plug 'https://hub.fastgit.org/morhetz/gruvbox'
@@ -99,7 +100,7 @@ Plug 'https://hub.fastgit.org/luochen1990/rainbow'
 Plug 'https://hub.fastgit.org/overcache/NeoSolarized'
 Plug 'https://hub.fastgit.org/w0rp/ale'
 Plug 'https://hub.fastgit.org/maximbaz/lightline-ale'
-Plug 'https://hub.fastgit.org/SirVer/ultisnips'
+"Plug 'https://hub.fastgit.org/SirVer/ultisnips'
 call plug#end()
 
 
