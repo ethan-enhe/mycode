@@ -16,13 +16,11 @@ typedef long double ld;
 typedef pair<ll,ll> pi;
 typedef vector<ll> vi;
 //}}}
-//{{{ Const
 const char nl='\n';
-const db EPS=1e-9;
+const ld EPS=1e-9;
 const ull B=131;
 const ll INF=1e18;
 ll P=1e9+7;
-//}}}
 //{{{ Func
 il ll qpow(ll x,ll y){
     ll r=1;
@@ -38,6 +36,14 @@ il ll mod(ll x){
 	if(x>=P)return x-P;
 	if(x<=-P)return x+P;
 	return x;
+}
+il void renum(ll *v,ll sz){
+	static ll *pool=NULL;
+	pool=(ll*)realloc(pool,sizeof(ll)*(sz+1));
+	memcpy(pool,v,sizeof(ll)*(sz+1));
+	sort(pool+1,pool+1+sz);
+	for(ll i=1;i<=sz;i++)
+		v[i]=lower_bound(pool+1,pool+1+sz,v[i])-pool;
 }
 il void madd(ll &x,ll y){x=mod(x+y);}
 il void add(ll &x,ll y){x=x+y;}
