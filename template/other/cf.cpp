@@ -2,11 +2,6 @@
 using namespace std;
 
 //{{{ Def
-#define fastio ios::sync_with_stdio(0),cin.tie(0),cout.tie(0)
-#define fileio \
-	freopen(".in","r",stdin),\
-	freopen(".out","w",stdout)
-
 #define il inline
 #define fi first
 #define se second
@@ -46,8 +41,12 @@ il ll mod(ll x){
 }
 il void madd(ll &x,ll y){x=mod(x+y);}
 il void add(ll &x,ll y){x=x+y;}
-il void cmx(ll &x,ll y){x=max(x,y);}
-il void cmn(ll &x,ll y){x=min(x,y);}
+il void umx(ll &x,ll y){x=max(x,y);}
+il void umn(ll &x,ll y){x=min(x,y);}
+il bool cle(ll x,ll y){return x<=y;}
+il bool cl(ll x,ll y){return x<y;}
+il bool cge(ll x,ll y){return x>=y;}
+il bool cg(ll x,ll y){return x>y;}
 //}}}
 //{{{ Algo
 //{{{ COMB
@@ -68,20 +67,30 @@ namespace comb{
 }
 //}}}
 //{{{ BIT
-template<void (*f)(ll&,ll)>
+template<void (*f)(ll&,ll),const ll DEF_V=0>
 struct tarr{
 	ll *v,sz;
 	il tarr(){v=NULL,sz=0;}
 	il ~tarr(){free(v);}
-	il void set(ll x=0){fill(v,v+sz,x);}
+	il void set(ll x=DEF_V){fill(v,v+sz,x);}
 	il void rsz(ll x){v=(ll*)realloc(v,sizeof(ll)*((sz=x)+1));}
 	il void mod(ll x,ll y){for(;x<=sz;x+=x&(-x))f(v[x],y);}
-	il ll pre(ll x){ll r=0;for(;x;x^=x&(-x))f(r,v[x]);return r;}
+	il ll pre(ll x){ll r=DEF_V;for(;x;x^=x&(-x))f(r,v[x]);return r;}
+	il ll lb(ll x,bool (*chk)(ll,ll)=cle){
+		ll r=0,cur=DEF_V;
+		for(ll i=1<<(ll)log2(sz);i;i>>=1)
+			if(r+i<=sz){
+				ll nx=cur;f(nx,v[r+i]);
+				if(!chk(x,nx)){
+					r+=i;
+					cur=nx;
+				}
+			}
+		return r+1;
+	}
 };
 //}}}
 //}}}
-
-
 
 const ll MXN=5e5+5;
 ll n,m;
@@ -92,12 +101,13 @@ il void solve(){
 	
 }
 
-
 int main(){
 #ifndef ONLINE_JUDGE
-	//fileio;
+	//freopen(".in","r",stdin);
+	//freopen(".out","w",stdout);
 #endif
-	fastio;
+	ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);
+
 	//ll t;cin>>t;while(t--)
 	solve();
 
