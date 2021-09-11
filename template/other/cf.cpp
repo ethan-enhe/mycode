@@ -72,7 +72,7 @@ struct tarr{
 	ll *v,sz;
 	il tarr(){v=NULL,sz=0;}
 	il ~tarr(){free(v);}
-	il void set(ll x=DEF_V){fill(v,v+sz,x);}
+	il void set(ll x=DEF_V){fill(v,v+sz+1,x);}
 	il void rsz(ll x){v=(ll*)realloc(v,sizeof(ll)*((sz=x)+1));}
 	il void mod(ll x,ll y){for(;x<=sz;x+=x&(-x))f(v[x],y);}
 	il ll pre(ll x){ll r=DEF_V;for(;x;x^=x&(-x))f(r,v[x]);return r;}
