@@ -1,7 +1,6 @@
 "set runtimepath^=~/.vim runtimepath+=~/.vim/after
 "let &packpath = &runtimepath
 "source ~/.vimrc
-"20210909
 
 
 " Basic
@@ -81,14 +80,14 @@ func! RunCode()
     exec "w"
 	let s:pre=has("nvim")?"bel 10sp term://":"!"
     if &filetype == 'cpp'
-		let s:suf=g:iswindows?"\./%<":"%<.exe";
+		let s:suf=g:iswindows?"\%<.exe":"\./%<"
     elseif &filetype == 'python'
 		let s:suf="python3 %"
     endif
 	exec s:pre.s:suf
 endfunction
-if empty(glob("~/.config/nvim/autoload/"))
-	exec "!curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://ethan_enhe.coding.net/p/code/d/code/git/raw/master/template/vim/plug.vim"
+if empty(glob(stdpath('config')."/autoload/"))
+	exec "!curl -fLo ".stdpath('config')."/autoload/plug.vim --create-dirs https://ethan_enhe.coding.net/p/code/d/code/git/raw/master/template/vim/plug.vim"
 endif
 
 " PLUG
@@ -100,6 +99,7 @@ Plug 'https://hub.fastgit.org/luochen1990/rainbow'
 Plug 'https://hub.fastgit.org/overcache/NeoSolarized'
 Plug 'https://hub.fastgit.org/w0rp/ale'
 Plug 'https://hub.fastgit.org/maximbaz/lightline-ale'
+"Plug 'https://hub.fastgit.org/octol/vim-cpp-enhanced-highlight'
 "Plug 'https://hub.fastgit.org/SirVer/ultisnips'
 call plug#end()
 
@@ -183,4 +183,12 @@ let g:UltiSnipsJumpBackwardTrigger="<S-tab>"
 
 " If you want :UltiSnipsEdit to split your window.
 let g:UltiSnipsEditSplit="vertical"
+" }}}
+" {{{ vim-cpp-enhanced-highlight
+let g:cpp_class_scope_highlight = 1
+let g:cpp_class_decl_highlight = 1
+let g:cpp_member_variable_highlight = 1
+let g:cpp_concepts_highlight = 1
+let g:cpp_experimental_simple_template_highlight = 1
+let g:cpp_posix_standard = 1
 " }}}
