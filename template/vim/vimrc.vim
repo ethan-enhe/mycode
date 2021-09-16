@@ -119,11 +119,11 @@ set background=dark
 set noshowmode
 let g:lightline = {
       \ 'colorscheme': 'gruvbox',
-	  \ 'component': {
-      \   'readonly': '%{&readonly?"":""}',
-      \ },
-      \ 'separator':    { 'left': '', 'right': '' },
-      \ 'subseparator': { 'left': '', 'right': '' },
+	  "\ 'component': {
+      "\   'readonly': '%{&readonly?"":""}',
+      "\ },
+      "\ 'separator':    { 'left': '', 'right': '' },
+      "\ 'subseparator': { 'left': '', 'right': '' },
       \ }
 "highlight Normal guibg=NONE ctermbg=None
 autocmd BufNewFile *.cpp 0 r ~/code/template/other/cf.cpp
