@@ -102,9 +102,46 @@ struct tarr{
 //}}}
 //}}}
 
-const ll MXN=5e5+5;
+const ll MXN=1e6+5;
 ll n,m;
 ll arr[MXN];
+
+struct segt{
+#define ls (p<<1)
+#define rs (p<<1|1)
+	struct node{
+		ll va,cov,mn;
+		il node(){cov=-1;mn=INF;}
+	}t[MXN<<2];
+	il void addt(ll p,node &k){
+		if(~k.cov)t[p].va=k.cov;
+		umn(t[p].va,k.mn);
+	}
+	il void pushd(ll p){
+		addt(ls,t[p]);
+		addt(rs,t[p]);
+		t[p].cov=-1,t[p].mn=-1;
+	}
+	il void pushu(ll p){t[p].va=min(t[ls].va,t[rs].va);}
+	il void mod(ll p,ll l,ll r,ll ml,ll mr,node &k){
+		if(ml<=l && r<=mr){
+			addt(p,k);
+			return;
+		}
+		pushd(p);ll mid=(l+r)>>1;
+		if(ml<=mid)mod(ls,l,mid,ml,mr,k);
+		if(mr>mid)mod(rs,mid+1,r,ml,mr,k);
+		pushu(p);
+	}
+	il ll que(ll p,ll l,ll r,ll qi){
+		if(l==r)return t[p].va;
+		pushd(p);ll mid=(l+r)>>1;
+		if(qi<=mid)return que(ls,l,mid,qi);
+		else return que(rs,mid);
+	}
+
+};
+
 
 il void solve(){
 
@@ -116,6 +153,7 @@ int main(){
 	//freopen(".in","r",stdin);
 	//freopen(".out","w",stdout);
 #endif
+
 	ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);
 
 	//ll t;cin>>t;while(t--)
@@ -124,14 +162,3 @@ int main(){
 	return 0;
 }
 
-/*
-{{{ Completion
-typedef using namespace
-sort stable_sort unique
-nth_element merge inplace_merge
-lower_bound upper_bound
-empty size push pop top front back push_front push_back
-insert erase find end begin
-iterator
-}}}
- */

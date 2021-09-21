@@ -124,14 +124,3 @@ int main(){
 	return 0;
 }
 
-/*
-{{{ Completion
-typedef using namespace
-sort stable_sort unique
-nth_element merge inplace_merge
-lower_bound upper_bound
-empty size push pop top front back push_front push_back
-insert erase find end begin
-iterator
-}}}
- */
