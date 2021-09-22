@@ -12,6 +12,8 @@ if has("gui_running")
 	set guifont=Consolas:h14
 	set backspace=indent,eol,start
 	set guioptions=
+else
+    exec "GuiFont! Consolas:h14"
 endif
 
 set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
