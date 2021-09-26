@@ -111,14 +111,15 @@ call plug#end()
 " COLOR
 let base16colorspace=256
 let g:rainbow_active = 1
-color gruvbox
+color NeoSolarized
 syntax enable
 
 set termguicolors
-set background=dark
+set background=light
 set noshowmode
 let g:lightline = {
-      \ 'colorscheme': 'gruvbox',
+      "\ 'colorscheme': 'gruvbox',
+      \ 'colorscheme': 'solarized',
 	  "\ 'component': {
       "\   'readonly': '%{&readonly?"":""}',
       "\ },
