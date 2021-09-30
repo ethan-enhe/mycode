@@ -33,6 +33,16 @@ il ll qpow(ll x,ll y){
     return r;
 }
 il ll gcd(ll x,ll y){return !y?x:gcd(y,x%y);}
+il ll exgcd(ll x,ll y,ll &rx,ll &ry){
+	if(!y){
+		rx=1,ry=0;
+		return x;
+	}
+	ll g=exgcd(y,x%y,rx,ry);
+	swap(rx,ry);
+	ry-=rx*(x/y);
+	return g;
+}
 il ll mod(ll x){
 	if(abs(x)>=(P<<1))return x%P;
 	if(x>=P)return x-P;
@@ -147,3 +157,4 @@ insert erase find end begin
 iterator
 }}}
  */
+
