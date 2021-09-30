@@ -15,6 +15,7 @@ typedef double db;
 typedef long double ld;
 typedef pair<ll,ll> pi;
 typedef vector<ll> vi;
+typedef vector<pi> vpi;
 //}}}
 const char nl='\n';
 const ld EPS=1e-9;
@@ -37,6 +38,17 @@ il ll mod(ll x){
 	if(x>=P)return x-P;
 	if(x<=-P)return x+P;
 	return x;
+}
+il vpi factor(ll x){
+	vpi r;
+	for(ll i=2;i*i<=x;i++)
+		if(x%i==0){
+			pi cur=pi(i,0);
+			do x/=i,++cur.se;while(x%i==0);
+			r.pb(cur);
+		}
+	if(x!=1)r.pb(pi(x,1));
+	return r;
 }
 il void madd(ll &x,ll y){x=mod(x+y);}
 il void add(ll &x,ll y){x=x+y;}
