@@ -15,7 +15,6 @@ typedef double db;
 typedef long double ld;
 typedef pair<ll,ll> pi;
 typedef vector<ll> vi;
-typedef vector<pi> vpi;
 //}}}
 const char nl='\n';
 const ld EPS=1e-9;
@@ -33,32 +32,11 @@ il ll qpow(ll x,ll y){
     return r;
 }
 il ll gcd(ll x,ll y){return !y?x:gcd(y,x%y);}
-il ll exgcd(ll x,ll y,ll &rx,ll &ry){
-	if(!y){
-		rx=1,ry=0;
-		return x;
-	}
-	ll g=exgcd(y,x%y,rx,ry);
-	swap(rx,ry);
-	ry-=rx*(x/y);
-	return g;
-}
 il ll mod(ll x){
 	if(abs(x)>=(P<<1))return x%P;
 	if(x>=P)return x-P;
 	if(x<=-P)return x+P;
 	return x;
-}
-il vpi factor(ll x){
-	vpi r;
-	for(ll i=2;i*i<=x;i++)
-		if(x%i==0){
-			pi cur=pi(i,0);
-			do x/=i,++cur.se;while(x%i==0);
-			r.pb(cur);
-		}
-	if(x!=1)r.pb(pi(x,1));
-	return r;
 }
 il void madd(ll &x,ll y){x=mod(x+y);}
 il void add(ll &x,ll y){x=x+y;}
@@ -125,10 +103,35 @@ struct tarr{
 //}}}
 
 const ll MXN=5e5+5;
-ll n,m;
-ll arr[MXN];
+ll n,m,k,res=INF;
+ll pre[MXN];
 
 il void solve(){
+	cin>>n>>m>>k;
+	for(int i=0;i<n;i++)
+		pre[i]=i;
+	for(int i=1;i<=m;i++){
+		ll p;
+		cin>>p;
+		pre[p]=-INF;
+	}
+	for(int i=1;i<n;i++)
+		umx(pre[i],pre[i-1]);
+	for(int i=1;i<=k;i++){
+		ll tmp;
+		cin>>tmp;
+		ll ind=0,ans=0;
+		while(ind<n){
+			ll nx=pre[ind]+i;
+			if(nx<=ind){
+				ans=INF;
+				break;
+			}
+			ind=nx,ans+=tmp;
+		}
+		umn(res,ans);
+	}
+	cout<<(res>=INF?-1:res);
 
 	
 }
@@ -145,3 +148,16 @@ int main(){
 
 	return 0;
 }
+
+/*
+{{{ Completion
+typedef using namespace
+sort stable_sort unique
+nth_element merge inplace_merge
+lower_bound upper_bound
+empty size push pop top front back push_front push_back
+insert erase find end begin
+iterator
+}}}
+ */
+
