@@ -100,8 +100,10 @@ Plug 'https://hub.fastgit.org/scrooloose/nerdtree'
 Plug 'https://hub.fastgit.org/morhetz/gruvbox'
 Plug 'https://hub.fastgit.org/luochen1990/rainbow'
 Plug 'https://hub.fastgit.org/overcache/NeoSolarized'
-Plug 'https://hub.fastgit.org/w0rp/ale'
-Plug 'https://hub.fastgit.org/maximbaz/lightline-ale'
+"Plug 'https://hub.fastgit.org/skywind3000/vim-auto-popmenu'
+
+"Plug 'https://hub.fastgit.org/w0rp/ale'
+"Plug 'https://hub.fastgit.org/maximbaz/lightline-ale'
 Plug 'https://hub.fastgit.org/neoclide/coc.nvim', {'branch': 'release'}
 "Plug 'https://hub.fastgit.org/octol/vim-cpp-enhanced-highlight'
 "Plug 'https://hub.fastgit.org/SirVer/ultisnips'
@@ -363,4 +365,17 @@ nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
 nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
+" }}}
+" {{{vap
+"" enable this plugin for filetypes, '*' for all files.
+"let g:apc_enable_ft = {'*':1}
+"
+"" source for dictionary, current or other loaded buffers, see ':help cpt'
+"set cpt=.,k,w,b
+"
+"" don't select the first item.
+"set completeopt=menu,menuone,noselect
+"
+"" suppress annoy messages.
+"set shortmess+=c
 " }}}
