@@ -126,14 +126,32 @@ struct tarr{
 
 const ll MXN=5e5+5;
 ll n,cnt=1;
-ll arr[MXN],brr[MXN],crr[MXN],ans[MXN];
+ll arr[MXN][4],s[MXN];
 
 il void solve(){
 	cin>>n;
 	for(int i=1;i<=n;i++){
-		cin>>arr[i]>>brr[i]>>crr[i];
-		brr[i]=P-brr[i];
+		cin>>arr[i][2]>>arr[i][3]>>arr[i][0];
+		arr[i][1]=(P-arr[i][3])%P;
 	}
+	arr[1][1]=0;
+	for(int i=2;i<=n;i++){
+		ll rate=qpow(arr[i-1][2],P-2)*arr[i][1]%P;
+		arr[i][0]=(arr[i][0]-arr[i-1][0]*rate)%P;
+		arr[i][3]=(arr[i][3]-arr[i-1][3]*rate)%P;
+		arr[i][1]=0;
+	}
+	if((arr[n][3]+arr[n][2])%P==0){
+		cout<<((arr[n][0]%P)?0:P)<<nl;
+		return;
+	}
+	s[n]=arr[n][0]*qpow(arr[n][3]+arr[n][2],P-2)%P;
+	cout<<1<<nl;
+	for(int i=1;i<=n;i++){
+		s[i]=(arr[i][0]-s[n]*arr[i][3])%P*qpow(arr[i][2],P-2)%P;
+		cout<<((s[i]-s[i-1])%P+P)%P<<" ";
+	}
+	cout<<nl;
 }
 
 int main(){
@@ -143,7 +161,7 @@ int main(){
 #endif
 	ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);
 
-	//ll t;cin>>t;while(t--)
+	ll t;cin>>t;while(t--)
 	solve();
 
 	return 0;
