@@ -203,7 +203,7 @@ let g:cpp_posix_standard = 1
 let g:apc_enable_ft = {'*':1}
 
 " source for dictionary, current or other loaded buffers, see ':help cpt'
-set cpt=.,k,w,b
+set cpt=.,k,w,b,i,d
 
 " don't select the first item.
 set completeopt=menu,menuone,noselect
