@@ -128,10 +128,40 @@ struct tarr{
 //}}}
 
 const ll MXN=5e5+5;
-ll n,m;
-ll arr[MXN];
+pi s,t,go[300];
+ll len;
+char str[MXN];
+il ll cal(ll cycle){
+	pi ts=s*cycle;
+	for(int i=1;i<=len;i++){
+		ts=ts+go[str[i]];
+		pi disv=ts-t;
+		ll dis=abs(disv.fi)+abs(disv.se);
+		if(dis<=cycle*len+i)
+			return cycle*len+i;
+	}
+	return INF-cycle;
+}
 
 il void solve(){
+	cin>>s.fi>>s.se>>t.fi>>t.se;
+	t=t-s;
+	cin>>len>>(str+1);
+	go['U']={0,1};
+	go['D']={0,-1};
+	go['L']={-1,0};
+	go['R']={1,0};
+	s={0,0};
+	for(int i=1;i<=len;i++)
+		s=s+go[str[i]];
+	ll l=0,r=1e10+5;
+	while(l<r){
+		ll mid=(l+r)>>1;
+		if(cal(mid)>=cal(mid+1))l=mid+1;
+		else r=mid;
+	}
+	ll tmp=cal(l);
+	cout<<(tmp>=1e16?-1:tmp);
 
 	
 }
@@ -148,3 +178,4 @@ int main(){
 
 	return 0;
 }
+

@@ -8,11 +8,9 @@
 
 " Basic
 
-if has("gui_running")
-	set guifont=Consolas:h14
-	set backspace=indent,eol,start
-	set guioptions=
-endif
+set guifont=Consolas:h14
+set backspace=indent,eol,start
+set guioptions=
 
 let g:iswindows = 0
 if(has("win32") || has("win64") || has("win95") || has("win16"))

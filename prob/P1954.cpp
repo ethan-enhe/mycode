@@ -127,11 +127,59 @@ struct tarr{
 //}}}
 //}}}
 
-const ll MXN=5e5+5;
-ll n,m;
-ll arr[MXN];
+const ll MXN=2e3+5;
+vi g[MXN],k[MXN];
+ll n,m,arr[MXN],ind[MXN],tmp[MXN];
+deque<ll> q;
+stack<ll> res;
+il ll cal(ll cur,bool tp){
+	memcpy(tmp,ind,sizeof(tmp));
+	q.clear();
+	for(int i=n;i;i--){
+		for(ll j:k[i])
+			if(!tmp[j])
+				q.pb(j);
+		if(q.size()==1 && q.front()==cur)return i;
+		else{
+			ll fly=0;
+			if(q.front()==cur){
+				fly=q.back();
+				q.pop_back();
+			}
+			else{
+				fly=q.front();
+				q.pop_front();
+			}
+			for(ll j:g[fly])
+				if(!(--tmp[j]) && i<=arr[j])
+					q.pb(j);
+			if(tp)res.push(fly);
+		}
+	}
+	return -1;
+}
+
 
 il void solve(){
+	cin>>n>>m;
+	for(int i=1;i<=n;i++){
+		cin>>arr[i];
+		k[arr[i]].pb(i);
+	}
+	while(m--){
+		ll ts,tt;
+		cin>>ts>>tt;
+		g[tt].pb(ts);
+		ind[ts]++;
+	}
+	cal(0,1);
+	while(!res.empty()){
+		cout<<res.top()<<" ";
+		res.pop();
+	}
+	cout<<nl;
+	for(int i=1;i<=n;i++)
+		cout<<cal(i,0)<<" ";
 
 	
 }
@@ -148,3 +196,4 @@ int main(){
 
 	return 0;
 }
+
