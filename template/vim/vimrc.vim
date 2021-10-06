@@ -1,3 +1,4 @@
+
 "call mkdir(stdpath('config'),'p')
 "exe 'edit' stdpath('config').'/init.vim'
 "
@@ -11,6 +12,15 @@
 set guifont=Consolas:h14
 set backspace=indent,eol,start
 set guioptions=
+set winaltkeys=no
+if has('nvim')
+	try
+		call rpcnotify(1, 'Gui', 'Option', 'Tabline', 0)
+		call rpcnotify(1, 'Gui', 'Option', 'Popupmenu', 0)
+	catch
+	endtry
+endif
+
 
 let g:iswindows = 0
 if(has("win32") || has("win64") || has("win95") || has("win16"))
@@ -37,12 +47,12 @@ set sw=4
 " 代码折叠
 set foldenable
 " 折叠方法
-" manual    手工折叠
-" indent    使用缩进表示折叠
-" expr      使用表达式定义折叠
-" syntax    使用语法定义折叠
-" diff      对没有更改的文本进行折叠
-" marker    使用标记进行折叠, 默认标记是 {{{ 和 }}}
+" manual	手工折叠
+" indent	使用缩进表示折叠
+" expr	  使用表达式定义折叠
+" syntax	使用语法定义折叠
+" diff	  对没有更改的文本进行折叠
+" marker	使用标记进行折叠, 默认标记是 {{{ 和 }}}
 set foldmethod=marker
 "set foldlevel=99
 
@@ -74,17 +84,17 @@ map <F9> :call CompileCode()<CR>
 map <F10> :NERDTreeToggle<CR>
 
 func! CompileCode()
-    exec "w"
+	exec "w"
 	exec "make"
 endfunction
 func! RunCode()
-    exec "w"
+	exec "w"
 	let s:pre=has("nvim")?"bel 10sp term://":"!"
-    if &filetype == 'cpp'
+	if &filetype == 'cpp'
 		let s:suf=g:iswindows?"\%<.exe":"\./%<"
-    elseif &filetype == 'python'
+	elseif &filetype == 'python'
 		let s:suf="python3 %"
-    endif
+	endif
 	exec s:pre.s:suf
 endfunction
 if empty(glob(stdpath('config')."/autoload/"))
@@ -117,14 +127,14 @@ set termguicolors
 set background=light
 set noshowmode
 let g:lightline = {
-      "\ 'colorscheme': 'gruvbox',
-      \ 'colorscheme': 'solarized',
+	  "\ 'colorscheme': 'gruvbox',
+	  \ 'colorscheme': 'solarized',
 	  "\ 'component': {
-      "\   'readonly': '%{&readonly?"":""}',
-      "\ },
-      "\ 'separator':    { 'left': '', 'right': '' },
-      "\ 'subseparator': { 'left': '', 'right': '' },
-      \ }
+	  "\   'readonly': '%{&readonly?"":""}',
+	  "\ },
+	  "\ 'separator':	{ 'left': '', 'right': '' },
+	  "\ 'subseparator': { 'left': '', 'right': '' },
+	  \ }
 "highlight Normal guibg=NONE ctermbg=None
 "autocmd vimenter * NERDTree
 autocmd BufNewFile *.cpp 0 r ~/code/template/other/cf.cpp
@@ -155,26 +165,26 @@ let g:ale_linters = {
 \   'c': ['clang'],
 \}
 let g:lightline.component_expand = {
-      \  'linter_checking': 'lightline#ale#checking',
-      \  'linter_infos': 'lightline#ale#infos',
-      \  'linter_warnings': 'lightline#ale#warnings',
-      \  'linter_errors': 'lightline#ale#errors',
-      \  'linter_ok': 'lightline#ale#ok',
-      \ }
+	  \  'linter_checking': 'lightline#ale#checking',
+	  \  'linter_infos': 'lightline#ale#infos',
+	  \  'linter_warnings': 'lightline#ale#warnings',
+	  \  'linter_errors': 'lightline#ale#errors',
+	  \  'linter_ok': 'lightline#ale#ok',
+	  \ }
 let g:lightline.component_type = {
-      \     'linter_checking': 'right',
-      \     'linter_infos': 'right',
-      \     'linter_warnings': 'warning',
-      \     'linter_errors': 'error',
-      \     'linter_ok': 'right',
-      \ }
+	  \	 'linter_checking': 'right',
+	  \	 'linter_infos': 'right',
+	  \	 'linter_warnings': 'warning',
+	  \	 'linter_errors': 'error',
+	  \	 'linter_ok': 'right',
+	  \ }
 let g:lightline.active = { 'right': [[ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_infos', 'linter_ok' ]] }
 
 let g:lightline.active = {
 		\ 'right': [ [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_infos', 'linter_ok' ],
-		\            [ 'lineinfo' ],
-	    \            [ 'percent' ],
-	    \            [ 'fileformat', 'fileencoding', 'filetype'] ] }
+		\			[ 'lineinfo' ],
+		\			[ 'percent' ],
+		\			[ 'fileformat', 'fileencoding', 'filetype'] ] }
 " }}}
 " {{{ snippets
 
