@@ -163,17 +163,6 @@ struct segt{
 		if(mr>mid)_mod(rs,mid+1,r,ml,mr,mv);
 		d[p].v=merge(d[ls].v,d[rs].v);
 	}
-	il void _set(ll &p,ll l,ll r,ll mi,v_type mv){
-		if(!p)p=++nodec;
-		if(l==r){
-			d[p].v=mv;
-			return;
-		}
-		ll mid=(l+r)>>1;pushd(p,l,r);
-		if(mi<=mid)_set(ls,l,mid,mi,mv);
-		else _set(rs,mid+1,r,mi,mv);
-		d[p].v=merge(d[ls].v,d[rs].v);
-	}
 	il v_type _que(ll p,ll l,ll r,ll ql,ll qr){
 		if(!p || (ql<=l && r<=qr))return d[p].v;
 		ll mid=(l+r)>>1;v_type res=DEFAULT_V;pushd(p,l,r);
@@ -182,17 +171,40 @@ struct segt{
 		return res;
 	}
 	il void mod(ll l,ll r,t_type mv){_mod(root,lb,rb,l,r,mv);}
-	il void set(ll mi,v_type mv){_set(root,lb,rb,mi,mv);}
 	il v_type que(ll l,ll r){return _que(root,lb,rb,l,r);}
 };
 //}}}
 //}}}
 
-const ll MXN=5e5+5;
+const ll MXN=35005,MXK=55;
 ll n,m;
-ll arr[MXN];
+ll arr[MXN],pre[MXN],last[MXN];
 
+il void addt(ll l,ll r,ll &v,ll &t,ll mt){
+	v+=mt;
+	t+=mt;
+}
+il ll mrg(ll x,ll y){return max(x,y);}
+segt<ll,ll,mrg,addt,0,0,MXN> dp[2];
 il void solve(){
+	scanf("%lld%lld",&n,&m);
+	for(int i=1;i<=n;i++){
+		scanf("%lld",arr+i);
+		pre[i]=last[arr[i]];
+		last[arr[i]]=i;
+	}
+	dp[0].init(0,n);
+	for(int i=1;i<=m;i++){
+		dp[i&1].init(0,n);
+		for(int j=1;j<=n;j++){
+			dp[!(i&1)].mod(pre[j],j-1,1);
+			dp[i&1].mod(j,j,dp[!(i&1)].que(0,j-1));
+			//cout<<dp[!(i&1)].que(0,j-1)<<" ";
+		}
+		//cout<<endl;
+	}
+	cout<<dp[m&1].que(n,n);
+	
 
 	
 }
@@ -209,3 +221,4 @@ int main(){
 
 	return 0;
 }
+

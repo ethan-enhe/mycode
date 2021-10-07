@@ -188,11 +188,45 @@ struct segt{
 //}}}
 //}}}
 
-const ll MXN=5e5+5;
-ll n,m;
-ll arr[MXN];
+const ll MXN=2000+5;
+ll n,m,w;
+ll price[MXN][2],lim[MXN][2];
+ll dp[MXN][MXN];
+pi q[MXN];
+ll ql,qr;
 
 il void solve(){
+	scanf("%lld%lld%lld",&n,&m,&w);
+	for(int i=1;i<=n;i++)
+		scanf("%lld%lld%lld%lld",&price[i][0],&price[i][1],&lim[i][0],&lim[i][1]);
+	w++;
+	memset(dp[0],~0x3f,sizeof(dp[0]));
+	dp[0][0]=0;
+	for(int i=1;i<=n;i++){
+		memcpy(dp[i],dp[i-1],sizeof(dp[i]));
+		ql=1,qr=0;
+		ll last=max(i-w,0ll);
+		for(int j=0;j<=m;j++){
+			ll tmp=dp[last][j]+price[i][0]*j;
+			while(ql<=qr && tmp>=q[qr].fi)qr--;
+			q[++qr]={tmp,j};
+			while(q[ql].se<j-lim[i][0])ql++;
+			umx(dp[i][j],q[ql].fi-price[i][0]*j);
+		}
+		ql=1,qr=0;
+		for(int j=m;~j;j--){
+			ll tmp=dp[last][j]+price[i][1]*j;
+			while(ql<=qr && tmp>=q[qr].fi)qr--;
+			q[++qr]={tmp,j};
+			while(q[ql].se>j+lim[i][1])ql++;
+			umx(dp[i][j],q[ql].fi-price[i][1]*j);
+		}
+		/*for(int j=0;j<=m;j++)
+			cout<<dp[i][j]<<" ";
+		cout<<endl;*/
+	}
+	printf("%lld",dp[n][0]);
+
 
 	
 }
@@ -209,3 +243,4 @@ int main(){
 
 	return 0;
 }
+

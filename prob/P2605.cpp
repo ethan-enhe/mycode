@@ -188,11 +188,40 @@ struct segt{
 //}}}
 //}}}
 
-const ll MXN=5e5+5;
+const ll MXN=20005,MXM=105;
 ll n,m;
-ll arr[MXN];
+ll d[MXN],c[MXN],s[MXN],w[MXN];
+vector<ll> en[MXN];
+il ll mrg(ll x,ll y){return min(x,y);}
+il void addt(ll l,ll r,ll &v,ll &t,ll mv){v+=mv,t+=mv;}
+segt<ll,ll,mrg,addt,INF,0,MXN*4> dp[2];
 
 il void solve(){
+	scanf("%lld%lld",&n,&m);
+	for(int i=2;i<=n;i++)scanf("%lld",d+i);
+	for(int i=1;i<=n;i++)scanf("%lld",c+i);
+	for(int i=1;i<=n;i++){
+		scanf("%lld",s+i);
+		en[upper_bound(d+1,d+1+n,d[i]+s[i])-d].pb(i);
+	}
+	for(int i=1;i<=n;i++)scanf("%lld",w+i);
+	++n;
+	d[n]=INF;
+
+
+	dp[0].init(0,n);
+	for(int i=1;i<=m+1;i++){
+		dp[!(i&1)].set(0,0);
+		dp[i&1].init(0,n);
+		for(int j=1;j<=n;j++){
+			for(ll k:en[j])
+				dp[!(i&1)].mod(0,lower_bound(d+1,d+1+n,d[k]-s[k])-d-1,w[k]);
+			dp[i&1].set(j,c[j]+dp[!(i&1)].que(0,j-1));
+		}
+	}
+	cout<<dp[!(m&1)].que(n,n);
+
+	
 
 	
 }
@@ -209,3 +238,4 @@ int main(){
 
 	return 0;
 }
+
