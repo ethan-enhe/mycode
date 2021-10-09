@@ -1,4 +1,3 @@
-
 "call mkdir(stdpath('config'),'p')
 "exe 'edit' stdpath('config').'/init.vim'
 "
@@ -151,7 +150,7 @@ autocmd BufNewFile *.cpp 0 r ~/code/template/other/cf.cpp
 if g:usecoc
 	"{{{ coc.nvim
 	let g:coc_global_extensions = ['coc-clangd', 'coc-pairs','coc-snippets']
-	let b:coc_pairs_disabled = ['<']
+	autocmd FileType * let b:coc_pairs_disabled = ['<']
 	" Use autocmd to force lightline update.
 	autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
 
