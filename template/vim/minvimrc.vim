@@ -12,5 +12,5 @@ inoremap ( ()<left>
 inoremap { {}<left>
 inoremap [ []<left>
 
-map <f9> :!g++ -O2 -Wall -fsanitize=address % -o %<<cr>
+map <f9> :!g++ -O2 -Wall -fsanitize=address,undefined % -o %<<cr>
 map <f8> :!time ./%<<cr>
