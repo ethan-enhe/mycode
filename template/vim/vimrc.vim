@@ -125,15 +125,15 @@ call plug#end()
 
 " COLOR
 let g:rainbow_active = 1
-color NeoSolarized
+color gruvbox
 syntax enable
 
 set termguicolors
-set background=light
+set background=dark
 set noshowmode
 let g:lightline = {
-	  "\ 'colorscheme': 'gruvbox',
-	  \ 'colorscheme': 'solarized',
+	  \ 'colorscheme': 'gruvbox',
+	  "\ 'colorscheme': 'solarized',
 	  \ 'active': {
 	  \   'left': [ [ 'mode', 'paste' ],
 	  \             [ 'cocstatus', 'readonly', 'filename', 'modified' ] ]
