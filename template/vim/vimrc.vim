@@ -144,7 +144,7 @@ let g:lightline = {
 	  \ }
 "highlight Normal guibg=NONE ctermbg=None
 "autocmd vimenter * NERDTree
-autocmd BufNewFile *.cpp 0 r ~/code/template/other/cf.cpp
+"autocmd BufNewFile *.cpp 0 r ~/code/template/other/cf.cpp
 
 
 if g:usecoc
