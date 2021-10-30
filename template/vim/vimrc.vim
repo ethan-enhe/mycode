@@ -84,7 +84,7 @@ let &makeprg="clang++\ -O2".(g:iswindows?"":"\ -fsanitize=address")."\ -std=c++1
 map <leader>/ :bel 10sp term://curl cht.sh/cpp/
 map <F8> :call RunCode()<CR>
 map <F9> :call CompileCode()<CR>
-map <F10> :NERDTreeToggle<CR>
+"map <F10> :NERDTreeToggle<CR>
 func! CompileCode()
 	exec "w"
 	exec "make"
@@ -105,7 +105,7 @@ endif
 
 " PLUG
 call plug#begin()
-Plug 'https://hub.fastgit.org/scrooloose/nerdtree'
+"Plug 'https://hub.fastgit.org/scrooloose/nerdtree'
 Plug 'https://hub.fastgit.org/itchyny/lightline.vim'
 Plug 'https://hub.fastgit.org/luochen1990/rainbow'
 Plug 'https://hub.fastgit.org/overcache/NeoSolarized'
