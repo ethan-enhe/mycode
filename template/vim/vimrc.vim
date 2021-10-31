@@ -242,6 +242,7 @@ if g:usecoc
 	xmap <leader>f  <Plug>(coc-format-selected)
 	nmap <leader>f  <Plug>(coc-format-selected)
 
+
 	augroup mygroup
 	  autocmd!
 	  " Setup formatexpr specified filetype(s).
