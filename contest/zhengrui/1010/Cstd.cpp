@@ -3,47 +3,57 @@ using namespace std;
 typedef long long ll;
 const ll MXN=405,P=1e9+7;
 ll n,k,arr[MXN],brr[MXN];
-ll fac[MXN],dp[MXN][MXN];
-//后面i个，有>=j个<=lim，的方案数
-inline void cal(ll lim){
-	ll ind=0;
-	dp[n+1][0]=1;
-	/*
-	for(int i=n+1;i;i--){
-		while(ind<n && brr[i-1]+arr[ind+1]<=lim)ind++;
-		for(int j=0;j<=n-i+1;j++){
-			add(dp[i-1][j+1],dp[i][j]*(ind-j));
-			add(dp[i-1][j],dp[i][j]);
-		}
+ll fac[MXN],ifac[MXN];
+ll dp[MXN],ans[MXN];
+inline ll qpow(ll x,ll y){
+	ll r=1;
+	while(y){
+		if(y&1)r=r*x%P;
+		x=x*x%P,y>>=1;
 	}
-	*/
+	return r;
+}
+inline ll c(ll x,ll y){
+	if(y>x || y<0)return 0;
+	return fac[x]*ifac[y]%P*ifac[x-y]%P;
+}
+/* 
+ * ans[i]=恰有i个>lim的答案数
+ * 答案<=lim的情况数
+ */
+inline ll cal(ll lim){
+	ll ind=0,res=0;
+	dp[0]=1;
 	for(int i=n;i;i--){
 		while(ind<n && brr[i]+arr[ind+1]<=lim)ind++;
-		dp[i][0]=1;
-		for(int j=1;j<=n-i+1;j++){
-			dp[i][j]=dp[i+1][j]+dp[i+1][j-1]*(ind-j+1)-dp[i-1][j-1];
-		}
+		for(int j=n-i+1;j;j--)
+			dp[j]=(dp[j]+dp[j-1]*(ind-j+1))%P;
 	}
-	for(int i=n;i;i--,cout<<endl)
-		for(int j=0;j<=n;j++)
-			cout<<dp[i][j]<<" ";
-	/*
+	for(int i=0;i<=n;i++)
+		dp[i]=dp[i]*fac[n-i]%P;
 	for(int i=0;i<=n;i++){
-		dp[1][i]=dp[1][i]*fac[n-i]%P;
-		cerr<<dp[1][i]<<endl;
+		if(n<k+i)
+			for(int j=i;j<=n;j++)
+				res=(res+dp[j]*((j-i&1)?-c(j,i):c(j,i)))%P;
+		dp[i]=0;
 	}
-	*/
+	return res;
 }
 int main(){
 	scanf("%lld%lld",&n,&k);
-	fac[0]=1;
-	for(int i=1;i<=n;i++)scanf("%lld",arr+i),fac[i]=fac[i-1]*i%P;
-	for(int i=1;i<=n;i++)scanf("%lld",brr+i);
+	fac[0]=ifac[0]=1;
+	for(int i=1;i<=n;i++){
+		scanf("%lld",arr+i);
+		fac[i]=fac[i-1]*i%P;
+		ifac[i]=qpow(fac[i],P-2);
+	}
+	for(int i=1;i<=n;i++)
+		scanf("%lld",brr+i);
 	sort(arr+1,arr+1+n);
 	sort(brr+1,brr+1+n);
-	cal(5);
-
-
-	
+	ll ans=fac[n]*(arr[n]+brr[n]+1)%P;
+	for(int i=arr[n]+brr[n];i;i--)
+		ans=(ans-cal(i))%P;
+	printf("%lld",(ans*ifac[n]%P+P)%P);
 	return 0;
 }
