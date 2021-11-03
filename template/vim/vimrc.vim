@@ -1,3 +1,7 @@
+".clang-format
+"BasedOnStyle: google
+"IndentWidth: 4
+"
 "call mkdir(stdpath('config'),'p')
 "exe 'edit' stdpath('config').'/init.vim'
 "
