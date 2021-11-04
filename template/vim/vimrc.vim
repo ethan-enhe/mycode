@@ -41,6 +41,7 @@ set showcmd
 set mouse=a
 set laststatus=2
 set scrolloff=2
+set clipboard+=unnamedplus
 
 " Indent+Cursor
 set smartindent
