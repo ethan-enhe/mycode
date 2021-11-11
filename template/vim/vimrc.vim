@@ -115,6 +115,7 @@ Plug 'https://hub.fastgit.org/itchyny/lightline.vim'
 Plug 'https://hub.fastgit.org/luochen1990/rainbow'
 Plug 'https://hub.fastgit.org/overcache/NeoSolarized'
 Plug 'https://hub.fastgit.org/morhetz/gruvbox'
+Plug 'https://hub.fastgit.org/crusoexia/vim-monokai'
 
 if g:usecoc
 	Plug 'https://hub.fastgit.org/neoclide/coc.nvim', {'branch': 'release'}
