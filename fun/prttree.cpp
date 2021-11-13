@@ -34,6 +34,11 @@ inline void draw(int x1, int y1, int x2, int y2) {
         x1++;
     }
 }
+inline void add(int p, int fa, int x) {
+    l[p] += x, r[p] += x;
+    for (int nx : g[p])
+        if (nx != fa) add(nx, p, x);
+}
 inline void init(int p, int fa) {
     r[p] = l[p];
     for (int nx : g[p])
@@ -42,7 +47,14 @@ inline void init(int p, int fa) {
             init(nx, p);
             r[p] = r[nx];
         }
-    r[p] = max(r[p], l[p] + sz[p]) + 1;
+        int tmp = r[p], x = 0;
+        r[p] = max(r[p] + (int)g[p].size() - (p != rt) + 1, l[p] + sz[p]);
+        tmp = (r[p] - tmp) / (g[p].size() - (p != rt) + 1);
+        for (int nx : g[p])
+            if (nx != fa) {
+                x += tmp;
+                add(nx, p, x);
+            }
 }
 inline void dfs(int p, int fa, int dpth) {
     mxd = (max(mxd, dpth));
@@ -63,8 +75,10 @@ int main() {
     freopen("test.in", "r", stdin);
     scanf("%d", &n);
     for (int i = 1; i <= n; i++) {
-        scanf("%s", prt[i]);
-        sz[i] = strlen(prt[i]);
+        scanf("%s", prt[i] + 1);
+        sz[i] = strlen(prt[i] + 1) + 2;
+        prt[i][0] = '(';
+        prt[i][sz[i] - 1] = ')';
     }
     for (int i = 1; i < n; i++) {
         int ts, tt;

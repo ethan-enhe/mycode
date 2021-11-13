@@ -54,7 +54,7 @@ inline void umx(ll &x,ll y){x=max(x,y);}
 inline void umn(ll &x,ll y){x=min(x,y);}
 //}}}
 
-const ll MXN=1e6+5;
+const ll MXN=5e5+5;
 ll n,m;
 ll arr[MXN];
 

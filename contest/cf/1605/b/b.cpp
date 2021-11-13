@@ -1,4 +1,5 @@
 #include<bits/stdc++.h>
+#include <vector>
 using namespace std;
 
 //{{{ Def
@@ -54,12 +55,32 @@ inline void umx(ll &x,ll y){x=max(x,y);}
 inline void umn(ll &x,ll y){x=min(x,y);}
 //}}}
 
-const ll MXN=1e6+5;
+const ll MXN=5e5+5;
 ll n,m;
-ll arr[MXN];
+char str[MXN],tmp[MXN];
+vector<int> ans;
 
 inline void solve(){
-
+	scanf("%lld%s",&n,str+1);
+	for(int i=1;i<=n;i++){
+		tmp[i]=str[i];
+	}
+	sort(tmp+1,tmp+1+n);
+	bool f=0;
+	for(int i=1;i<=n;i++){
+		if(tmp[i]!=str[i]){
+			if(!f)puts("1"),f=1;
+			ans.push_back(i);
+		}
+	}
+	if(!f)puts("0");
+	else{
+		printf("%d ",(int)ans.size());
+		for(int i:ans)
+			printf("%d ",i);
+		ans.clear();
+	}
+	putchar('\n');
 	
 }
 
@@ -70,7 +91,7 @@ int main(){
 #endif
 	//ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);
 
-	//ll t;cin>>t;while(t--)
+	ll t;cin>>t;while(t--)
 	solve();
 
 	return 0;

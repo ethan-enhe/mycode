@@ -54,11 +54,41 @@ inline void umx(ll &x,ll y){x=max(x,y);}
 inline void umn(ll &x,ll y){x=min(x,y);}
 //}}}
 
-const ll MXN=1e6+5;
-ll n,m;
-ll arr[MXN];
+const ll MXN=2e5+5,LG=20;
+ll n,m,ind[MXN],lg2[MXN],ans[MXN];
+vector<ll> g[MXN],id[MXN];
+bool used[MXN][LG+1];
 
+inline void dfs(int p,int fa){
+	memset(used[p],0,sizeof(used[p]));
+	for(int nx:g[p])
+		if(nx!=fa){
+			dfs(nx,p);
+			used[p][lg2[ans[nx]]]=1;
+		}
+	for(int i=0;i<=LG;i++)
+		if(id[i].size()!=ind[i] && !used[p][i]){
+			ans[p]=id[i][ind[i]++];
+			break;
+		}
+}
 inline void solve(){
+	scanf("%lld",&n);
+	for(int i=0;i<=LG;i++)
+		id[i].clear(),ind[i]=0;
+	for(int i=1;i<=n;i++){
+		g[i].clear();
+		id[lg2[i]].push_back(i);
+	}
+	for(int i=1;i<n;i++){
+		ll ts,tt;
+		scanf("%lld%lld",&ts,&tt);
+		g[ts].push_back(tt);
+		g[tt].push_back(ts);
+	}
+	dfs(1,0);
+	for(int i=1;i<=n;i++)printf("%lld ",ans[i]);
+	putchar('\n');
 
 	
 }
@@ -70,7 +100,10 @@ int main(){
 #endif
 	//ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);
 
-	//ll t;cin>>t;while(t--)
+	lg2[0]=-1;
+	for(int i=1;i<MXN;i++)
+		lg2[i]=lg2[i>>1]+1;
+	ll t;cin>>t;while(t--)
 	solve();
 
 	return 0;

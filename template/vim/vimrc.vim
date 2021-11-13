@@ -87,6 +87,7 @@ map <c-c> "+y
 let mapleader=" "
 let &makeprg=(g:iswindows?"g++":"clang++\ -fsanitize=address")."\ -O2\ -std=c++11\ %\ -o\ %<"
 map <leader>/ :bel 10sp term://curl cht.sh/cpp/
+map <leader>t :0 r ~/code/template/other/cf.cpp<cr>
 map <F8> :call RunCode()<CR>
 map <F9> :call CompileCode()<CR>
 "map <F10> :NERDTreeToggle<CR>

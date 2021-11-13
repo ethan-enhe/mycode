@@ -1,4 +1,6 @@
 #include<bits/stdc++.h>
+#include <queue>
+#include <vector>
 using namespace std;
 
 //{{{ Def
@@ -54,13 +56,73 @@ inline void umx(ll &x,ll y){x=max(x,y);}
 inline void umn(ll &x,ll y){x=min(x,y);}
 //}}}
 
-const ll MXN=1e6+5;
+const ll MXN=2e6+5,MXQ=1e6+5;
 ll n,m;
-ll arr[MXN];
+ll arr[MXN],brr[MXN],ans[MXN];
+pi op[MXN];
 
+
+struct delt{
+	ll st,end,init,k;
+	inline bool operator < (const delt &b) const{return end>b.end;}
+};
+vector<delt> ask[MXN];
+priority_queue<delt> q;
+inline void ins(ll l,ll r,ll a,ll b){
+	if(l>r || l>MXQ)return;
+	ask[l].push_back({l,r+1,a,b});
+}
+inline ll cal(pi x,ll y){
+	ll r=x.fi*y+x.se;
+	if(r<0)r=-r;
+	return r;
+}
 inline void solve(){
-
-	
+	scanf("%lld",&n);
+	for(ll i=1;i<=n;i++)
+		scanf("%lld",arr+i);
+	for(ll i=1;i<=n;i++){
+		scanf("%lld",brr+i);
+		if(i==1)brr[i]=0;
+		op[i]={0,brr[i]-arr[i]};
+	}
+	op[1].fi=1;
+	for(ll i=1;i<=n;i++){
+		for(ll j=i<<1;j<=n;j+=i)
+			op[j]=op[j]-op[i];
+		if(!op[i].fi)
+			ins(1,MXQ,abs(op[i].se),0);
+		else{
+			if(op[i].fi<0){
+				op[i].fi=-op[i].fi;
+				op[i].se=-op[i].se;
+			}
+			ll low=max(1ll,(op[i].fi-op[i].se-1)/op[i].fi);
+			ins(low,MXQ,cal(op[i],low),op[i].fi);
+			if(low>1)ins(1,low-1,cal(op[i],1),-op[i].fi);
+		}
+	}
+	ll curva=0,curk=0;
+	for(ll i=1;i<=MXQ;i++){
+		for(delt &j:ask[i]){
+			curva+=j.init;
+			curk+=j.k;
+			q.push(j);
+		}
+		while(!q.empty() && q.top().end<=i){
+			delt p=q.top();q.pop();
+			curk-=p.k;
+			curva-=p.init+p.k*(i-p.st);
+		}
+		ans[i]=curva;
+		curva+=curk;
+	}
+	scanf("%lld",&m);
+	while(m--){
+		ll x;
+		scanf("%lld",&x);
+		printf("%lld\n",ans[x]);
+	}
 }
 
 int main(){
@@ -75,3 +137,4 @@ int main(){
 
 	return 0;
 }
+

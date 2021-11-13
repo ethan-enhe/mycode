@@ -54,11 +54,14 @@ inline void umx(ll &x,ll y){x=max(x,y);}
 inline void umn(ll &x,ll y){x=min(x,y);}
 //}}}
 
-const ll MXN=1e6+5;
+const ll MXN=5e5+5;
 ll n,m;
 ll arr[MXN];
 
 inline void solve(){
+	ll a,b,c;
+	cin>>a>>b>>c;
+	cout<<bool((a+b+c)%3)<<endl;
 
 	
 }
@@ -70,7 +73,7 @@ int main(){
 #endif
 	//ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);
 
-	//ll t;cin>>t;while(t--)
+	ll t;cin>>t;while(t--)
 	solve();
 
 	return 0;

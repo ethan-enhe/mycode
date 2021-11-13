@@ -56,9 +56,34 @@ inline void umn(ll &x,ll y){x=min(x,y);}
 
 const ll MXN=1e6+5;
 ll n,m;
-ll arr[MXN];
+char str[MXN];
 
 inline void solve(){
+	scanf("%lld%s",&n,str+1);
+	for(int i=1;i<n;i++)
+		if(str[i]=='a' && str[i+1]=='a'){
+			puts("2");
+			return;
+		}
+	for(int i=1;i<n-1;i++)
+		if(str[i]=='a' && str[i+2]=='a'){
+			puts("3");
+			return;
+		}
+	for(int i=1;i<n-2;i++)
+		if(str[i]=='a' && str[i+3]=='a' && str[i+1]!=str[i+2]){
+			puts("4");
+			return;
+		}
+	for(int i=1;i<n-5;i++)
+		if(str[i]=='a' && str[i+3]=='a' && str[i+6]=='a'
+				&& str[i+1]==str[i+2] && str[i+4]==str[i+5] && str[i+1]!=str[i+4]){
+			puts("7");
+			return;
+		}
+
+
+	puts("-1");
 
 	
 }
@@ -70,7 +95,7 @@ int main(){
 #endif
 	//ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);
 
-	//ll t;cin>>t;while(t--)
+	ll t;cin>>t;while(t--)
 	solve();
 
 	return 0;
