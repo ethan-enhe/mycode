@@ -1,4 +1,5 @@
 #include<bits/stdc++.h>
+#include <cstdlib>
 using namespace std;
 
 //{{{ Def
@@ -17,7 +18,8 @@ typedef vector<pi> vpi;
 const char nl='\n';
 const ld EPS=1e-9;
 const ull B=131;
-const ll INF=1e18,P=1e9+7;
+const ll INF=1e18;
+ll P=1e9+7;
 //{{{ Func
 inline pi operator + (const pi &x,const pi &y){return pi(x.fi+y.fi,x.se+y.se);}
 inline pi operator - (const pi &x,const pi &y){return pi(x.fi-y.fi,x.se-y.se);}
@@ -58,6 +60,19 @@ ll n,m;
 ll arr[MXN];
 
 inline void solve(){
+	ll t=100;
+	while(t--){
+		system("./dg>d.in");
+		system("./d<d.in>d.out");
+		system("./df<d.in>df.out");
+		if(system("diff df.out d.out")){
+			break;
+		}
+		system("cat d.in");
+		puts("-----");
+
+	}
+
 
 	
 }
@@ -74,3 +89,4 @@ int main(){
 
 	return 0;
 }
+

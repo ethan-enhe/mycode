@@ -17,7 +17,7 @@ typedef vector<pi> vpi;
 const char nl='\n';
 const ld EPS=1e-9;
 const ull B=131;
-const ll INF=1e18,P=1e9+7;
+const ll INF=1e18,P=998244353;
 //{{{ Func
 inline pi operator + (const pi &x,const pi &y){return pi(x.fi+y.fi,x.se+y.se);}
 inline pi operator - (const pi &x,const pi &y){return pi(x.fi-y.fi,x.se-y.se);}
@@ -74,3 +74,4 @@ int main(){
 
 	return 0;
 }
+

@@ -17,7 +17,8 @@ typedef vector<pi> vpi;
 const char nl='\n';
 const ld EPS=1e-9;
 const ull B=131;
-const ll INF=1e18,P=1e9+7;
+const ll INF=1e18;
+ll P=1e9+7;
 //{{{ Func
 inline pi operator + (const pi &x,const pi &y){return pi(x.fi+y.fi,x.se+y.se);}
 inline pi operator - (const pi &x,const pi &y){return pi(x.fi-y.fi,x.se-y.se);}
@@ -53,13 +54,25 @@ inline void umx(ll &x,ll y){x=max(x,y);}
 inline void umn(ll &x,ll y){x=min(x,y);}
 //}}}
 
-const ll MXN=1e6+5;
+const ll MXN=10;
 ll n,m;
 ll arr[MXN];
 
 inline void solve(){
-
-	
+	srand(time(NULL));
+	ll n=rand()%MXN+1,m=rand()%(n*2)+1;
+	cout<<n<<" "<<m<<endl;
+	for(int i=1;i<=n;i++)
+		putchar('0'+(rand()&1));
+	putchar('\n');
+	for(int i=1;i<=n;i++)
+		putchar('0'+(rand()&1));
+	putchar('\n');
+	while(m--){
+		ll x=rand()%n+1,y=rand()%n+1;
+		if(x>y)swap(x,y);
+		printf("%lld %lld\n",x,y);
+	}
 }
 
 int main(){
@@ -74,3 +87,4 @@ int main(){
 
 	return 0;
 }
+

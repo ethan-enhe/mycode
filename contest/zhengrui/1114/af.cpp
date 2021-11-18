@@ -17,7 +17,8 @@ typedef vector<pi> vpi;
 const char nl='\n';
 const ld EPS=1e-9;
 const ull B=131;
-const ll INF=1e18,P=1e9+7;
+const ll INF=1e18;
+ll P=1e9+7;
 //{{{ Func
 inline pi operator + (const pi &x,const pi &y){return pi(x.fi+y.fi,x.se+y.se);}
 inline pi operator - (const pi &x,const pi &y){return pi(x.fi-y.fi,x.se-y.se);}
@@ -54,12 +55,35 @@ inline void umn(ll &x,ll y){x=min(x,y);}
 //}}}
 
 const ll MXN=1e6+5;
-ll n,m;
-ll arr[MXN];
-
+ll n,m,cnt;
+ll arr[MXN],l[MXN],r[MXN];
+inline void dfs(ll ind){
+	if(ind==m+1){
+		for(int i=1;i<=n;i++)
+			if(arr[i])
+				return;
+		cnt++;
+		return;
+	}
+	dfs(ind+1);
+	for(int i=l[ind];i<=r[ind];i++)arr[i]^=1;
+	dfs(ind+1);
+	for(int i=l[ind];i<=r[ind];i++)arr[i]^=1;
+}
+char str[MXN];
 inline void solve(){
-
-	
+	scanf("%lld%lld",&n,&m);
+	scanf("%s",str+1);
+	for(int i=1;i<=n;i++)
+		arr[i]^=str[i]-'0';
+	scanf("%s",str+1);
+	for(int i=1;i<=n;i++)
+		arr[i]^=str[i]-'0';
+	for(int i=1;i<=m;i++)
+		scanf("%lld%lld",l+i,r+i);
+	dfs(1);
+	cout<<cnt<<endl;
+	puts(cnt?"YES":"NO");
 }
 
 int main(){
@@ -74,3 +98,4 @@ int main(){
 
 	return 0;
 }
+

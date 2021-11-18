@@ -1,4 +1,5 @@
 #include<bits/stdc++.h>
+#include <bitset>
 using namespace std;
 
 //{{{ Def
@@ -17,7 +18,8 @@ typedef vector<pi> vpi;
 const char nl='\n';
 const ld EPS=1e-9;
 const ull B=131;
-const ll INF=1e18,P=1e9+7;
+const ll INF=1e18;
+ll P=1e9+7;
 //{{{ Func
 inline pi operator + (const pi &x,const pi &y){return pi(x.fi+y.fi,x.se+y.se);}
 inline pi operator - (const pi &x,const pi &y){return pi(x.fi-y.fi,x.se-y.se);}
@@ -53,24 +55,47 @@ inline void umx(ll &x,ll y){x=max(x,y);}
 inline void umn(ll &x,ll y){x=min(x,y);}
 //}}}
 
-const ll MXN=1e6+5;
-ll n,m;
+const ll MXN=505,MXK=1005;
+ll n,k,v;
 ll arr[MXN];
+bool dp[MXN][MXK];
 
 inline void solve(){
-
-	
+	scanf("%lld%lld%lld",&n,&k,&v);
+	for(ll i=1;i<=n;i++)scanf("%lld",arr+i);
+	if(arr[1]==v){
+		puts("1");
+		return;
+	}
+	dp[0][0]=1;
+	ll sz=0,cnt=0;
+	for(ll i=1;i<=n;i++){
+		cnt+=arr[i]/k;
+		arr[i]%=k;
+		sz+=arr[i];
+		for(ll j=sz;j>=arr[i];j--)
+			dp[i][j]=dp[i-1][j]|dp[i-1][j-arr[i]+k];
+		if(i>1)
+			for(ll j=0;j<=sz;j++){
+				if(dp[i][j] && (v-j)%k==0 && (v-j)/k<=cnt && (v-j)/k>=0){
+					printf("%lld\n",i);
+					return;
+				}
+			}
+	}
+	puts("-1");
 }
 
 int main(){
 #ifndef ONLINE_JUDGE
-	//freopen(".in","r",stdin);
+	//freopen("test.in","r",stdin);
 	//freopen(".out","w",stdout);
 #endif
 	//ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);
 
-	//ll t;cin>>t;while(t--)
+	ll t;cin>>t;while(t--)
 	solve();
 
 	return 0;
 }
+

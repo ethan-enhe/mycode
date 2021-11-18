@@ -99,7 +99,7 @@ func! RunCode()
 	exec "w"
 	let s:pre=has("nvim")?"bel 10sp term://":"!"
 	if &filetype == 'cpp'
-		let s:suf=g:iswindows?"\%<.exe":"\./%<"
+		let s:suf=g:iswindows?"%<.exe":"time ./%<"
 	elseif &filetype == 'python'
 		let s:suf="python3 %"
 	endif

@@ -17,7 +17,8 @@ typedef vector<pi> vpi;
 const char nl='\n';
 const ld EPS=1e-9;
 const ull B=131;
-const ll INF=1e18,P=1e9+7;
+const ll INF=1e18;
+ll P=1e9+7;
 //{{{ Func
 inline pi operator + (const pi &x,const pi &y){return pi(x.fi+y.fi,x.se+y.se);}
 inline pi operator - (const pi &x,const pi &y){return pi(x.fi-y.fi,x.se-y.se);}
@@ -53,24 +54,52 @@ inline void umx(ll &x,ll y){x=max(x,y);}
 inline void umn(ll &x,ll y){x=min(x,y);}
 //}}}
 
-const ll MXN=1e6+5;
+const ll MXN=1e4+5,MXM=5e5+5;
 ll n,m;
-ll arr[MXN];
+bool g[MXN][MXN];
+pi edge[MXM];
+ll stk[MXN],top;
 
 inline void solve(){
-
-	
+	scanf("%lld%lld",&n,&m);
+	for(int i=1;i<=n;i++)
+		for(int j=1;j<=n;j++)
+			g[i][j]=0;
+	for(int i=1;i<=m;i++){
+		ll ts,tt;
+		scanf("%lld%lld",&ts,&tt);
+		g[ts][tt]=g[tt][ts]=1;
+		edge[i]={ts,tt};
+	}
+	for(int i=1;i<=m;i++){
+		top=0;
+		for(int j=1;j<=n;j++)
+			if(g[edge[i].fi][j] && g[edge[i].se][j])
+				stk[++top]=j;
+		if((top*(top-1)>>1)>m){
+			puts("YES");
+			return;
+		}
+		for(int j=1;j<=top;j++)
+			for(int k=j+1;k<=top;k++)
+				if(!g[stk[j]][stk[k]]){
+					puts("YES");
+					return;
+				}
+	}
+	puts("NO");
 }
 
 int main(){
 #ifndef ONLINE_JUDGE
-	//freopen(".in","r",stdin);
+	//freopen("d.in","r",stdin);
 	//freopen(".out","w",stdout);
 #endif
 	//ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);
 
-	//ll t;cin>>t;while(t--)
+	ll t;cin>>t;while(t--)
 	solve();
 
 	return 0;
 }
+

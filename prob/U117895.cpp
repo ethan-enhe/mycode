@@ -1,4 +1,6 @@
 #include<bits/stdc++.h>
+#include <cstdio>
+#include <queue>
 using namespace std;
 
 //{{{ Def
@@ -54,10 +56,39 @@ inline void umn(ll &x,ll y){x=min(x,y);}
 //}}}
 
 const ll MXN=1e6+5;
-ll n,m;
-ll arr[MXN];
+ll n,m,lb,rb;
+ll en[MXN];
+pi arr[MXN];
 
+priority_queue<ll> q;
+inline bool inter(ll a,ll b,ll c,ll d){
+	if(a>c)swap(a,c),swap(b,d);
+	return b>=c;
+}
 inline void solve(){
+	scanf("%lld%lld",&n,&m);
+	for(int i=1;i<=n;i++)
+		scanf("%lld%lld",&arr[i].fi,&arr[i].se);
+	scanf("%lld%lld",&lb,&rb);
+	sort(arr+1,arr+1+n);
+	ll ans=INF;
+	arr[++n]={INF,0};
+	for(int i=1;i<=m;i++)q.push(0);
+	for(int i=1;i<=n;i++){
+		en[i]=max(-q.top(),arr[i].fi)+arr[i].se;q.pop();
+		q.push(-en[i]);
+		en[i]=-q.top();
+	}
+	for(int i=1;i<=n;i++)
+		if(lb<=arr[i].fi && rb>=arr[i].fi)
+			ans=min(ans,max(0ll,en[i-1]-arr[i].fi));
+	for(int i=n;i;i--)
+		if(arr[i].fi<=rb){
+			ans=min(ans,max(0ll,en[i]-rb));
+			break;
+		}
+	printf("%lld",ans);
+
 
 	
 }
@@ -74,3 +105,4 @@ int main(){
 
 	return 0;
 }
+
