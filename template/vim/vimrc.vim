@@ -148,10 +148,13 @@ let g:lightline = {
 	  \   'left': [ [ 'mode', 'paste' ],
 	  \             [ 'cocstatus', 'readonly', 'filename', 'modified' ] ]
 	  \ },
+	  \ 'separator':{ 'left': "\ue0bc", 'right': "\ue0be" },
+	  \ 'subseparator':{ 'left': "\ue0bd", 'right': "\ue0bf" },
 	  \ 'component_function': {
 	  \   'cocstatus': 'coc#status'
 	  \ },
 	  \ }
+
 "highlight Normal guibg=NONE ctermbg=None
 "autocmd vimenter * NERDTree
 "autocmd BufNewFile *.cpp 0 r ~/code/template/other/cf.cpp

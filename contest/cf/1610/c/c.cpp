@@ -1,4 +1,6 @@
 #include <bits/stdc++.h>
+#include <queue>
+#include <vector>
 using namespace std;
 
 //{{{ Def
@@ -63,9 +65,36 @@ struct mll {
 //}}}
 const ll MXN = 1e6 + 5;
 ll n, m;
-ll arr[MXN];
+ll a[MXN],b[MXN];
+vector<ll> en[MXN];
+priority_queue<ll> q;
+inline bool chk(ll sz){
+	for(int i=1;i<=n;i++)
+		en[max(1ll,sz-b[i])].pb(a[i]+1);
+	while(!q.empty())q.pop();
+	for(int i=1;i<=sz;i++){
+		for(ll j:en[i])
+			q.push(-j);
+		en[i].clear();
+		while(!q.empty()){
+			ll x=-q.top();
+			if(x<i)q.pop();
+			else break;
+		}
+		if(q.empty())return 0;
+		else q.pop();
+	}
+	return 1;
+}
 
-void solve() {}
+void solve() {
+	scanf("%lld",&n);
+	for(int i=1;i<=n;i++)
+		scanf("%lld%lld",a+i,b+i);
+	for(int i=1;i<=n;i++)
+		cerr<<chk(i);
+
+}
 
 int main() {
 #ifndef ONLINE_JUDGE

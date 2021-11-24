@@ -65,14 +65,26 @@ const ll MXN = 1e6 + 5;
 ll n, m;
 ll arr[MXN];
 
-void solve() {}
+void solve() {
+	scanf("%lld%lld",&m,&n);
+	if(n==1){
+		if(m==1)puts("0");
+		else puts("1");
+	}
+	else{
+		if(m==1)puts("1");
+		else puts("2");
+	}
+
+
+}
 
 int main() {
 #ifndef ONLINE_JUDGE
     // freopen(".in","r",stdin);
     // freopen(".out","w",stdout);
 #endif
-    // ll t;scanf("%lld",&t);while(t--)
+    ll t;scanf("%lld",&t);while(t--)
     solve();
 
     return 0;

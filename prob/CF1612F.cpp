@@ -51,21 +51,50 @@ struct mll {
     mll operator+(const mll &y) const { return mll(redu(v + y.v)); }
     mll operator-(const mll &y) const { return mll(redu(P + v - y.v)); }
     mll operator*(const mll &y) const { return mll(redu(v * y.v)); }
-    mll operator/(const mll &y) const { return mll(redu(v * (ll)qpow(y, P - 2))); }
+    mll operator/(const mll &y) const {
+        return mll(redu(v * (ll)qpow(y, P - 2)));
+    }
     mll &operator=(const mll &y) { return v = y.v, *this; }
     mll &operator+=(const mll &y) { return v = redu(v + y.v), *this; }
     mll &operator-=(const mll &y) { return v = redu(P + v - y.v), *this; }
     mll &operator*=(const mll &y) { return v = redu(v * y.v), *this; }
-    mll &operator/=(const mll &y) { return v = redu(v * (ll)qpow(y, P - 2)), *this; }
+    mll &operator/=(const mll &y) {
+        return v = redu(v * (ll)qpow(y, P - 2)), *this;
+    }
     bool operator==(const mll &y) const { return v == y.v; }
     bool operator!=(const mll &y) const { return v != y.v; }
 };
 //}}}
 const ll MXN = 1e6 + 5;
-ll n, m;
-ll arr[MXN];
+ll n, m,ans=20;
+map<ll,bool> arr[MXN];
+inline void cal(ll x,ll y,ll dpth) {
+	if(dpth>=ans)return;
+	if(x==n && y==m){
+		ans=dpth;
+		return;
+	}
+	ll tmp=x+y+arr[x][y];
+	if(x!=n)cal(min(tmp,n),y,dpth+1);
+	if(y!=m)cal(x,min(tmp,m),dpth+1);
+}
 
-void solve() {}
+void solve() {
+	
+	scanf("%lld%lld",&n,&m);
+	ll t;
+	scanf("%lld",&t);
+	while(t--){
+		ll x,y;
+		scanf("%lld%lld",&x,&y);
+		arr[x][y]=1;
+	}
+	cal(1,1,0);
+	printf("%lld",ans);
+
+
+
+}
 
 int main() {
 #ifndef ONLINE_JUDGE
@@ -77,3 +106,4 @@ int main() {
 
     return 0;
 }
+

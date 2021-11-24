@@ -64,8 +64,17 @@ struct mll {
 const ll MXN = 1e6 + 5;
 ll n, m;
 ll arr[MXN];
+void solve() {
+	m=n=10;
+	cout<<m<<endl;
+	while(m--){
+		cout<<n<<endl;
+		for(int i=1;i<=n;i++)
+			cout<<rand()%n+1<<" ";
+		cout<<endl;
+	}
 
-void solve() {}
+}
 
 int main() {
 #ifndef ONLINE_JUDGE
@@ -77,3 +86,4 @@ int main() {
 
     return 0;
 }
+
