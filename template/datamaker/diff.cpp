@@ -1,23 +1,31 @@
-#include<iostream>
-#include<cstdio>
-#include<windows.h>
+#include<bits/stdc++.h>
+#define sys(fmt...) (sprintf(tmp,fmt),system(tmp))
 using namespace std;
-char prob[100];
-int main(){
-	while(1){
-		system("./gen > test.in");
-		system("./std < test.in > std.out");
-		system("./force < test.in > force.out");
-		if(system("diff force.out std.out -Z -B -q")){
+const int MXS=10000;
+char tmp[MXS];
+int main(int argc,char *argv[]){
+	if(argc<3 || argc>4){
+		puts("Usage: dp <gen> <std> <force>");
+		return 0;
+	}
+	int t=100;
+	while(t--){
+		cerr<<"!!!"<<endl;
+		sys("./%s > test.in",argv[1]);
+		cerr<<"!!!"<<endl;
+		sys("./%s < test.in > std.out",argv[2]);
+		cerr<<"!!!"<<endl;
+		if(argc==4)sys("./%s < test.in > force.out",argv[3]);
+		if(argc==4 && sys("diff force.out std.out -Z -B -q")){
 			puts("\n---\ndata:");
-			system("cat test.in");
+			sys("cat test.in");
 			puts("\n---\nforce:");
-			system("cat force.out");
+			sys("cat force.out");
 			puts("\n---\nstd:");
-			system("cat std.out");
+			sys("cat std.out");
 			break;
 		}
-		else printf("AC\n");
+		else puts("AC");
 	}
 	return 0;
 }
