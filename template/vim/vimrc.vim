@@ -93,6 +93,7 @@ map <leader>t :0 r ~/code/template/other/cf.cpp<cr>
 map <F8> :call RunCode()<CR>
 map <F9> :call CompileCode()<CR>
 "map <F10> :NERDTreeToggle<CR>
+map <F10> :MarkdownPreviewToggle<CR>
 func! CompileCode()
 	exec "w"
 	exec "make"
@@ -112,23 +113,26 @@ if empty(glob(stdpath('config')."/autoload/"))
 endif
 
 " PLUG
+let g:mirror='https://github.com.cnpmjs.org'
 call plug#begin()
-"Plug 'https://hub.fastgit.org/scrooloose/nerdtree'
-Plug 'https://hub.fastgit.org/itchyny/lightline.vim'
-Plug 'https://hub.fastgit.org/luochen1990/rainbow'
-Plug 'https://hub.fastgit.org/overcache/NeoSolarized'
-Plug 'https://hub.fastgit.org/morhetz/gruvbox'
-Plug 'https://hub.fastgit.org/crusoexia/vim-monokai'
+"Plug g:mirror.'/scrooloose/nerdtree'
+Plug g:mirror.'/itchyny/lightline.vim'
+Plug g:mirror.'/luochen1990/rainbow'
+Plug g:mirror.'/overcache/NeoSolarized'
+Plug g:mirror.'/morhetz/gruvbox'
+Plug g:mirror.'/crusoexia/vim-monokai'
+Plug g:mirror.'/iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
+
 
 if g:usecoc
-	Plug 'https://hub.fastgit.org/neoclide/coc.nvim', {'branch': 'release'}
+	Plug g:mirror.'/neoclide/coc.nvim', {'branch': 'release'}
 else
-	Plug 'https://hub.fastgit.org/skywind3000/vim-auto-popmenu'
-	Plug 'https://hub.fastgit.org/w0rp/ale'
-	Plug 'https://hub.fastgit.org/maximbaz/lightline-ale'
+	Plug g:mirror.'/skywind3000/vim-auto-popmenu'
+	Plug g:mirror.'/w0rp/ale'
+	Plug g:mirror.'/maximbaz/lightline-ale'
 endif
-"Plug 'https://hub.fastgit.org/octol/vim-cpp-enhanced-highlight'
-"Plug 'https://hub.fastgit.org/SirVer/ultisnips'
+"Plug g:mirror.'/octol/vim-cpp-enhanced-highlight'
+"Plug g:mirror.'/SirVer/ultisnips'
 call plug#end()
 
 
