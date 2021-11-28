@@ -63,9 +63,40 @@ struct mll {
 //}}}
 const ll MXN = 1e6 + 5;
 ll n, m;
-ll arr[MXN];
-
+ll fa[MXN],sz[MXN];
+ll find(ll x){return fa[x]==x?x:fa[x]=find(fa[x]);}
+void merge(ll x,ll y){
+	x=find(x),y=find(y);
+	fa[x]=y;
+	sz[y]+=sz[x];
+	sz[x]=0;
+}
+ll cnt=0;
+ll tmp[MXN];
+ll cal(){
+	ll ind=0;
+	for(int i=1;i<=n;i++)
+		if(find(i)==i){
+			tmp[++ind]=sz[i];
+		}
+	sort(tmp+1,tmp+1+ind);
+	ll ans=0;
+	for(int i=0;i<=cnt && i<ind;i++)
+		ans+=tmp[ind-i];
+	return ans;
+}
 void solve() {
+	scanf("%lld%lld",&n,&m);
+	for(int i=1;i<=n;i++)
+		fa[i]=i,sz[i]=1;
+	for(int i=1;i<=m;i++){
+		ll x,y;
+		scanf("%lld%lld",&x,&y);
+		if(find(x)!=find(y))merge(x,y);
+		else cnt++;
+		printf("%lld\n",cal()-1);
+
+	}
 
 }
 

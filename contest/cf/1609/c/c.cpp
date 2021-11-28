@@ -62,19 +62,49 @@ struct mll {
 };
 //}}}
 const ll MXN = 1e6 + 5;
-ll n, m;
-ll arr[MXN];
-
-void solve() {
+ll n, m,ans;
+ll arr[MXN],tmp[MXN];
+bool f[MXN],isc[MXN];
+inline void cal(ll st){
+	ll ind=0,cnt=0;
+	for(;st<=n;st+=m){
+		++cnt;
+		if(arr[st]!=1){
+			tmp[++ind]=cnt;
+			f[ind]=!isc[arr[st]];
+		}
+	}
+	tmp[++ind]=++cnt;
+	for(int i=1;i<ind;i++){
+		if(f[i]){
+			ans+=(tmp[i+1]-tmp[i])*(tmp[i]-tmp[i-1])-1;
+		}
+	}
 
 }
 
+void solve() {
+	ans=0;
+	scanf("%lld%lld",&n,&m);
+	for(int i=1;i<=n;i++)
+		scanf("%lld",arr+i);
+	for(int i=1;i<=m;i++)
+		cal(i);
+	printf("%lld\n",ans);
+
+}
 int main() {
 #ifndef ONLINE_JUDGE
     // freopen(".in","r",stdin);
     // freopen(".out","w",stdout);
 #endif
-    // ll t;scanf("%lld",&t);while(t--)
+	isc[1]=1;
+	for(int i=2;i<MXN;i++)
+		if(!isc[i])
+			for(int j=i<<1;j<MXN;j+=i)
+				isc[j]=1;
+	
+    ll t;scanf("%lld",&t);while(t--)
     solve();
 
     return 0;

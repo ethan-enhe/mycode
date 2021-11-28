@@ -63,9 +63,29 @@ struct mll {
 //}}}
 const ll MXN = 1e6 + 5;
 ll n, m;
-ll arr[MXN];
+char str[MXN];
 
+bool chk(ll ind){
+	if(ind<0 || ind+2>n)return 0;
+	return str[ind]=='a' && str[ind+1]=='b' && str[ind+2]=='c';
+}
 void solve() {
+	scanf("%lld%lld",&n,&m);
+	scanf("%s",str+1);
+	ll ans=0;
+	for(int i=1;i<=n;i++)
+		ans+=chk(i);
+	while(m--){
+		ll x;char y;
+		scanf("%lld %c",&x,&y);
+		ans-=chk(x)+chk(x-1)+chk(x-2);
+		str[x]=y;
+		ans+=chk(x)+chk(x-1)+chk(x-2);
+		printf("%lld\n",ans);
+
+
+
+	}
 
 }
 

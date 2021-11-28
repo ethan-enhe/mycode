@@ -66,6 +66,19 @@ ll n, m;
 ll arr[MXN];
 
 void solve() {
+	scanf("%lld",&n);
+	for(int i=1;i<=n;i++){
+		scanf("%lld",arr+i);
+	}
+	sort(arr+1,arr+1+n);
+	ll sum=0,ans=0,mx=0;
+	for(int i=1;i<=n;i++){
+		while(!(arr[i]&1))
+			arr[i]>>=1,sum++;
+		umx(mx,arr[i]);
+		ans+=arr[i];
+	}
+	printf("%lld\n",ans-mx+(mx<<sum));
 
 }
 
@@ -74,7 +87,7 @@ int main() {
     // freopen(".in","r",stdin);
     // freopen(".out","w",stdout);
 #endif
-    // ll t;scanf("%lld",&t);while(t--)
+    ll t;scanf("%lld",&t);while(t--)
     solve();
 
     return 0;
