@@ -6,6 +6,7 @@ using namespace std;
 #define se second
 #define pb push_back
 #define log(fmt...) fprintf(stderr, fmt)
+#define va2d(x,y) x[(y.fi)][(y.se)] 
 
 typedef long long ll;
 typedef unsigned long long ull;
@@ -59,6 +60,22 @@ struct mll {
     mll &operator/=(const mll &y) { return v = redu(v * (ll)qpow(y, P - 2)), *this; }
     bool operator==(const mll &y) const { return v == y.v; }
     bool operator!=(const mll &y) const { return v != y.v; }
+};
+template <class T>
+struct myvec {
+    T *v;
+    int sz, dsz;
+    myvec() { v = NULL, sz = dsz = 0; }
+    ~myvec() { free(v); }
+    operator T *() const { return v; }
+    void rsz(int x) { v = (T *)realloc(v, sizeof(T) * (dsz = sz = x)); }
+    void pb(T x) {
+        if (sz == dsz) v = (T *)realloc(v, sizeof(T) * (dsz = dsz << 1 | 1));
+        v[sz++] = x;
+    }
+    void fill(T x) {
+        for (int i = 0; i < sz; i++) v[i] = x;
+    }
 };
 //}}}
 const ll MXN = 1e6 + 5;
