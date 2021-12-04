@@ -1,6 +1,7 @@
 *
 !.gitignore
 !*.sh
+!*.json
 !*.vim
 !*.py
 !*.cpp
