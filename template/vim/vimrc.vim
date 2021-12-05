@@ -121,7 +121,7 @@ Plug g:mirror.'luochen1990/rainbow'
 Plug g:mirror.'overcache/NeoSolarized'
 Plug g:mirror.'morhetz/gruvbox'
 Plug g:mirror.'crusoexia/vim-monokai'
-Plug g:mirror.'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
+Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 
 
 if g:usecoc
@@ -159,7 +159,7 @@ let g:lightline = {
 	  \ },
 	  \ }
 
-"highlight Normal guibg=NONE ctermbg=None
+highlight Normal guibg=NONE ctermbg=None
 "autocmd vimenter * NERDTree
 "autocmd BufNewFile *.cpp 0 r ~/code/template/other/cf.cpp
 
