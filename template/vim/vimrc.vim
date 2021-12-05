@@ -113,23 +113,23 @@ if empty(glob(stdpath('config')."/autoload/"))
 endif
 
 " PLUG
-let g:mirror='https://github.com.cnpmjs.org'
+let g:mirror='https://hub.fastgit.org/'
 call plug#begin()
-"Plug g:mirror.'/scrooloose/nerdtree'
-Plug g:mirror.'/itchyny/lightline.vim'
-Plug g:mirror.'/luochen1990/rainbow'
-Plug g:mirror.'/overcache/NeoSolarized'
-Plug g:mirror.'/morhetz/gruvbox'
-Plug g:mirror.'/crusoexia/vim-monokai'
-Plug g:mirror.'/iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
+"Plug g:mirror.'scrooloose/nerdtree'
+Plug g:mirror.'itchyny/lightline.vim'
+Plug g:mirror.'luochen1990/rainbow'
+Plug g:mirror.'overcache/NeoSolarized'
+Plug g:mirror.'morhetz/gruvbox'
+Plug g:mirror.'crusoexia/vim-monokai'
+Plug g:mirror.'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 
 
 if g:usecoc
-	Plug g:mirror.'/neoclide/coc.nvim', {'branch': 'release'}
+	Plug g:mirror.'neoclide/coc.nvim', {'branch': 'release'}
 else
-	Plug g:mirror.'/skywind3000/vim-auto-popmenu'
-	Plug g:mirror.'/w0rp/ale'
-	Plug g:mirror.'/maximbaz/lightline-ale'
+	Plug g:mirror.'skywind3000/vim-auto-popmenu'
+	Plug g:mirror.'w0rp/ale'
+	Plug g:mirror.'maximbaz/lightline-ale'
 endif
 "Plug g:mirror.'/octol/vim-cpp-enhanced-highlight'
 "Plug g:mirror.'/SirVer/ultisnips'
