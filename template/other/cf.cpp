@@ -6,7 +6,7 @@ using namespace std;
 #define se second
 #define pb push_back
 #define log(fmt...) fprintf(stderr, fmt)
-#define va2d(x,y) x[(y.fi)][(y.se)] 
+#define va2d(x, y) x[(y.fi)][(y.se)]
 
 typedef long long ll;
 typedef unsigned long long ull;
@@ -15,6 +15,7 @@ typedef long double ld;
 typedef pair<ll, ll> pi;
 //}}}
 const ll INF = 1e18;
+const pi go[] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 ll P = 1e9 + 7;
 //{{{ Func
 template <class T>
@@ -35,6 +36,7 @@ template <class T>
 void umn(T &x, T y) {
     x = min(x, y);
 }
+ll abs(pi x) { return abs(x.fi) + abs(x.se); }
 //}}}
 //{{{ Type
 pi operator+(const pi &x, const pi &y) { return pi(x.fi + y.fi, x.se + y.se); }
@@ -68,6 +70,8 @@ struct myvec {
     myvec() { v = NULL, sz = dsz = 0; }
     ~myvec() { free(v); }
     operator T *() const { return v; }
+    T *begin() { return v; }
+    T *end() { return v + sz; }
     void rsz(int x) { v = (T *)realloc(v, sizeof(T) * (dsz = sz = x)); }
     void pb(T x) {
         if (sz == dsz) v = (T *)realloc(v, sizeof(T) * (dsz = dsz << 1 | 1));
