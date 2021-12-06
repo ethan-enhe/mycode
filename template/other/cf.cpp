@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+
 using namespace std;
 
 //{{{ Def
@@ -13,10 +14,12 @@ typedef unsigned long long ull;
 typedef double db;
 typedef long double ld;
 typedef pair<ll, ll> pi;
+mt19937_64 myrand(chrono::system_clock::now().time_since_epoch().count());
 //}}}
-const ll INF = 1e18;
+const ll INF = 1e18, P = 1e9 + 7, MXN = 1e6 + 5;
 const pi go[] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
-ll P = 1e9 + 7;
+ll n, m;
+ll arr[MXN];
 //{{{ Func
 template <class T>
 T qpow(T x, ll y) {
@@ -37,6 +40,14 @@ void umn(T &x, T y) {
     x = min(x, y);
 }
 ll abs(pi x) { return abs(x.fi) + abs(x.se); }
+ll randint(ll l, ll r) {
+    uniform_int_distribution<ll> res(l, r);
+    return res(myrand);
+}
+ld randdb(ld l, ld r) {
+    uniform_real_distribution<ld> res(l, r);
+    return res(myrand);
+}
 //}}}
 //{{{ Type
 pi operator+(const pi &x, const pi &y) { return pi(x.fi + y.fi, x.se + y.se); }
@@ -82,12 +93,9 @@ struct myvec {
     }
 };
 //}}}
-const ll MXN = 1e6 + 5;
-ll n, m;
-ll arr[MXN];
 
 void solve() {
-
+    // code
 }
 
 int main() {
