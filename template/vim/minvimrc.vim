@@ -13,4 +13,4 @@ inoremap { {}<left>
 inoremap [ []<left>
 
 map <f9> :!g++ -Wall -fsanitize=address,undefined % -o %<<cr>
-map <f8> :!time ./%<<cr>
+map <f8> :!\time -f "\n\%M \%U" ./%<<cr>
