@@ -29,7 +29,7 @@ let g:iswindows = 0
 if(has("win32") || has("win64") || has("win95") || has("win16"))
 	let g:iswindows = 1
 endif
-let g:usecoc = 0
+let g:usecoc = 1
 
 set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
 set termencoding=utf-8
@@ -128,7 +128,7 @@ if g:usecoc
 	Plug g:mirror.'neoclide/coc.nvim', {'branch': 'release'}
 else
 	Plug g:mirror.'skywind3000/vim-auto-popmenu'
-	Plug g:mirror.'neomake/neomake'
+	"Plug g:mirror.'neomake/neomake'
 	"Plug g:mirror.'w0rp/ale'
 	"Plug g:mirror.'maximbaz/lightline-ale'
 endif
@@ -394,15 +394,6 @@ else
 	" {{{ Neomake
 	
 	let g:neomake_open_list = 2
-	" When writing a buffer (no delay).
-	call neomake#configure#automake('w')
-	" When writing a buffer (no delay), and on normal mode changes (after 750ms).
-	call neomake#configure#automake('nw', 750)
-	" When reading a buffer (after 1s), and when writing (no delay).
-	call neomake#configure#automake('rw', 1000)
-	" Full config: when writing or reading a buffer, and on changes in insert and
-	" normal mode (after 500ms; no delay when writing).
-	call neomake#configure#automake('nrwi', 500)
 	" }}}
 endif
 " {{{ snippets
