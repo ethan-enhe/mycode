@@ -94,9 +94,26 @@ map <F8> :call RunCode()<CR>
 map <F9> :call CompileCode()<CR>
 "map <F10> :NERDTreeToggle<CR>
 map <F10> :MarkdownPreviewToggle<CR>
+let s:res=""
+function! s:OnEvent(job_id, data, event) dict
+	if a:event == 'exit'
+		echo s:res."finished."
+		let s:res=""
+	else
+		let s:res =s:res.join(a:data,"\n")
+	endif
+endfunction
+let s:callbacks = {
+\ 'on_stdout': function('s:OnEvent'),
+\ 'on_stderr': function('s:OnEvent'),
+\ 'on_exit': function('s:OnEvent')
+\ }
+
 func! CompileCode()
 	exec "w"
-	exec "make"
+"	exec "make"
+	echo "compiling..."
+	call jobstart((g:iswindows?"g++ -Wl,-stack=536870912":"clang++\ -fsanitize=address")."\ -O2\ -std=c++11\ ".expand("%")."\ -o\ ".expand("%<"),s:callbacks)
 endfunction
 func! RunCode()
 	exec "w"
@@ -121,6 +138,8 @@ Plug g:mirror.'luochen1990/rainbow'
 Plug g:mirror.'overcache/NeoSolarized'
 Plug g:mirror.'morhetz/gruvbox'
 Plug g:mirror.'crusoexia/vim-monokai'
+Plug g:mirror.'skywind3000/asyncrun.vim'
+
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 
 
