@@ -138,7 +138,9 @@ Plug g:mirror.'luochen1990/rainbow'
 Plug g:mirror.'overcache/NeoSolarized'
 Plug g:mirror.'morhetz/gruvbox'
 Plug g:mirror.'crusoexia/vim-monokai'
-Plug g:mirror.'skywind3000/asyncrun.vim'
+Plug g:mirror.'tpope/vim-surround'
+"Plug g:mirror.'skywind3000/asyncrun.vim'
+"Plug g:mirror.'djoshea/vim-autoread'
 
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 
