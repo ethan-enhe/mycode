@@ -1,4 +1,11 @@
-".clang-format
+":CocConfig
+"{
+"	"clangd.disableSnippetCompletion": true,
+"    "clangd.semanticHighlighting": true,
+"    "coc.preferences.semanticTokensHighlights": false
+"}
+"
+"~/.clang-format
 "BasedOnStyle: google
 "IndentWidth: 4
 "
@@ -132,7 +139,7 @@ if empty(glob(stdpath('config')."/autoload/"))
 endif
 
 " PLUG
-let g:mirror='https://hub.fastgit.org/'
+let g:mirror='https://github.com.cnpmjs.org/'
 call plug#begin()
 "Plug g:mirror.'scrooloose/nerdtree'
 Plug g:mirror.'itchyny/lightline.vim'
@@ -149,6 +156,7 @@ Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': 
 
 if g:usecoc
 	Plug g:mirror.'neoclide/coc.nvim', {'branch': 'release'}
+	Plug g:mirror.'jackguo380/vim-lsp-cxx-highlight'
 else
 	Plug g:mirror.'skywind3000/vim-auto-popmenu'
 	"Plug g:mirror.'neomake/neomake'
@@ -190,7 +198,7 @@ highlight Normal guibg=NONE ctermbg=None
 
 if g:usecoc
 	"{{{ coc.nvim
-	let g:coc_global_extensions = ['coc-clangd', 'coc-pairs','coc-snippets']
+	let g:coc_global_extensions = ['coc-clangd', 'coc-pairs']
 	autocmd FileType * let b:coc_pairs_disabled = ['<']
 	" Use autocmd to force lightline update.
 	autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
