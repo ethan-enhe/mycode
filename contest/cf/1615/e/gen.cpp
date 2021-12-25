@@ -98,6 +98,10 @@ struct myvec {
 
 void solve() {
     // code
+	ll n=randint(1,100),m=randint(1,n);
+	cout<<n<<" "<<m<<endl;
+	for(int i=2;i<=n;i++)
+		cout<<randint(1,i-1)<<" "<<i<<endl;
 }
 
 int main() {
@@ -110,3 +114,4 @@ int main() {
 
     return 0;
 }
+

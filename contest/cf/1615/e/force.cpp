@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include <vector>
 
 using namespace std;
 
@@ -20,8 +21,7 @@ const ll INF = 1e18;
 const ll P = 1e9 + 7;
 const ll MXN = 1e6 + 5;
 const pi go[] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
-ll n, m;
-ll arr[MXN];
+ll n, m,ans=-INF;
 //{{{ Func
 template <class T>
 T qpow(T x, ll y) {
@@ -95,14 +95,55 @@ struct myvec {
     }
 };
 //}}}
-
+bool cover[MXN];
+ll fa[MXN];
+vector<ll> g[MXN];
+void dfs(ll p){
+	for(ll nx:g[p])
+		if(nx!=fa[p]){
+			fa[nx]=p;
+			dfs(nx);
+		}
+}
+ll cal(ll p,bool mod=0){
+	ll r=0;
+	while(p){
+		r+=!cover[p];
+		if(mod)cover[p]=1;
+		p=fa[p];
+	}
+	return r;
+}
 void solve() {
     // code
+	scanf("%lld%lld",&n,&m);
+	for(int i=1;i<n;i++){
+		ll u,v;
+		scanf("%lld%lld",&u,&v);
+		g[u].push_back(v);
+		g[v].push_back(u);
+	}
+	dfs(1);
+	ll b=n;
+	for(ll i=1;i<=m;i++){
+		ll mx=-INF,mxi=0;
+		for(int i=1;i<=n;i++)
+			if(cal(i)>mx){
+				mx=cal(i);
+				mxi=i;
+			}
+		cal(mxi,1);
+		ll cnt=0;
+		for(int i=1;i<=n;i++)
+			cnt+=cover[i];
+		umx(ans,(cnt-i)*(i-n+cnt));
+	}
+	printf("%lld",ans);
 }
 
 int main() {
 #ifndef ONLINE_JUDGE
-    // freopen(".in","r",stdin);
+     //freopen("test.in","r",stdin);
     // freopen(".out","w",stdout);
 #endif
     // ll t;scanf("%lld",&t);while(t--)

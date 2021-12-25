@@ -122,6 +122,8 @@ func! RunCode()
 		let s:suf=g:iswindows?"%<.exe":'\\time -f \"\\n----\\n\%Mkb \%Us\" ./%<'
 	elseif &filetype == 'python'
 		let s:suf="python3 %"
+	elseif &filetype == 'lua'
+		let s:suf="lua %"
 	endif
 	exec s:pre.s:suf
 endfunction

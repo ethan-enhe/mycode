@@ -98,6 +98,18 @@ struct myvec {
 
 void solve() {
     // code
+	for(int i=1;i<=100;i++){
+		system("./gen>test.in");
+		system("./e<test.in>std.out");
+		system("./force<test.in>f.out");
+		cerr<<i<<endl;
+		if(system("diff f.out std.out")){
+			cerr<<"!!!";
+			break;
+
+		}
+
+	}
 }
 
 int main() {
@@ -110,3 +122,4 @@ int main() {
 
     return 0;
 }
+

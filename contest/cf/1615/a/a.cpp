@@ -98,6 +98,14 @@ struct myvec {
 
 void solve() {
     // code
+	scanf("%lld",&n);
+	m=0;
+	for(int i=1;i<=n;i++){
+		ll tmp;
+		scanf("%lld",&tmp);
+		m+=tmp;
+	}
+	puts(m%n?"1":"0");
 }
 
 int main() {
@@ -105,7 +113,7 @@ int main() {
     // freopen(".in","r",stdin);
     // freopen(".out","w",stdout);
 #endif
-    // ll t;scanf("%lld",&t);while(t--)
+    ll t;scanf("%lld",&t);while(t--)
     solve();
 
     return 0;

@@ -21,7 +21,8 @@ const ll P = 1e9 + 7;
 const ll MXN = 1e6 + 5;
 const pi go[] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 ll n, m;
-ll arr[MXN];
+char str[MXN];
+bool arr[MXN],brr[MXN];
 //{{{ Func
 template <class T>
 T qpow(T x, ll y) {
@@ -98,6 +99,24 @@ struct myvec {
 
 void solve() {
     // code
+	scanf("%lld",&n);
+	scanf("%s",str+1);
+	for(int i=1;i<=n;i++)
+		arr[i]=str[i]-'0';
+	scanf("%s",str+1);
+	for(int i=1;i<=n;i++)
+		brr[i]=str[i]-'0';
+	ll ans=INF;
+	for(int i=0;i<2;i++){
+		ll cnt[2]={0,0};
+		for(int j=1;j<=n;j++)
+			if(arr[j]^brr[j]^i)
+				cnt[arr[j]]++;
+		if((cnt[0]+cnt[1]-i)%2==0 && cnt[1]>=cnt[0] && cnt[1]<=cnt[0]+1)
+			umn(ans,cnt[0]+cnt[1]);
+	}
+	if(ans==INF)puts("-1");
+	else printf("%lld\n",ans);
 }
 
 int main() {
@@ -105,7 +124,7 @@ int main() {
     // freopen(".in","r",stdin);
     // freopen(".out","w",stdout);
 #endif
-    // ll t;scanf("%lld",&t);while(t--)
+    ll t;scanf("%lld",&t);while(t--)
     solve();
 
     return 0;

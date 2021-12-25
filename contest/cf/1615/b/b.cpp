@@ -18,10 +18,10 @@ mt19937_64 myrand(chrono::system_clock::now().time_since_epoch().count());
 //}}}
 const ll INF = 1e18;
 const ll P = 1e9 + 7;
-const ll MXN = 1e6 + 5;
+const ll MXN = 2e5 + 5,LG=20;
 const pi go[] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 ll n, m;
-ll arr[MXN];
+ll sum[LG][MXN];
 //{{{ Func
 template <class T>
 T qpow(T x, ll y) {
@@ -98,6 +98,12 @@ struct myvec {
 
 void solve() {
     // code
+	scanf("%lld%lld",&n,&m);
+	--n;
+	ll ans=INF;
+	for(int i=0;i<LG;i++)
+		umn(ans,sum[i][m]-sum[i][n]);
+	printf("%lld\n",ans);
 }
 
 int main() {
@@ -105,7 +111,10 @@ int main() {
     // freopen(".in","r",stdin);
     // freopen(".out","w",stdout);
 #endif
-    // ll t;scanf("%lld",&t);while(t--)
+	for(int i=0;i<LG;i++)
+		for(int j=1;j<MXN;j++)
+			sum[i][j]=sum[i][j-1]+!((j>>i)&1);
+    ll t;scanf("%lld",&t);while(t--)
     solve();
 
     return 0;

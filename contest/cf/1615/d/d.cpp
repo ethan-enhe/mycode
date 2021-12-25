@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include <vector>
 
 using namespace std;
 
@@ -95,9 +96,51 @@ struct myvec {
     }
 };
 //}}}
-
+vector<pi> g[MXN];
+struct lim{
+	ll u,v,w;
+}e[MXN];
+bool dfs(ll p,ll v){
+	if(arr[p]==-1)arr[p]=v;
+	else return arr[p]==v;
+	for(pi &nx:g[p])
+		if(!dfs(nx.fi,arr[p]^nx.se))
+			return 0;
+	return 1;
+}
 void solve() {
     // code
+	scanf("%lld%lld",&n,&m);
+	for(int i=1;i<=n;i++){
+		arr[i]=-1;
+		g[i].clear();
+	}
+	for(int i=1;i<n;i++){
+		ll u,v,w;
+		scanf("%lld%lld%lld",&u,&v,&w);
+		e[i]={u,v,w};
+		if(w!=-1){
+			bool tmp=__builtin_popcount(w)&1;
+			g[u].push_back({v,tmp});
+			g[v].push_back({u,tmp});
+		}
+	}
+	for(int i=1;i<=m;i++){
+		ll u,v,w;
+		scanf("%lld%lld%lld",&u,&v,&w);
+		g[u].push_back({v,w});
+		g[v].push_back({u,w});
+	}
+	for(int i=1;i<=n;i++)
+		if(arr[i]==-1 && !dfs(i,0)){
+			puts("NO");
+			return;
+		}
+	puts("YES");
+	for(int i=1;i<n;i++){
+		ll cw=e[i].w==-1?arr[e[i].u]^arr[e[i].v]:e[i].w;
+		printf("%lld %lld %lld\n",e[i].u,e[i].v,cw);
+	}
 }
 
 int main() {
@@ -105,7 +148,7 @@ int main() {
     // freopen(".in","r",stdin);
     // freopen(".out","w",stdout);
 #endif
-    // ll t;scanf("%lld",&t);while(t--)
+    ll t;scanf("%lld",&t);while(t--)
     solve();
 
     return 0;

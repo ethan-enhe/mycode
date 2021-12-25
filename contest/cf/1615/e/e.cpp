@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include <vector>
 
 using namespace std;
 
@@ -20,8 +21,7 @@ const ll INF = 1e18;
 const ll P = 1e9 + 7;
 const ll MXN = 1e6 + 5;
 const pi go[] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
-ll n, m;
-ll arr[MXN];
+ll n, m,ans=-INF;
 //{{{ Func
 template <class T>
 T qpow(T x, ll y) {
@@ -95,14 +95,95 @@ struct myvec {
     }
 };
 //}}}
-
+bool cover[MXN];
+ll fa[MXN];
+ll dfn[MXN],id[MXN],sz[MXN],dpth[MXN],dfnc;
+vector<ll> g[MXN];
+void dfs(ll p){
+	id[dfn[p]=++dfnc]=p;
+	sz[p]=1;
+	for(ll nx:g[p])
+		if(nx!=fa[p]){
+			fa[nx]=p;
+			dpth[nx]=dpth[p]+1;
+			dfs(nx);
+			sz[p]+=sz[nx];
+		}
+}
+struct node{
+	ll tag;
+	pi mx;
+}t[MXN];
+#define ls (p<<1)
+#define rs (p<<1|1)
+void pushu(ll p){
+	t[p].mx=max(t[ls].mx,t[rs].mx);
+}
+void addt(ll p,ll tag){
+	t[p].tag+=tag;
+	t[p].mx.fi+=tag;
+}
+void pushd(ll p){
+	if(t[p].tag){
+		addt(ls,t[p].tag);
+		addt(rs,t[p].tag);
+		t[p].tag=0;
+	}
+}
+void build(ll p,ll l,ll r){
+	t[p].tag=0;
+	if(l==r){
+		t[p].mx={dpth[id[l]],id[l]};
+		return;
+	}
+	ll mid=(l+r)>>1;
+	build(ls,l,mid);
+	build(rs,mid+1,r);
+	pushu(p);
+}
+void mod(ll p,ll l,ll r,ll ml,ll mr,ll mv){
+	if(ml<=l && r<=mr){
+		addt(p,mv);
+		return;
+	}
+	pushd(p);ll mid=(l+r)>>1;
+	if(ml<=mid)mod(ls,l,mid,ml,mr,mv);
+	if(mr>mid)mod(rs,mid+1,r,ml,mr,mv);
+	pushu(p);
+}
 void solve() {
     // code
+	scanf("%lld%lld",&n,&m);
+	for(int i=1;i<n;i++){
+		ll u,v;
+		scanf("%lld%lld",&u,&v);
+		g[u].push_back(v);
+		g[v].push_back(u);
+	}
+	dpth[1]=1;
+	dfs(1);
+	build(1,1,n);
+	//for(ll i=1;i<=n;i++)
+	//	log("node %lld:%lld %lld %lld\n",(ll)i,dpth[i],dfn[i],sz[i]);
+	cover[0]=1;
+	ll b=n;
+	for(ll i=1;i<=m;i++){
+		ll cur=t[1].mx.se;
+		//log("%lld\n",cur);
+		while(!cover[cur]){
+			--b;
+			mod(1,1,n,dfn[cur],dfn[cur]+sz[cur]-1,-1);
+			cover[cur]=1;
+			cur=fa[cur];
+		}
+		umx(ans,(n-i-min(b,n/2))*(i-min(b,n/2)));
+	}
+	printf("%lld",ans);
 }
 
 int main() {
 #ifndef ONLINE_JUDGE
-    // freopen(".in","r",stdin);
+     //freopen("test.in","r",stdin);
     // freopen(".out","w",stdout);
 #endif
     // ll t;scanf("%lld",&t);while(t--)
