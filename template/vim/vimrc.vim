@@ -2,7 +2,8 @@
 "{
 "	"clangd.disableSnippetCompletion": true,
 "    "clangd.semanticHighlighting": true,
-"    "coc.preferences.semanticTokensHighlights": false
+"    "coc.preferences.semanticTokensHighlights": false,
+"	"diagnostic.warningSign":"!!"
 "}
 "
 "~/.clang-format
@@ -148,6 +149,8 @@ Plug g:mirror.'overcache/NeoSolarized'
 Plug g:mirror.'morhetz/gruvbox'
 Plug g:mirror.'crusoexia/vim-monokai'
 Plug g:mirror.'tpope/vim-surround'
+
+
 "Plug g:mirror.'skywind3000/asyncrun.vim'
 "Plug g:mirror.'djoshea/vim-autoread'
 
@@ -423,7 +426,6 @@ else
 	set shortmess+=c
 	" }}}
 	" {{{ Neomake
-	
 	let g:neomake_open_list = 2
 	" }}}
 endif
