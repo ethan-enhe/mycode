@@ -3,7 +3,36 @@
 "	"clangd.disableSnippetCompletion": true,
 "    "clangd.semanticHighlighting": true,
 "    "coc.preferences.semanticTokensHighlights": false,
-"	"diagnostic.warningSign":"!!"
+"	"diagnostic.warningSign":"!!",
+"	  "suggest.completionItemKindLabels": {
+"		"keyword": "\uf1de",
+"		"variable": "\ue79b",
+"		"value": "\uf89f",
+"		"operator": "\u03a8",
+"		"constructor": "\uf0ad",
+"		"function": "\u0192",
+"		"reference": "\ufa46",
+"		"constant": "\uf8fe",
+"		"method": "\uf09a",
+"		"struct": "\ufb44",
+"		"class": "\uf0e8",
+"		"interface": "\uf417",
+"		"text": "\ue612",
+"		"enum": "\uf435",
+"		"enumMember": "\uf02b",
+"		"module": "\uf40d",
+"		"color": "\ue22b",
+"		"property": "\ue624",
+"		"field": "\uf9be",
+"		"unit": "\uf475",
+"		"event": "\ufacd",
+"		"file": "\uf723",
+"		"folder": "\uf114",
+"		"snippet": "\ue60b",
+"		"typeParameter": "\uf728",
+"		"default": "\uf29c"
+"	},
+"	"suggest.labelMaxLength": 50
 "}
 "
 "~/.clang-format
@@ -201,7 +230,7 @@ highlight Normal guibg=NONE ctermbg=None
 
 if g:usecoc
 	"{{{ coc.nvim
-	let g:coc_global_extensions = ['coc-clangd', 'coc-pairs']
+	let g:coc_global_extensions = ['coc-clangd', 'coc-pairs','coc-json']
 	autocmd FileType * let b:coc_pairs_disabled = ['<']
 	" Use autocmd to force lightline update.
 	autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
