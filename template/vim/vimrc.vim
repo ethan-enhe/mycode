@@ -47,7 +47,6 @@
 
 
 " Basic
-
 set guifont=Consolas:h14
 set backspace=indent,eol,start
 set guioptions=
@@ -119,6 +118,8 @@ endif
 inoremap jj <ESC>
 tnoremap jj <c-\><c-n>
 tnoremap <ESC> <c-\><c-n>
+nnoremap [b :bp<CR>
+nnoremap ]b :bn<CR>
 map <c-a> :!cat '%' \| clip.exe<cr>
 map <c-c> "+y
 
@@ -226,15 +227,13 @@ let g:lightline = {
 	  \   'cocstatus': 'coc#status'
 	  \ },
 	  \ }
-let g:airline_powerline_fonts = 1   
+let g:airline_powerline_fonts = 1
 let g:airline_theme="gruvbox" 
 let g:airline#extensions#tabline#enabled = 1      "tabline中当前buffer两端的分隔字符
 let g:airline#extensions#coc#enabled = 1
 let g:airline#extensions#coc#show_coc_status = 1
 let g:airline#extensions#whitespace#enabled = 0
 let g:airline#extensions#whitespace#symbol = '!'
-
-
 
 
 "highlight Normal guibg=NONE ctermbg=None
