@@ -2,7 +2,7 @@
 "{
 "    "clangd.semanticHighlighting": true,
 "    "coc.preferences.semanticTokensHighlights": false,
-"	"diagnostic.warningSign":"!!",
+"	 "diagnostic.warningSign":"!!",
 "	  "suggest.completionItemKindLabels": {
 "		"keyword": "\uf1de",
 "		"variable": "\ue79b",
@@ -106,6 +106,7 @@ set autowrite
 set autoread
 set hlsearch
 set incsearch
+set diffopt+=vertical
 
 " MAP
 if !g:usecoc
@@ -171,12 +172,15 @@ endif
 let g:mirror='https://github.com.cnpmjs.org/'
 call plug#begin()
 "Plug g:mirror.'scrooloose/nerdtree'
-Plug g:mirror.'itchyny/lightline.vim'
+"Plug g:mirror.'itchyny/lightline.vim'
 Plug g:mirror.'luochen1990/rainbow'
 Plug g:mirror.'overcache/NeoSolarized'
 Plug g:mirror.'morhetz/gruvbox'
 Plug g:mirror.'crusoexia/vim-monokai'
 Plug g:mirror.'tpope/vim-surround'
+Plug g:mirror.'vim-airline/vim-airline'
+
+
 
 
 "Plug g:mirror.'skywind3000/asyncrun.vim'
@@ -222,8 +226,18 @@ let g:lightline = {
 	  \   'cocstatus': 'coc#status'
 	  \ },
 	  \ }
+let g:airline_powerline_fonts = 1   
+let g:airline_theme="gruvbox" 
+let g:airline#extensions#tabline#enabled = 1      "tabline中当前buffer两端的分隔字符
+let g:airline#extensions#coc#enabled = 1
+let g:airline#extensions#coc#show_coc_status = 1
+let g:airline#extensions#whitespace#enabled = 0
+let g:airline#extensions#whitespace#symbol = '!'
 
-highlight Normal guibg=NONE ctermbg=None
+
+
+
+"highlight Normal guibg=NONE ctermbg=None
 "autocmd vimenter * NERDTree
 "autocmd BufNewFile *.cpp 0 r ~/code/template/other/cf.cpp
 
@@ -233,7 +247,7 @@ if g:usecoc
 	let g:coc_global_extensions = ['coc-clangd', 'coc-pairs','coc-json','coc-snippets']
 	autocmd FileType * let b:coc_pairs_disabled = ['<']
 	" Use autocmd to force lightline update.
-	autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
+	"autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
 
 	" TextEdit might fail if hidden is not set.
 	set hidden
@@ -268,6 +282,7 @@ if g:usecoc
       \ pumvisible() ? "\<C-n>" :
       \ <SID>check_back_space() ? "\<TAB>" :
       \ coc#refresh()
+
 	inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
 	function! s:check_back_space() abort
@@ -374,6 +389,10 @@ if g:usecoc
 
 	" Add `:OR` command for organize imports of the current buffer.
 	command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
+	" Add (Neo)Vim's native statusline support.
+	" NOTE: Please see `:h coc-status` for integrations with external plugins that
+	" provide custom statusline: lightline.vim, vim-airline.
+	set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
 	" Mappings for CoCList
 	" Show all diagnostics.
