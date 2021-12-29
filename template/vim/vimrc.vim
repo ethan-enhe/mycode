@@ -118,8 +118,12 @@ endif
 inoremap jj <ESC>
 tnoremap jj <c-\><c-n>
 tnoremap <ESC> <c-\><c-n>
-nnoremap [b :bp<CR>
-nnoremap ]b :bn<CR>
+nnoremap bp :bp<CR>
+nnoremap bn :bn<CR>
+nnoremap bo :enew<CR>
+nnoremap bd :bd<CR>
+nnoremap bl :ls<CR>
+
 map <c-a> :!cat '%' \| clip.exe<cr>
 map <c-c> "+y
 
@@ -234,6 +238,7 @@ let g:airline#extensions#coc#enabled = 1
 let g:airline#extensions#coc#show_coc_status = 1
 let g:airline#extensions#whitespace#enabled = 0
 let g:airline#extensions#whitespace#symbol = '!'
+let g:airline#extensions#tabline#buffer_nr_show=1
 
 
 "highlight Normal guibg=NONE ctermbg=None
