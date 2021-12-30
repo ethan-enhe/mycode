@@ -152,8 +152,12 @@ int main() {
 	long long sum=0;
 	while(q--){
 		int u=(GenHelper::read()^last)%n+1,v=(GenHelper::read()^last)%n+1;
-		if(s==-1)
+		if(s==-1){
 			scanf("%d%d",&u,&v);
+			u^=last;
+			v^=last;
+		}
+	
 		last=solve(u, v);
 		if(s==-1)
 			printf("%d\n",last);
