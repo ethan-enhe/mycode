@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#include <cstdio>
+
 using namespace std;
 
 //{{{ Def
@@ -7,15 +7,21 @@ using namespace std;
 #define se second
 #define pb push_back
 #define log(fmt...) fprintf(stderr, fmt)
+#define va2d(x, y) x[(y.fi)][(y.se)]
 
 typedef long long ll;
 typedef unsigned long long ull;
 typedef double db;
 typedef long double ld;
 typedef pair<ll, ll> pi;
+mt19937_64 myrand(chrono::system_clock::now().time_since_epoch().count());
 //}}}
 const ll INF = 1e18;
-ll P = 1e9 + 7;
+const ll P = 1e9 + 7;
+const ll MXN = 1e6 + 5;
+const pi go[] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
+ll n, m;
+ll arr[MXN];
 //{{{ Func
 template <class T>
 T qpow(T x, ll y) {
@@ -34,6 +40,15 @@ void umx(T &x, T y) {
 template <class T>
 void umn(T &x, T y) {
     x = min(x, y);
+}
+ll abs(pi x) { return abs(x.fi) + abs(x.se); }
+ll randint(ll l, ll r) {
+    uniform_int_distribution<ll> res(l, r);
+    return res(myrand);
+}
+ld randdb(ld l, ld r) {
+    uniform_real_distribution<ld> res(l, r);
+    return res(myrand);
 }
 //}}}
 //{{{ Type
@@ -61,20 +76,39 @@ struct mll {
     bool operator==(const mll &y) const { return v == y.v; }
     bool operator!=(const mll &y) const { return v != y.v; }
 };
+template <class T>
+struct myvec {
+    T *v;
+    int sz, dsz;
+    myvec() { v = NULL, sz = dsz = 0; }
+    ~myvec() { free(v); }
+    operator T *() const { return v; }
+    T *begin() { return v; }
+    T *end() { return v + sz; }
+    void rsz(int x) { v = (T *)realloc(v, sizeof(T) * (dsz = sz = x)); }
+    void pb(T x) {
+        if (sz == dsz) v = (T *)realloc(v, sizeof(T) * (dsz = dsz << 1 | 1));
+        v[sz++] = x;
+    }
+    void fill(T x) {
+        for (int i = 0; i < sz; i++) v[i] = x;
+    }
+};
 //}}}
-const ll MXN = 1e6 + 5;
-ll n, m;
-ll arr[MXN];
-char tmp[MXN];
-void solve() {
-	srand(time(NULL));
-	for(int i=1;i<=1000;i++){
-		sprintf(tmp,"./gen>test.in %d",rand());
-		system(tmp);
-		if(system("./CF1610F<test.in>std.out"))break;
-		cerr<<i<<endl;
-	}
 
+void solve() {
+    // code
+	for(int i=1;i<=1000;i++){
+		system("./gen>test.in");
+		system("./std<test.in>std.out");
+		system("./T217363<test.in>wr.out");
+		if(system("diff -Z wr.out std.out")){
+			break;
+
+		}
+		cerr<<"!!!"<<endl;
+
+	}
 }
 
 int main() {
