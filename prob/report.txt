@@ -1,0 +1,38 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+ no time accumulated
+
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  Ts/call  Ts/call  name    
+  0.00      0.00     0.00 20000000     0.00     0.00  GenHelper::rand_()
+  0.00      0.00     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN9GenHelper2z1E
+
+			Call graph
+
+
+granularity: each sample hit covers 2 byte(s) no time propagated
+
+index % time    self  children    called     name
+                0.00    0.00 20000000/20000000     GenHelper::read() [14]
+[8]      0.0    0.00    0.00 20000000         GenHelper::rand_() [8]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [23]
+[9]      0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN9GenHelper2z1E [9]
+-----------------------------------------------
+                              299999             dfsup(int) [10]
+[10]     0.0    0.00    0.00       0+299999  dfsup(int) [10]
+                              299999             dfsup(int) [10]
+-----------------------------------------------
+                              299999             dfsdown(int) [12]
+[12]     0.0    0.00    0.00       0+299999  dfsdown(int) [12]
+                              299999             dfsdown(int) [12]
+-----------------------------------------------
+                              299999             init_lca(int) [13]
+[13]     0.0    0.00    0.00       0+299999  init_lca(int) [13]
+                              299999             init_lca(int) [13]
+-----------------------------------------------
+
+Index by function name
+
+   [9] _GLOBAL__sub_I__ZN9GenHelper2z1E [8] GenHelper::rand_()

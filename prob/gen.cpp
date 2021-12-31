@@ -5,7 +5,7 @@ using namespace std;
 mt19937 rnd(chrono::steady_clock::now().time_since_epoch().count());
 
 
-int n = 10, m = 2000000, q = 100;
+int n = 3e5, m =2e6, q = 5e6;
 int a[1000005], b[1000005], g[1005][1005], idx[1000005], tmp[1000005];
 int vis[1000005];
 
@@ -131,6 +131,7 @@ p[n + m + 1].x = 500000;
 int main()
 {
 	srand(unsigned(time(NULL)));
+	freopen("test.in","w",stdout);
 	
 	
 	//Generator begin

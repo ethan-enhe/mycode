@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include <unordered_map>
 
 #define umn(x, y) x = min(x, y)
 using namespace std;
@@ -29,8 +30,8 @@ int read() {
 }
 } // namespace GenHelper
 //}}}
-const int MXN = 3e5 + 5, LG = 31 - __builtin_clz(MXN), INF = 1e9;
-int n, q, s,cnt;
+const int MXN = 5e5 + 5, LG = 31 - __builtin_clz(MXN), INF = 1e9;
+int n, q, s;
 int fa[MXN], w[MXN];
 bool notleaf[MXN];
 vector<int> g[MXN];
@@ -55,15 +56,14 @@ void dfsdown(int p) {
         pre[nx] = tot[p];
     }
 }
-int tmp[2];
 struct data {
     int dis[2][2], anc;
-	void init(int _anc = 0) {
+#define upd(x, y) res.dis[x][y] = min(dis[x][0] + b.dis[0][y], dis[x][1] + b.dis[1][y])
+    void init(int _anc = 0) {
         anc = _anc;
         dis[0][0] = dis[0][1] = 0;
         dis[1][0] = dis[1][1] = INF;
     }
-#define upd(x, y) res.dis[x][y] = min(dis[x][0] + b.dis[0][y], dis[x][1] + b.dis[1][y])
     data operator+(const data &b) {
         data res;
         upd(0, 0), upd(0, 1);
@@ -72,14 +72,13 @@ struct data {
         return res;
     }
 #undef upd
-#define upd(x) tmp[x] = min(dis[0][0] + b.dis[0][x], dis[0][1] + b.dis[1][x])
-    void operator^=(const data &b) {
+#define upd(x) res.dis[0][x] = min(dis[0][0] + b.dis[0][x], dis[0][1] + b.dis[1][x])
+    data operator^(const data &b) {
+        data res;
         upd(0), upd(1);
-		dis[0][0]=tmp[0];
-		dis[0][1]=tmp[1];
-        anc = b.anc;
+        res.anc = b.anc;
+        return res;
     }
-#undef upd
 #undef upd
 } jmp[MXN][LG + 1];
 int dpth[MXN];
@@ -97,23 +96,33 @@ void init_lca(int p) {
         init_lca(nx);
     }
 }
+typedef pair<int,int> pi;
+map<pi, int> saved;
+int cnt=0;
 int solve(int x, int y) {
+	if(x>y)swap(x,y);
+	if(!saved[{x,y}]){
+		saved[{x,y}]=1;
+		++cnt;
+	}
+
+
     if (x == y) return 0;
     if (dpth[x] < dpth[y]) swap(x, y);
-    data dx,dy;
-	dx.init(x),dy.init(y);
-
+    data dx, dy;
+    dx.init(x);
+    dy.init(y);
     if (dpth[x] != dpth[y]) {
         int tmp = dpth[x] - dpth[y] - 1;
-        for (int i = LG; ~i; i--) if ((tmp >> i) & 1) dx ^= jmp[dx.anc][i];
-        if (fa[dx.anc] == dy.anc) 
-            return min(dx.dis[0][0], dx.dis[0][1]);
-        dx ^= jmp[dx.anc][0];
+        for (int i = LG; ~i; i--)
+            if ((tmp >> i) & 1) dx = dx ^ jmp[dx.anc][i];
+        if (fa[dx.anc] == dy.anc) return min(dx.dis[0][0], dx.dis[0][1]);
+        dx = dx ^ jmp[dx.anc][0];
     }
     for (int i = LG; ~i; i--)
         if (jmp[dx.anc][i].anc != jmp[dy.anc][i].anc) {
-            dx ^= jmp[dx.anc][i];
-            dy ^= jmp[dy.anc][i];
+            dx = dx ^ jmp[dx.anc][i];
+            dy = dy ^ jmp[dy.anc][i];
         }
     if (dx.anc > dy.anc) swap(dx, dy);
     x = dx.anc, y = dy.anc;
@@ -128,18 +137,18 @@ int solve(int x, int y) {
 }
 
 int main() {
-	freopen("test.in","r",stdin);
     scanf("%d%d%d", &n, &q, &s);
-    GenHelper::srand(s);
+    if (s != -1) GenHelper::srand(s);
     for (int i = 2; i <= n; i++) {
-        scanf("%d%d", fa + i, w + i);
+        scanf("%d", fa + i);
+        w[i] = 1;
         g[fa[i]].push_back(i);
         notleaf[fa[i]] = 1;
     }
-    scanf("%d", w + 1);
+    w[1] = 1;
     for (int i = 1; i <= n; i++) {
         sort(g[i].begin(), g[i].end());
-        if (!notleaf[i]) scanf("%d", dp + i);
+        if (!notleaf[i]) dp[i] = 1;
     }
     dfsup(1);
     dfsdown(1);
@@ -148,12 +157,19 @@ int main() {
     long long sum = 0;
     while (q--) {
         int u = (GenHelper::read() ^ last) % n + 1, v = (GenHelper::read() ^ last) % n + 1;
+        if (s == -1) {
+            scanf("%d%d", &u, &v);
+            u ^= last;
+            v ^= last;
+        }
+
         last = solve(u, v);
+        if (s == -1) printf("%d\n", last);
         xsum ^= last;
         sum += last;
     }
-    printf("%d %lld", xsum, sum);
-	cerr<<endl<<cnt;
+	cout<<log10(cnt)<<endl;
+    if (s != -1) printf("%d %lld", xsum, sum);
 
     return 0;
 }

@@ -133,7 +133,8 @@ let &makeprg=(g:iswindows?"g++ -Wl,-stack=536870912":"clang++\ -fsanitize=addres
 map <leader>/ :bel 10sp term://curl cht.sh/cpp/
 map <leader>t :0 r ~/code/template/other/cf.cpp<cr>
 map <F8> :call RunCode()<CR>
-map <F9> :call CompileCode()<CR>
+map <F9> :call CompileCode('-O2 -fsanitize=address,undefined')<CR>
+map <leader><F9> :call CompileCode('-O2')<CR>
 "map <F10> :NERDTreeToggle<CR>
 map <F10> :MarkdownPreviewToggle<CR>
 let s:res=""
@@ -151,11 +152,11 @@ let s:callbacks = {
 \ 'on_exit': function('s:OnEvent')
 \ }
 
-func! CompileCode()
+func! CompileCode(copt)
 	exec "w"
 "	exec "make"
-	echo "compiling..."
-	call jobstart((g:iswindows?"g++ -Wl,-stack=536870912":"clang++\ -fsanitize=address")."\ -O2\ -std=c++11\ ".expand("%")."\ -o\ ".expand("%<"),s:callbacks)
+	echo "compiling... ".a:copt
+	call jobstart((g:iswindows?"g++ -Wl,-stack=536870912":"clang++\ -fsanitize=address")."\ ".a:copt."\ ".expand("%")."\ -o\ ".expand("%<"),s:callbacks)
 endfunction
 func! RunCode()
 	exec "w"
