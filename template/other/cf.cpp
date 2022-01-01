@@ -1,62 +1,80 @@
 #include <bits/stdc++.h>
-
 using namespace std;
-
 //{{{ FastIO
-namespace fio{
-const int BS=1<<20;
-char ibuf[BS],*ip1=ibuf,*ip2=ibuf;
-char obuf[BS],*op=obuf;
-#define gc() (ip1==ip2 && (ip2=(ip1=ibuf)+fread(ibuf,1,BS,stdin),ip1==ip2)?EOF:*ip1++)
-#define flsh() (fwrite(obuf,1,op-obuf,stdout),op=obuf)
-#define pc(x) (*op++=(x),op==obuf+BS && flsh())
-struct flusher{inline ~flusher(){flsh();}}tmp;
+namespace fio {
+const int BS = 1 << 20;
+char ibuf[BS], *ip1 = ibuf, *ip2 = ibuf;
+char obuf[BS], *op = obuf;
+#define gc() (ip1 == ip2 && (ip2 = (ip1 = ibuf) + fread(ibuf, 1, BS, stdin), ip1 == ip2) ? EOF : *ip1++)
+#define flsh() (fwrite(obuf, 1, op - obuf, stdout), op = obuf)
+#define pc(x) (*op++ = (x), op == obuf + BS && flsh())
+struct flusher {
+    inline ~flusher() { flsh(); }
+} tmp;
 
-template<class T>
-inline void read(T &x){
-	bool f=0;x=0;char c;
-	while(c=gc(),!isdigit(c))if(c=='-')f=1;
-	while(isdigit(c))x=(x<<3)+(x<<1)+(c^48),c=gc();
-	if(f)x=-x;
+template <typename T>
+inline void read(T &x) {
+    bool f = 0;
+    x = 0;
+    char c;
+    while (c = gc(), !isdigit(c))
+        if (c == '-') f = 1;
+    while (isdigit(c)) x = (x << 3) + (x << 1) + (c ^ 48), c = gc();
+    if (f) x = -x;
 }
-inline void read(char &x){while(x=gc(),isspace(x));}
-inline void read(char *x){
-	while(*x=gc(),isspace(*x))if(*x==EOF)return;
-	while(*++x=gc(),!isspace(*x) && *x!=EOF);
-	*x=0;
+inline void read(char &x) {
+    while (x = gc(), isspace(x))
+        ;
 }
-template<class T>
-inline void prt(T x){
-	if(x<0)pc('-'),x=-x;
-	if(x>9)prt(x/10);
-	pc(x%10^48);
+inline void read(char *x) {
+    while (*x = gc(), isspace(*x))
+        if (*x == EOF) return;
+    while (*++x = gc(), !isspace(*x) && *x != EOF)
+        ;
+    *x = 0;
 }
-inline void prt(const char x){pc(x);}
-inline void prt(char *x){while(*x)pc(*x++);}
-inline void prt(const char x[]){for(int i=0;x[i];i++)pc(x[i]);}
+template <typename T>
+inline void prt(T x) {
+    if (x < 0) pc('-'), x = -x;
+    if (x > 9) prt(x / 10);
+    pc(x % 10 ^ 48);
+}
+inline void prt(const char x) { pc(x); }
+inline void prt(char *x) {
+    while (*x) pc(*x++);
+}
+inline void prt(const char x[]) {
+    for (int i = 0; x[i]; i++) pc(x[i]);
+}
 #undef gc
 #undef pc
 #undef flsh
-}
+} // namespace fio
 
-void prt(){}
+void prt() {}
 template <typename T1, typename... T2>
-void prt(const T1 x,const T2... y) {
-	fio::prt(x);
-	prt(y...);
+void prt(const T1 x, const T2... y) {
+    fio::prt(x);
+    prt(y...);
 }
-void read(){}
+void read() {}
 template <typename T1, typename... T2>
-void read(T1 &x, T2 &...y) {
-	fio::read(x);
-	read(y...);
+void read(T1 &x, T2 &... y) {
+    fio::read(x);
+    read(y...);
 }
 //}}}
 //{{{ Def
 #define fi first
 #define se second
 #define pb push_back
+
+#ifdef ONLINE_JUDGE
+#define log(fmt...) void()
+#else
 #define log(fmt...) fprintf(stderr, fmt)
+#endif
+
 #define va2d(x, y) x[(y.fi)][(y.se)]
 
 typedef long long ll;
@@ -69,11 +87,10 @@ mt19937_64 myrand(chrono::system_clock::now().time_since_epoch().count());
 const ll INF = 1e18;
 const ll P = 1e9 + 7;
 const ll MXN = 1e6 + 5;
-const pi go[] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 ll n, m;
 ll arr[MXN];
 //{{{ Func
-template <class T>
+template <typename T>
 T qpow(T x, ll y) {
     T r(1);
     while (y) {
@@ -83,11 +100,11 @@ T qpow(T x, ll y) {
     return r;
 }
 ll gcd(ll x, ll y) { return y ? gcd(y, x % y) : x; }
-template <class T>
+template <typename T>
 void umx(T &x, T y) {
     x = max(x, y);
 }
-template <class T>
+template <typename T>
 void umn(T &x, T y) {
     x = min(x, y);
 }
@@ -102,6 +119,7 @@ ld randdb(ld l, ld r) {
 }
 //}}}
 //{{{ Type
+const pi go[] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 pi operator+(const pi &x, const pi &y) { return pi(x.fi + y.fi, x.se + y.se); }
 pi operator-(const pi &x, const pi &y) { return pi(x.fi - y.fi, x.se - y.se); }
 pi operator*(const pi &x, const ll &y) { return pi(x.fi * y, x.se * y); }
@@ -126,7 +144,7 @@ struct mll {
     bool operator==(const mll &y) const { return v == y.v; }
     bool operator!=(const mll &y) const { return v != y.v; }
 };
-template <class T>
+template <typename T>
 struct myvec {
     T *v;
     int sz, dsz;
@@ -146,17 +164,6 @@ struct myvec {
 };
 //}}}
 
-void solve() {
-    // code
-}
-
 int main() {
-#ifndef ONLINE_JUDGE
-    // freopen(".in","r",stdin);
-    // freopen(".out","w",stdout);
-#endif
-    // ll t;scanf("%lld",&t);while(t--)
-    solve();
-
     return 0;
 }

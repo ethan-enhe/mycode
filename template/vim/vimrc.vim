@@ -1,5 +1,5 @@
-":CocConfig
-"{
+" :CocConfig
+" {
 "    "clangd.semanticHighlighting": true,
 "    "coc.preferences.semanticTokensHighlights": false,
 "	 "diagnostic.warningSign":"!!",
@@ -125,7 +125,6 @@ nnoremap bd :bd<CR>
 nnoremap bl :ls<CR>
 
 map <c-a> :!cat '%' \| clip.exe<cr>
-map <c-c> "+y
 
 
 let mapleader=" "
@@ -137,6 +136,9 @@ map <F9> :call CompileCode('-O2 -Wall -fsanitize=address,undefined')<CR>
 map <leader><F9> :call CompileCode('-O2 -Wall')<CR>
 "map <F10> :NERDTreeToggle<CR>
 map <F10> :MarkdownPreviewToggle<CR>
+map<c-c> :Commentary<CR>
+autocmd FileType cpp setlocal commentstring=//\ %s
+
 let s:res=""
 function! s:OnEvent(job_id, data, event) dict
 	if a:event == 'exit'
@@ -178,20 +180,14 @@ endif
 let g:mirror='https://github.com.cnpmjs.org/'
 call plug#begin()
 "Plug g:mirror.'scrooloose/nerdtree'
-"Plug g:mirror.'itchyny/lightline.vim'
 Plug g:mirror.'luochen1990/rainbow'
 Plug g:mirror.'overcache/NeoSolarized'
 Plug g:mirror.'morhetz/gruvbox'
 Plug g:mirror.'crusoexia/vim-monokai'
+Plug g:mirror.'chriskempson/base16-vim'
 Plug g:mirror.'tpope/vim-surround'
+Plug g:mirror.'tpope/vim-commentary'
 Plug g:mirror.'vim-airline/vim-airline'
-
-
-
-
-"Plug g:mirror.'skywind3000/asyncrun.vim'
-"Plug g:mirror.'djoshea/vim-autoread'
-
 Plug g:mirror.'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 
 
@@ -201,19 +197,15 @@ if g:usecoc
 	Plug g:mirror.'ethan-enhe/vim-snippets/'
 else
 	Plug g:mirror.'skywind3000/vim-auto-popmenu'
-	"Plug g:mirror.'neomake/neomake'
 	"Plug g:mirror.'w0rp/ale'
-	"Plug g:mirror.'maximbaz/lightline-ale'
 endif
-"Plug g:mirror.'/octol/vim-cpp-enhanced-highlight'
-"Plug g:mirror.'/SirVer/ultisnips'
 call plug#end()
-
-
 
 " COLOR
 let g:rainbow_active = 1
-color gruvbox
+let base16colorspace=256
+colorscheme gruvbox
+
 syntax enable
 
 set termguicolors
@@ -233,7 +225,6 @@ let g:lightline = {
 	  \ },
 	  \ }
 let g:airline_powerline_fonts = 1
-let g:airline_theme="gruvbox" 
 let g:airline#extensions#tabline#enabled = 1      "tabline中当前buffer两端的分隔字符
 let g:airline#extensions#whitespace#enabled = 0
 let g:airline#extensions#whitespace#symbol = '!'
@@ -302,8 +293,9 @@ if g:usecoc
 
 	" Make <CR> auto-select the first completion item and notify coc.nvim to
 	" format on enter, <cr> could be remapped by other vim plugin
-	inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
+	"inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
 								  \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+	inoremap <silent><expr> <cr> pumvisible() ? "\<C-y>" : "\<CR>"
 
 	" Use `[g` and `]g` to navigate diagnostics
 	" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
@@ -489,27 +481,4 @@ else
 	" suppress annoy messages.
 	set shortmess+=c
 	" }}}
-	" {{{ Neomake
-	let g:neomake_open_list = 2
-	" }}}
 endif
-" {{{ snippets
-
-" Trigger configuration. You need to change this to something other than <tab> if you use one of the following:
-" - https://github.com/Valloric/YouCompleteMe
-" - https://github.com/nvim-lua/completion-nvim
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsJumpBackwardTrigger="<S-tab>"
-
-" If you want :UltiSnipsEdit to split your window.
-let g:UltiSnipsEditSplit="vertical"
-" }}}
-" {{{ vim-cpp-enhanced-highlight
-let g:cpp_class_scope_highlight = 1
-let g:cpp_class_decl_highlight = 1
-let g:cpp_member_variable_highlight = 1
-let g:cpp_concepts_highlight = 1
-let g:cpp_experimental_simple_template_highlight = 1
-let g:cpp_posix_standard = 1
-" }}}
