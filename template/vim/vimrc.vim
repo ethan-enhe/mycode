@@ -129,12 +129,12 @@ map <c-c> "+y
 
 
 let mapleader=" "
-let &makeprg=(g:iswindows?"g++ -Wl,-stack=536870912":"clang++\ -fsanitize=address")."\ -O2\ -std=c++11\ %\ -o\ %<"
+"let &makeprg=(g:iswindows?"g++ -Wl,-stack=536870912":"clang++\ -fsanitize=address")."\ -O2\ -std=c++11\ %\ -o\ %<"
 map <leader>/ :bel 10sp term://curl cht.sh/cpp/
 map <leader>t :0 r ~/code/template/other/cf.cpp<cr>
 map <F8> :call RunCode()<CR>
-map <F9> :call CompileCode('-O2 -fsanitize=address,undefined')<CR>
-map <leader><F9> :call CompileCode('-O2')<CR>
+map <F9> :call CompileCode('-O2 -Wall -fsanitize=address,undefined')<CR>
+map <leader><F9> :call CompileCode('-O2 -Wall')<CR>
 "map <F10> :NERDTreeToggle<CR>
 map <F10> :MarkdownPreviewToggle<CR>
 let s:res=""
@@ -156,7 +156,7 @@ func! CompileCode(copt)
 	exec "w"
 "	exec "make"
 	echo "compiling... ".a:copt
-	call jobstart((g:iswindows?"g++ -Wl,-stack=536870912":"clang++\ -fsanitize=address")."\ ".a:copt."\ ".expand("%")."\ -o\ ".expand("%<"),s:callbacks)
+	call jobstart((g:iswindows?"g++ -Wl,-stack=536870912":"clang++")."\ ".a:copt."\ ".expand("%")."\ -o\ ".expand("%<"),s:callbacks)
 endfunction
 func! RunCode()
 	exec "w"
@@ -192,7 +192,7 @@ Plug g:mirror.'vim-airline/vim-airline'
 "Plug g:mirror.'skywind3000/asyncrun.vim'
 "Plug g:mirror.'djoshea/vim-autoread'
 
-Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
+Plug g:mirror.'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 
 
 if g:usecoc
@@ -235,8 +235,6 @@ let g:lightline = {
 let g:airline_powerline_fonts = 1
 let g:airline_theme="gruvbox" 
 let g:airline#extensions#tabline#enabled = 1      "tabline中当前buffer两端的分隔字符
-let g:airline#extensions#coc#enabled = 1
-let g:airline#extensions#coc#show_coc_status = 1
 let g:airline#extensions#whitespace#enabled = 0
 let g:airline#extensions#whitespace#symbol = '!'
 let g:airline#extensions#tabline#buffer_nr_show=1
@@ -416,6 +414,20 @@ if g:usecoc
 	nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 	" Resume latest coc list.
 	nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
+	"}}}
+	"{{{ coc-snippets
+	" Use <C-l> for trigger snippet expand.
+	imap <C-l> <Plug>(coc-snippets-expand)
+	" Use <C-j> for select text for visual placeholder of snippet.
+	vmap <C-j> <Plug>(coc-snippets-select)
+	" Use <C-j> for jump to next placeholder, it's default of coc.nvim
+	let g:coc_snippet_next = '<c-j>'
+	" Use <C-k> for jump to previous placeholder, it's default of coc.nvim
+	let g:coc_snippet_prev = '<c-k>'
+	" Use <C-j> for both expand and jump (make expand higher priority.)
+	imap <C-j> <Plug>(coc-snippets-expand-jump)
+	" Use <leader>x for convert visual selected code to snippet
+	xmap <leader>x  <Plug>(coc-convert-snippet)
 	"}}}
 else
 	" ale-setting {{{
