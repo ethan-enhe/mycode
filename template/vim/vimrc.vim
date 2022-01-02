@@ -183,13 +183,13 @@ let g:mirror='https://github.com.cnpmjs.org/'
 call plug#begin()
 "Plug g:mirror.'scrooloose/nerdtree'
 Plug g:mirror.'luochen1990/rainbow'
-Plug g:mirror.'overcache/NeoSolarized'
 Plug g:mirror.'morhetz/gruvbox'
-Plug g:mirror.'crusoexia/vim-monokai'
+Plug g:mirror.'rakr/vim-one'
 Plug g:mirror.'chriskempson/base16-vim'
 Plug g:mirror.'tpope/vim-surround'
 Plug g:mirror.'tpope/vim-commentary'
 Plug g:mirror.'vim-airline/vim-airline'
+Plug g:mirror.'vim-airline/vim-airline-themes'
 Plug g:mirror.'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 
 " Plug g:mirror.'skywind3000/vim-terminal-help'
@@ -208,7 +208,8 @@ call plug#end()
 " COLOR
 let g:rainbow_active = 1
 let base16colorspace=256
-colorscheme gruvbox
+let g:one_allow_italics = 1 " I love italic for comments
+colorscheme one
 
 syntax enable
 
