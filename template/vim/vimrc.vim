@@ -124,16 +124,13 @@ nnoremap bo :enew<CR>
 nnoremap bd :bd<CR>
 nnoremap bl :ls<CR>
 
-map <c-a> :!cat '%' \| clip.exe<cr>
-
-
 let mapleader=" "
-"let &makeprg=(g:iswindows?"g++ -Wl,-stack=536870912":"clang++\ -fsanitize=address")."\ -O2\ -std=c++11\ %\ -o\ %<"
+" let &makeprg=(g:iswindows?"g++ -Wl,-stack=536870912":"clang++\ -fsanitize=address")."\ -O2\ -std=c++11\ %\ -o\ %<"
 map <leader>/ :bel 10sp term://curl cht.sh/cpp/
-map <leader>t :0 r ~/code/template/other/cf.cpp<cr>
+map <leader>t :r ~/code/template/other/cf.cpp<cr>
 map <F8> :call RunCode()<CR>
-map <F9> :call CompileCode('-O2 -Wall -fsanitize=address,undefined')<CR>
-map <leader><F9> :call CompileCode('-O2 -Wall')<CR>
+map <F9> :call CompileCode('-O2 -fsanitize=address,undefined')<CR>
+map <leader><F9> :call CompileCode('-O2')<CR>
 "map <F10> :NERDTreeToggle<CR>
 map <F10> :MarkdownPreviewToggle<CR>
 map<c-c> :Commentary<CR>
@@ -154,22 +151,27 @@ let s:callbacks = {
 \ 'on_exit': function('s:OnEvent')
 \ }
 
+" let g:terminal_list=0
+" let g:terminal_height=8
 func! CompileCode(copt)
 	exec "w"
-"	exec "make"
+	" exec 'H '.(g:iswindows?"g++ -Wl,-stack=536870912":"clang++")."\ ".a:copt."\ ".expand("%")."\ -o\ ".expand("%<")
+	" exec "make"
 	echo "compiling... ".a:copt
-	call jobstart((g:iswindows?"g++ -Wl,-stack=536870912":"clang++")."\ ".a:copt."\ ".expand("%")."\ -o\ ".expand("%<"),s:callbacks)
+	let cpl=jobstart((g:iswindows?"g++ -Wl,-stack=536870912":"clang++")."\ ".a:copt."\ ".expand("%")."\ -o\ ".expand("%<"),s:callbacks)
 endfunction
 func! RunCode()
 	exec "w"
 	let s:pre=has("nvim")?"bel 10sp term://":"!"
 	if &filetype == 'cpp'
-		let s:suf=g:iswindows?"%<.exe":'\\time -f \"\\n----\\n\%Mkb \%Us\" ./%<'
+		let s:suf=g:iswindows?expand('%<').'.exe':'\\time -f \"\\n----\\n\%Mkb \%Us\" ./'.expand('%<')
+		" let s:suf=g:iswindows?expand('%<').'.exe':'\time -f "\n----\n%Mkb %Us" ./'.expand('%<')
 	elseif &filetype == 'python'
-		let s:suf="python3 %"
+		let s:suf='python3 '.expand('%')
 	elseif &filetype == 'lua'
-		let s:suf="lua %"
+		let s:suf='lua '.expand('%')
 	endif
+	" exec 'H '.s:suf
 	exec s:pre.s:suf
 endfunction
 if empty(glob(stdpath('config')."/autoload/"))
@@ -190,6 +192,8 @@ Plug g:mirror.'tpope/vim-commentary'
 Plug g:mirror.'vim-airline/vim-airline'
 Plug g:mirror.'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 
+" Plug g:mirror.'skywind3000/vim-terminal-help'
+" Plug g:mirror.'skywind3000/asyncrun.vim'
 
 if g:usecoc
 	Plug g:mirror.'neoclide/coc.nvim', {'branch': 'release'}
@@ -211,19 +215,19 @@ syntax enable
 set termguicolors
 set background=dark
 set noshowmode
-let g:lightline = {
-	  \ 'colorscheme': 'gruvbox',
-	  "\ 'colorscheme': 'solarized',
-	  \ 'active': {
-	  \   'left': [ [ 'mode', 'paste' ],
-	  \             [ 'cocstatus', 'readonly', 'filename', 'modified' ] ]
-	  \ },
-	  \ 'separator':{ 'left': "\ue0bc", 'right': "\ue0be" },
-	  \ 'subseparator':{ 'left': "\ue0bd", 'right': "\ue0bf" },
-	  \ 'component_function': {
-	  \   'cocstatus': 'coc#status'
-	  \ },
-	  \ }
+"let g:lightline = {
+"	  \ 'colorscheme': 'gruvbox',
+"	  "\ 'colorscheme': 'solarized',
+"	  \ 'active': {
+"	  \   'left': [ [ 'mode', 'paste' ],
+"	  \             [ 'cocstatus', 'readonly', 'filename', 'modified' ] ]
+"	  \ },
+"	  \ 'separator':{ 'left': "\ue0bc", 'right': "\ue0be" },
+"	  \ 'subseparator':{ 'left': "\ue0bd", 'right': "\ue0bf" },
+"	  \ 'component_function': {
+"	  \   'cocstatus': 'coc#status'
+"	  \ },
+"	  \ }
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1      "tabline中当前buffer两端的分隔字符
 let g:airline#extensions#whitespace#enabled = 0

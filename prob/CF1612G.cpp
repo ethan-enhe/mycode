@@ -1,3 +1,7 @@
+//File:             CF1612G.cpp
+//Author:           ethan
+//Created:          01/02/22 
+//Description:      贪心
 #include <bits/stdc++.h>
 using namespace std;
 //{{{ FastIO
@@ -86,7 +90,7 @@ mt19937_64 myrand(chrono::system_clock::now().time_since_epoch().count());
 //}}}
 const ll INF = 1e18;
 const ll P = 1e9 + 7;
-const ll MXN = 1e6 + 5;
+const ll MXN = 1e6 + 10;
 //{{{ Func
 ll redu(const ll &x) {
     if (x < P) return x;
@@ -162,10 +166,32 @@ struct myvec {
     }
 };
 //}}}
-ll n, m;
-ll arr[MXN];
+ll n, ind;
+ll cnt[MXN<<1];
+mll fac[MXN],ans1,ans2(1);
 
-int main(int argc, char *argv[]) {
 
+int main() {
+	read(n);
+	for(ll i=1,tmp;i<=n;i++){
+		read(tmp);
+		ind+=tmp;
+		cnt[MXN+tmp-1]++;
+		cnt[MXN-1-tmp]--;
+		// log("%lld %lld",MXN+1-tmp,MXN+tmp+1);
+	}
+	fac[0]=(mll)1;
+	for(int i=1;i<MXN;i++)
+		fac[i]=fac[i-1]*mll(i);
+	for(ll i=(MXN<<1)-5;i;i--){
+		cnt[i]+=cnt[i+2];
+        ans1 +=ltm (i-MXN)*ltm(cnt[i]) * ltm(ind*2-cnt[i]+1)/mll(2);
+		ind-=cnt[i];
+		ans2 *=fac[cnt[i]];
+        // if(cnt[i]){
+			// log("%lld %lld %lld\n",i-MXN,cnt[i],ans1);
+		// }
+	}
+	prt((ll)ans1,' ',(ll)ans2);
     return 0;
 }
