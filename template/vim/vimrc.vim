@@ -330,6 +330,8 @@ if g:usecoc
 
 	" Symbol renaming.
 	nmap <leader>rn <Plug>(coc-rename)
+	nmap <leader>rf <Plug>(coc-refactor)
+
 
 	" Formatting selected code.
 	xmap <leader>f  <Plug>(coc-format-selected)
