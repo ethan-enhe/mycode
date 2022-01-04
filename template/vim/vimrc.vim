@@ -196,13 +196,15 @@ Plug g:mirror.'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }
 " Plug g:mirror.'skywind3000/vim-terminal-help'
 " Plug g:mirror.'skywind3000/asyncrun.vim'
 
+Plug g:mirror.'ethan-enhe/vim-snippets/'
 if g:usecoc
 	Plug g:mirror.'neoclide/coc.nvim', {'branch': 'release'}
 	Plug g:mirror.'jackguo380/vim-lsp-cxx-highlight'
-	Plug g:mirror.'ethan-enhe/vim-snippets/'
 else
-	Plug g:mirror.'skywind3000/vim-auto-popmenu'
-	"Plug g:mirror.'w0rp/ale'
+
+	Plug g:mirror.'jayli/vim-easycomplete'
+	" Plug g:mirror.'skywind3000/vim-auto-popmenu'
+	" Plug g:mirror.'w0rp/ale'
 endif
 call plug#end()
 
@@ -440,50 +442,50 @@ if g:usecoc
 	"}}}
 else
 	" ale-setting {{{
-	let g:ale_set_highlights = 0
-	"自定义error和warning图标
-	let g:ale_sign_error = '>>'
-	let g:ale_sign_warning = '--'
-	"显示Linter名称,出错或警告等相关信息
-	let g:ale_echo_msg_error_str = 'E'
-	let g:ale_echo_msg_warning_str = 'W'
-	let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
-	"打开文件时不进行检查
-	"let g:ale_lint_on_enter = 0
+	"let g:ale_set_highlights = 0
+	""自定义error和warning图标
+	"let g:ale_sign_error = '>>'
+	"let g:ale_sign_warning = '--'
+	""显示Linter名称,出错或警告等相关信息
+	"let g:ale_echo_msg_error_str = 'E'
+	"let g:ale_echo_msg_warning_str = 'W'
+	"let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+	""打开文件时不进行检查
+	""let g:ale_lint_on_enter = 0
 
-	"普通模式下，sp前往上一个错误或警告，sn前往下一个错误或警告
-	nmap sp <Plug>(ale_previous_wrap)
-	nmap sn <Plug>(ale_next_wrap)
-	"<Leader>s触发/关闭语法检查
-	nmap <Leader>s :ALEToggle<CR>
-	"<Leader>d查看错误或警告的详细信息
-	nmap <Leader>d :ALEDetail<CR>
-	"使用clang对c和c++进行语法检查，对python使用pylint进行语法检查
-	let g:ale_linters = {
-	\   'c++': ['clang'],
-	\   'c': ['clang'],
-	\}
-	let g:lightline.component_expand = {
-		  \  'linter_checking': 'lightline#ale#checking',
-		  \  'linter_infos': 'lightline#ale#infos',
-		  \  'linter_warnings': 'lightline#ale#warnings',
-		  \  'linter_errors': 'lightline#ale#errors',
-		  \  'linter_ok': 'lightline#ale#ok',
-		  \ }
-	let g:lightline.component_type = {
-		  \	 'linter_checking': 'right',
-		  \	 'linter_infos': 'right',
-		  \	 'linter_warnings': 'warning',
-		  \	 'linter_errors': 'error',
-		  \	 'linter_ok': 'right',
-		  \ }
-	let g:lightline.active = { 'right': [[ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_infos', 'linter_ok' ]] }
+	""普通模式下，sp前往上一个错误或警告，sn前往下一个错误或警告
+	"nmap sp <Plug>(ale_previous_wrap)
+	"nmap sn <Plug>(ale_next_wrap)
+	""<Leader>s触发/关闭语法检查
+	"nmap <Leader>s :ALEToggle<CR>
+	""<Leader>d查看错误或警告的详细信息
+	"nmap <Leader>d :ALEDetail<CR>
+	""使用clang对c和c++进行语法检查，对python使用pylint进行语法检查
+	"let g:ale_linters = {
+	"\   'c++': ['clang'],
+	"\   'c': ['clang'],
+	"\}
+	"let g:lightline.component_expand = {
+	"	  \  'linter_checking': 'lightline#ale#checking',
+	"	  \  'linter_infos': 'lightline#ale#infos',
+	"	  \  'linter_warnings': 'lightline#ale#warnings',
+	"	  \  'linter_errors': 'lightline#ale#errors',
+	"	  \  'linter_ok': 'lightline#ale#ok',
+	"	  \ }
+	"let g:lightline.component_type = {
+	"	  \	 'linter_checking': 'right',
+	"	  \	 'linter_infos': 'right',
+	"	  \	 'linter_warnings': 'warning',
+	"	  \	 'linter_errors': 'error',
+	"	  \	 'linter_ok': 'right',
+	"	  \ }
+	"let g:lightline.active = { 'right': [[ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_infos', 'linter_ok' ]] }
 
-	let g:lightline.active = {
-			\ 'right': [ [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_infos', 'linter_ok' ],
-			\			[ 'lineinfo' ],
-			\			[ 'percent' ],
-			\			[ 'fileformat', 'fileencoding', 'filetype'] ] }
+	"let g:lightline.active = {
+	"		\ 'right': [ [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_infos', 'linter_ok' ],
+	"		\			[ 'lineinfo' ],
+	"		\			[ 'percent' ],
+	"		\			[ 'fileformat', 'fileencoding', 'filetype'] ] }
 	" }}}
 	" {{{vap
 	" enable this plugin for filetypes, '*' for all files.
