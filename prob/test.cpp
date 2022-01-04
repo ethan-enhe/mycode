@@ -7,6 +7,6 @@ int main(){
     int asdaa;
     cin >> asdaa;
     cout << asdaa << endl;
-	asdaa;
+	cout<<"!!!";
     return 0;
 }

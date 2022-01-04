@@ -1,5 +1,73 @@
 #include <bits/stdc++.h>
 
+//{{{ FastIO
+namespace fio {
+const int BS = 1 << 20;
+char ibuf[BS], *ip1 = ibuf, *ip2 = ibuf;
+char obuf[BS], *op = obuf;
+#define gc()                                                              \
+    (ip1 == ip2 &&                                                        \
+             (ip2 = (ip1 = ibuf) + fread(ibuf, 1, BS, stdin), ip1 == ip2) \
+         ? EOF                                                            \
+         : *ip1++)
+#define flsh() (fwrite(obuf, 1, op - obuf, stdout), op = obuf)
+#define pc(x) (*op++ = (x), op == obuf + BS && flsh())
+struct flusher {
+    inline ~flusher() { flsh(); }
+} tmp;
+
+template <typename T>
+inline void read(T &x) {
+    bool f = 0;
+    x = 0;
+    char c;
+    while (c = gc(), !isdigit(c))
+        if (c == '-') f = 1;
+    while (isdigit(c)) x = (x << 3) + (x << 1) + (c ^ 48), c = gc();
+    if (f) x = -x;
+}
+inline void read(char &x) {
+    while (x = gc(), isspace(x))
+        ;
+}
+inline void read(char *x) {
+    while (*x = gc(), isspace(*x))
+        if (*x == EOF) return;
+    while (*++x = gc(), !isspace(*x) && *x != EOF)
+        ;
+    *x = 0;
+}
+template <typename T>
+inline void prt(T x) {
+    if (x < 0) pc('-'), x = -x;
+    if (x > 9) prt(x / 10);
+    pc(x % 10 ^ 48);
+}
+inline void prt(const char x) { pc(x); }
+inline void prt(char *x) {
+    while (*x) pc(*x++);
+}
+inline void prt(const char x[]) {
+    for (int i = 0; x[i]; i++) pc(x[i]);
+}
+#undef gc
+#undef pc
+#undef flsh
+}  // namespace fio
+
+void prt() {}
+template <typename T1, typename... T2>
+void prt(const T1 x, const T2... y) {
+    fio::prt(x);
+    prt(y...);
+}
+void read() {}
+template <typename T1, typename... T2>
+void read(T1 &x, T2 &... y) {
+    fio::read(x);
+    read(y...);
+}
+//}}}
 #define umn(x, y) x = min(x, y)
 using namespace std;
 //{{{ Rand
@@ -27,13 +95,13 @@ int read() {
     int b = rand_() & 32767;
     return a * 32768 + b;
 }
-} // namespace GenHelper
+}  // namespace GenHelper
 //}}}
 const int MXN = 3e5 + 5, LG = 31 - __builtin_clz(MXN), INF = 1e9;
-int n, q, s,cnt;
-int fa[MXN], w[MXN];
+int n, q, s, cnt;
+int fa[MXN], w[MXN],id[MXN];
 bool notleaf[MXN];
-vector<int> g[MXN];
+vector<int> g[MXN],_g[MXN];
 
 int dp[MXN], tot[MXN], pre[MXN];
 void dfsup(int p) {
@@ -58,12 +126,13 @@ void dfsdown(int p) {
 int tmp[2];
 struct data {
     int dis[2][2], anc;
-	void init(int _anc = 0) {
+    void init(int _anc = 0) {
         anc = _anc;
         dis[0][0] = dis[0][1] = 0;
         dis[1][0] = dis[1][1] = INF;
     }
-#define upd(x, y) res.dis[x][y] = min(dis[x][0] + b.dis[0][y], dis[x][1] + b.dis[1][y])
+#define upd(x, y) \
+    res.dis[x][y] = min(dis[x][0] + b.dis[0][y], dis[x][1] + b.dis[1][y])
     data operator+(const data &b) {
         data res;
         upd(0, 0), upd(0, 1);
@@ -75,8 +144,8 @@ struct data {
 #define upd(x) tmp[x] = min(dis[0][0] + b.dis[0][x], dis[0][1] + b.dis[1][x])
     void operator^=(const data &b) {
         upd(0), upd(1);
-		dis[0][0]=tmp[0];
-		dis[0][1]=tmp[1];
+        dis[0][0] = tmp[0];
+        dis[0][1] = tmp[1];
         anc = b.anc;
     }
 #undef upd
@@ -88,10 +157,12 @@ void init_lca(int p) {
     for (int i = 0; i < 2; i++)
         for (int j = 0; j < 2; j++) {
             int ldis = pre[p] - (i ? 0 : dp[p]) + (j ? dp[fa[p]] : 0);
-            int rdis = tot[fa[p]] - pre[p] + (i ? 0 : dp[p]) + (j ? 0 : dp[fa[p]]);
+            int rdis =
+                tot[fa[p]] - pre[p] + (i ? 0 : dp[p]) + (j ? 0 : dp[fa[p]]);
             jmp[p][0].dis[i][j] = min(ldis, rdis);
         }
-    for (int i = 1; (1 << i) <= dpth[p]; i++) jmp[p][i] = jmp[p][i - 1] + jmp[jmp[p][i - 1].anc][i - 1];
+    for (int i = 1; (1 << i) <= dpth[p]; i++)
+        jmp[p][i] = jmp[p][i - 1] + jmp[jmp[p][i - 1].anc][i - 1];
     for (int nx : g[p]) {
         dpth[nx] = dpth[p] + 1;
         init_lca(nx);
@@ -100,14 +171,14 @@ void init_lca(int p) {
 int solve(int x, int y) {
     if (x == y) return 0;
     if (dpth[x] < dpth[y]) swap(x, y);
-    data dx,dy;
-	dx.init(x),dy.init(y);
+    data dx, dy;
+    dx.init(x), dy.init(y);
 
     if (dpth[x] != dpth[y]) {
         int tmp = dpth[x] - dpth[y] - 1;
-        for (int i = LG; ~i; i--) if ((tmp >> i) & 1) dx ^= jmp[dx.anc][i];
-        if (fa[dx.anc] == dy.anc) 
-            return min(dx.dis[0][0], dx.dis[0][1]);
+        for (int i = LG; ~i; i--)
+            if ((tmp >> i) & 1) dx ^= jmp[dx.anc][i];
+        if (fa[dx.anc] == dy.anc) return min(dx.dis[0][0], dx.dis[0][1]);
         dx ^= jmp[dx.anc][0];
     }
     for (int i = LG; ~i; i--)
@@ -127,33 +198,51 @@ int solve(int x, int y) {
     return ans;
 }
 
+int rebuild(int p){
+	if(_g[p].size()==1 && p!=1){
+		int nx=_g[p][0],tmp=rebuild(nx);
+		umn(w[nx], w[p]);
+		return id[p]=tmp;
+	}
+	else{
+		for(int nx:_g[p]){
+			int tmp=rebuild(nx);
+			// cerr<<p<<tmp<<endl;
+			g[p].push_back(tmp);
+			fa[tmp]=p;
+		}
+		return id[p]=p;
+	}
+}
 int main() {
 	freopen("test.in","r",stdin);
-    scanf("%d%d%d", &n, &q, &s);
+	// freopen("test.out","w",stdout);
+    read(n, q, s);
     GenHelper::srand(s);
     for (int i = 2; i <= n; i++) {
-        scanf("%d%d", fa + i, w + i);
-        g[fa[i]].push_back(i);
+        read(fa[i], w[i]);
+        _g[fa[i]].push_back(i);
         notleaf[fa[i]] = 1;
     }
-    scanf("%d", w + 1);
+    read(w[1]);
     for (int i = 1; i <= n; i++) {
-        sort(g[i].begin(), g[i].end());
-        if (!notleaf[i]) scanf("%d", dp + i);
+        sort(_g[i].begin(), _g[i].end());
+        if (!notleaf[i]) read(dp[i]);
     }
+	rebuild(1);
     dfsup(1);
     dfsdown(1);
     init_lca(1);
     int last = 0, xsum = 0;
     long long sum = 0;
     while (q--) {
-        int u = (GenHelper::read() ^ last) % n + 1, v = (GenHelper::read() ^ last) % n + 1;
-        last = solve(u, v);
+        int u = (GenHelper::read() ^ last) % n + 1,
+            v = (GenHelper::read() ^ last) % n + 1;
+		prt(u,v,'\n');
+        last = solve(id[u], id[v]);
         xsum ^= last;
         sum += last;
     }
-    printf("%d %lld", xsum, sum);
-	cerr<<endl<<cnt;
-
+    prt(xsum, ' ', sum);
     return 0;
 }

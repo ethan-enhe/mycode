@@ -184,6 +184,7 @@ call plug#begin()
 "Plug g:mirror.'scrooloose/nerdtree'
 Plug g:mirror.'luochen1990/rainbow'
 Plug g:mirror.'morhetz/gruvbox'
+Plug g:mirror.'tomasr/molokai'
 Plug g:mirror.'rakr/vim-one'
 Plug g:mirror.'chriskempson/base16-vim'
 Plug g:mirror.'tpope/vim-surround'
@@ -208,8 +209,17 @@ call plug#end()
 " COLOR
 let g:rainbow_active = 1
 let base16colorspace=256
+let g:rehash256 = 1
+let g:molokai_original = 1
 let g:one_allow_italics = 1 " I love italic for comments
-colorscheme one
+let g:gruvbox_italic=1
+let g:gruvbox_number_column='bg1'
+let g:gruvbox_invert_signs=1
+" let g:gruvbox_improved_strings=1
+" let g:gruvbox_improved_warnings=1
+
+
+colorscheme gruvbox
 
 syntax enable
 
@@ -236,14 +246,14 @@ let g:airline#extensions#whitespace#symbol = '!'
 let g:airline#extensions#tabline#buffer_nr_show=1
 
 
-"highlight Normal guibg=NONE ctermbg=None
-"autocmd vimenter * NERDTree
-"autocmd BufNewFile *.cpp 0 r ~/code/template/other/cf.cpp
+" highlight Normal guibg=NONE ctermbg=None
+" autocmd vimenter * NERDTree
+" autocmd BufNewFile *.cpp 0 r ~/code/template/other/cf.cpp
 
 
 if g:usecoc
 	"{{{ coc.nvim
-	let g:coc_global_extensions = ['coc-clangd', 'coc-pairs','coc-json','coc-snippets']
+	let g:coc_global_extensions = ['coc-clangd','coc-markdownlint', 'coc-pairs','coc-json','coc-snippets']
 	autocmd FileType * let b:coc_pairs_disabled = ['<']
 	" Use autocmd to force lightline update.
 	"autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
