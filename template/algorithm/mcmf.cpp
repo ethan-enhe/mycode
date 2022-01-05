@@ -1,80 +1,73 @@
-#include<bits/stdc++.h>
-using namespace std;
-typedef long long ll;
-const ll INF=1e18;
-template<const ll MXN>
-struct mcmf{
-	struct edge{
-		ll ter,cap,cost,opp;
-		inline edge(ll ter,ll cap,ll cost,ll opp):ter(ter),cap(cap),cost(cost),opp(opp){}
-	};
-	queue<ll> q;
-	bool vis[MXN];
-	vector<edge> e[MXN];
-	ll fs,ft,dis[MXN],cure[MXN];
+// File:             flow.cpp
+// Author:           ethan
+// Created:          01/04/22
+// Description:      mcmf
+#include <bits/stdc++.h>
 
-	inline mcmf(){memset(vis,0,sizeof(vis));}
-	inline void adde(ll ts,ll tt,ll tcap,ll tcost){
-		e[ts].push_back(edge(tt,tcap,tcost,e[tt].size()));
-		e[tt].push_back(edge(ts,0,-tcost,e[ts].size()-1));
-	}
-	inline bool spfa(){
-		memset(dis,0x3f,sizeof(dis));
-		dis[fs]=0;q.push(fs);
-		while(!q.empty()){
-			ll p=q.front();q.pop();
-			vis[p]=0;
-			for(ll i=0;i<(ll)e[p].size();i++){
-				edge &nx=e[p][i];ll nd=dis[p]+nx.cost;
-				if(dis[nx.ter]<=nd || !nx.cap)continue;
-				dis[nx.ter]=nd;
-				if(!vis[nx.ter]){
-					vis[nx.ter]=1;
-					q.push(nx.ter);
-				}
-			}
-		}
-		return dis[ft]<INF;
-	}
-	inline ll dinic(ll p,ll fin){
-		if(p==ft)return fin;
-		vis[p]=1;
-		ll fout=0;
-		for(ll &i=cure[p];i<(ll)e[p].size();i++){
-			edge &nx=e[p][i];
-			if(dis[nx.ter]!=dis[p]+nx.cost || vis[nx.ter] || !nx.cap)continue;
-			ll delt=dinic(nx.ter,min(fin-fout,nx.cap));
-			if(delt){
-				nx.cap-=delt;
-				e[nx.ter][nx.opp].cap+=delt;
-				fout+=delt;
-				if(fin==fout)break;
-			}
-			else dis[nx.ter]=-INF;
-		}
-		return vis[p]=0,fout;
-	}
-	inline pair<ll,ll> run(ll ts,ll tt){
-		fs=ts,ft=tt;
-		pair<ll,ll> res;
-		while(spfa()){
-			memset(cure,0,sizeof(cure));
-			ll tmp=dinic(fs,INF);
-			res.first+=tmp,res.second+=tmp*dis[ft];
-		}
-		return res;
-	}
+using namespace std;
+const int MXN = 5e3 + 5, INF = 1e9;
+int n, m, s, t, ansf, answ;
+struct edge {
+    int v, c, w, o;
 };
-mcmf<(ll)5e3+5> f;
-int main(){
-	ll n,m,s,t;
-	scanf("%lld%lld%lld%lld",&n,&m,&s,&t);
-	while(m--){
-		ll ts,tt,tcap,tcost;
-		scanf("%lld%lld%lld%lld",&ts,&tt,&tcap,&tcost);
-		f.adde(ts,tt,tcap,tcost);
-	}
-	pair<ll,ll> res=f.run(s,t);
-	printf("%lld %lld",res.first,res.second);
-	return 0;
+vector<edge> g[MXN];
+void ae(int u, int v, int c, int w) {
+    g[u].push_back({v, c, w, (int)g[v].size()});
+    g[v].push_back({u, 0, -w, (int)g[u].size() - 1});
+}
+bool vis[MXN];
+int cure[MXN], dis[MXN];
+queue<int> q;
+bool spfa() {
+    for (int i = 1; i <= n; i++) dis[i] = INF, cure[i] = 0;
+    dis[s] = 0;
+    q.push(s);
+    while (!q.empty()) {
+        int p = q.front();
+        q.pop();
+        vis[p] = 0;
+        for (edge &nx : g[p])
+            if (nx.c && dis[nx.v] > dis[p] + nx.w) {
+                dis[nx.v] = dis[p] + nx.w;
+                if (!vis[nx.v]) {
+                    vis[nx.v] = 1;
+                    q.push(nx.v);
+                }
+            }
+    }
+    return dis[t] != INF;
+}
+int dinic(int p, int fi) {
+    if (p == t) return fi;
+    int fo = 0;
+    vis[p] = 1;
+    for (int &i = cure[p]; i < (int)g[p].size(); i++) {
+        edge &nx = g[p][i];
+        if (dis[nx.v] == dis[p] + nx.w && !vis[nx.v] && nx.c) {
+            int delt = dinic(nx.v, min(fi - fo, nx.c));
+            if (delt) {
+                nx.c -= delt;
+                g[nx.v][nx.o].c += delt;
+                fo += delt;
+                if (fi == fo) return vis[p] = 0, fo;
+            } else
+                dis[nx.v] = -1;
+        }
+    }
+    return vis[p] = 0, fo;
+}
+int main() {
+    scanf("%d%d%d%d", &n, &m, &s, &t);
+    while (m--) {
+        int u, v, c, w;
+        scanf("%d%d%d%d", &u, &v, &c, &w);
+        ae(u, v, c, w);
+    }
+    while (spfa()) {
+        int flow = dinic(s, INF);
+        ansf += flow;
+        answ += flow * dis[t];
+    }
+    printf("%d %d", ansf, answ);
+    return 0;
 }

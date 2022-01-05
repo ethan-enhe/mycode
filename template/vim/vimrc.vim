@@ -125,16 +125,15 @@ nnoremap bd :bd<CR>
 nnoremap bl :ls<CR>
 
 let mapleader=" "
-" let &makeprg=(g:iswindows?"g++ -Wl,-stack=536870912":"clang++\ -fsanitize=address")."\ -O2\ -std=c++11\ %\ -o\ %<"
 map <leader>/ :bel 10sp term://curl cht.sh/cpp/
 map <leader>t :r ~/code/template/other/cf.cpp<cr>
 map <F8> :call RunCode()<CR>
-map <F9> :call CompileCode('-O2 -fsanitize=address,undefined')<CR>
-map <leader><F9> :call CompileCode('-O2')<CR>
+map <F9> :call CompileCode('-O2')<CR>
+map <leader><F9> :call CompileCode('-O2 -Wall -fsanitize=address,undefined')<CR>
 "map <F10> :NERDTreeToggle<CR>
 map <F10> :MarkdownPreviewToggle<CR>
 map<c-c> :Commentary<CR>
-autocmd FileType cpp setlocal commentstring=//\ %s
+autocmd FileType cpp setlocal commentstring=//%s
 
 let s:res=""
 function! s:OnEvent(job_id, data, event) dict
@@ -151,11 +150,8 @@ let s:callbacks = {
 \ 'on_exit': function('s:OnEvent')
 \ }
 
-" let g:terminal_list=0
-" let g:terminal_height=8
 func! CompileCode(copt)
 	exec "w"
-	" exec 'H '.(g:iswindows?"g++ -Wl,-stack=536870912":"clang++")."\ ".a:copt."\ ".expand("%")."\ -o\ ".expand("%<")
 	" exec "make"
 	echo "compiling... ".a:copt
 	let cpl=jobstart((g:iswindows?"g++ -Wl,-stack=536870912":"clang++")."\ ".a:copt."\ ".expand("%")."\ -o\ ".expand("%<"),s:callbacks)
@@ -192,9 +188,6 @@ Plug g:mirror.'tpope/vim-commentary'
 Plug g:mirror.'vim-airline/vim-airline'
 Plug g:mirror.'vim-airline/vim-airline-themes'
 Plug g:mirror.'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
-
-" Plug g:mirror.'skywind3000/vim-terminal-help'
-" Plug g:mirror.'skywind3000/asyncrun.vim'
 
 Plug g:mirror.'ethan-enhe/vim-snippets/'
 if g:usecoc
