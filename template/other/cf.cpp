@@ -5,12 +5,17 @@ namespace fio {
 const int BS = 1 << 20;
 char ibuf[BS], *ip1 = ibuf, *ip2 = ibuf;
 char obuf[BS], *op = obuf;
-#define gc() (ip1 == ip2 && (ip2 = (ip1 = ibuf) + fread(ibuf, 1, BS, stdin), ip1 == ip2) ? EOF : *ip1++)
+#define gc()                                                              \
+    (ip1 == ip2 &&                                                        \
+             (ip2 = (ip1 = ibuf) + fread(ibuf, 1, BS, stdin), ip1 == ip2) \
+         ? EOF                                                            \
+         : *ip1++)
 #define flsh() (fwrite(obuf, 1, op - obuf, stdout), op = obuf)
 #define pc(x) (*op++ = (x), op == obuf + BS && flsh())
 struct flusher {
     inline ~flusher() { flsh(); }
 } tmp;
+inline void myflush() { flsh(); }
 
 template <typename T>
 inline void read(T &x) {
@@ -49,20 +54,11 @@ inline void prt(const char x[]) {
 #undef gc
 #undef pc
 #undef flsh
-} // namespace fio
+}  // namespace fio
+using fio::myflush;
+using fio::prt;
+using fio::read;
 
-void prt() {}
-template <typename T1, typename... T2>
-void prt(const T1 x, const T2... y) {
-    fio::prt(x);
-    prt(y...);
-}
-void read() {}
-template <typename T1, typename... T2>
-void read(T1 &x, T2 &... y) {
-    fio::read(x);
-    read(y...);
-}
 //}}}
 //{{{ Def
 #define fi first
@@ -122,7 +118,8 @@ ld randdb(ld l, ld r) {
 }
 //}}}
 //{{{ Type
-const pi go[] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
+const pi go[] = {{1, 0}, {-1, 0}, {0, 1},  {0, -1},
+                 {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 pi operator+(const pi &x, const pi &y) { return pi(x.fi + y.fi, x.se + y.se); }
 pi operator-(const pi &x, const pi &y) { return pi(x.fi - y.fi, x.se - y.se); }
 pi operator*(const pi &x, const ll &y) { return pi(x.fi * y, x.se * y); }
@@ -133,12 +130,16 @@ struct mll {
     mll operator+(const mll &y) const { return mll(redu(v + y.v)); }
     mll operator-(const mll &y) const { return mll(redu(P + v - y.v)); }
     mll operator*(const mll &y) const { return mll(redu(v * y.v)); }
-    mll operator/(const mll &y) const { return mll(redu(v * (ll)qpow(y, P - 2))); }
+    mll operator/(const mll &y) const {
+        return mll(redu(v * (ll)qpow(y, P - 2)));
+    }
     mll &operator=(const mll &y) { return v = y.v, *this; }
     mll &operator+=(const mll &y) { return v = redu(v + y.v), *this; }
     mll &operator-=(const mll &y) { return v = redu(P + v - y.v), *this; }
     mll &operator*=(const mll &y) { return v = redu(v * y.v), *this; }
-    mll &operator/=(const mll &y) { return v = redu(v * (ll)qpow(y, P - 2)), *this; }
+    mll &operator/=(const mll &y) {
+        return v = redu(v * (ll)qpow(y, P - 2)), *this;
+    }
     bool operator==(const mll &y) const { return v == y.v; }
     bool operator!=(const mll &y) const { return v != y.v; }
 };
