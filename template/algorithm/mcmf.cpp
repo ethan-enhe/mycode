@@ -57,7 +57,11 @@ int dinic(int p, int fi) {
     return vis[p] = 0, fo;
 }
 int main() {
-    scanf("%d%d%d%d", &n, &m, &s, &t);
+	// freopen("mcmf.in","r",stdin);
+	// freopen("mcmf.out","w",stdout);
+    // scanf("%d%d%d%d", &n, &m, &s, &t);
+    scanf("%d%d", &n, &m);
+	s=1,t=n;
     while (m--) {
         int u, v, c, w;
         scanf("%d%d%d%d", &u, &v, &c, &w);
