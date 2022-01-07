@@ -1,16 +1,15 @@
 // File:             mcmf.cpp
 // Author:           ethan
 // Created:          01/07/22
-// Description:      mxmf
+// Description:      mcmf
 
 #include <bits/stdc++.h>
 
 using namespace std;
 // {{{ flow
-#define constINF const T INF = numeric_limits<T>::max()
 template <const int MXN, typename T = int>
 struct flow {
-    constINF;
+    const T INF = numeric_limits<T>::max();
     struct edge {
         int v, o;
         T c, w;
@@ -21,10 +20,13 @@ struct flow {
     int s, t, cure[MXN];
     bool vis[MXN];
     T dis[MXN];
-    void ae(int u, int v, T c, T w) {
-        cerr << u << " " << v << " " << c << " " << w << endl;
+    void addedge(int u, int v, T c, T w) {
         g[u].push_back(edge(v, c, w, g[v].size()));
         g[v].push_back(edge(u, 0, -w, g[u].size() - 1));
+    }
+    void adduedge(int u, int v, T c) {
+        g[u].push_back(edge(v, c, 1, g[v].size()));
+        g[v].push_back(edge(u, 0, 1, g[u].size() - 1));
     }
     bool spfa() {
         for (int i = 1; i < MXN; i++) dis[i] = INF, cure[i] = 0;
@@ -64,71 +66,89 @@ struct flow {
         }
         return vis[p] = 0, fo;
     }
-    pair<T, T> mcmf(int _s, int _t) {
+    // Option:
+    // 0->min_cost_max_flow
+    // 1->min_cost
+    pair<T, T> run(int _s, int _t, bool opt = 0) {
         tie(s, t) = {_s, _t};
         pair<T, T> res = {0, 0};
         while (spfa()) {
+            if (opt && dis[t] > 0) break;
             T delt = dinic(s, INF);
             res.first += delt, res.second += delt * dis[t];
         }
         return res;
     }
 };
-// }}}
 template <const int MXN, typename T = int>
-struct lu_flow {
-    constINF;
+struct limflow {
+    const T INF = numeric_limits<T>::max();
     flow<MXN> f;
     T deg[MXN];
     pair<T, T> res;
-    void ae(int u, int v, T l, T r, T w, bool nocycle = 1) {
-        if (!nocycle && w < 0) {
+    void addedge(int u, int v, T l, T r, T w, bool cycle = 0) {
+        if (cycle && w < 0) {
             w = -w;
-			swap(v,u);
+            swap(v, u);
             tie(l, r) = make_tuple(-r, -l);
         }
         deg[u] -= l, deg[v] += l;
         res.second += l * w;
-        f.ae(u, v, r - l, w);
+        f.addedge(u, v, r - l, w);
     }
-    // n super_s super_t
-    pair<T, T> run(int ss, int st, int s, int t, bool ismx = 1) {
+    void adduedge(int u, int v, T l, T r) {
+        deg[u] -= l, deg[v] += l;
+        f.adduedge(u, v, r - l);
+    }
+    // Option:
+    // 0->valid_flow
+    // 1->min_cost_max_flow
+    // 2->min_cost_min_flow
+    // 3->min_cost_valid_flow
+    pair<T, T> run(int ss, int st, int s, int t, int opt = 1) {
         T all = 0;
         for (int i = 1; i < MXN; i++) {
             if (deg[i] > 0)
-                f.ae(ss, i, deg[i], 0), all += deg[i];
+                f.addedge(ss, i, deg[i], 0), all += deg[i];
             else if (deg[i] < 0)
-                f.ae(i, st, -deg[i], 0);
+                f.addedge(i, st, -deg[i], 0);
         }
-        f.ae(t, s, INF, 0);
-        pair<T, T> tres = f.mcmf(ss, st);
+        f.addedge(t, s, INF, 0);
+        pair<T, T> tres = f.run(ss, st);
         if (tres.first != all) return {-1, -1};
         res.second += tres.second;
         res.first += f.g[s].rbegin()->c;
         f.g[s].rbegin()->c = 0;
         f.g[t].rbegin()->c = 0;
-        if (ismx) {
-            tres = f.mcmf(s, t);
+        if (opt == 1) {
+            tres = f.run(s, t);
             res.first += tres.first, res.second += tres.second;
-        } else {
-            tres = f.mcmf(t, s);
+        } else if (opt == 2) {
+            tres = f.run(t, s);
             res.first -= tres.first, res.second += tres.second;
+        } else if (opt == 3) {
+            tres = f.run(s, t, 1);
+            res.first += tres.first, res.second += tres.second;
         }
         return res;
     }
 };
-
-lu_flow<230> f;
+// }}}
+const int INF = 1e9;
+limflow<305> f;
 int main() {
-    // freopen("test.in", "r", stdin);
-    int n, m, s, t;
-    scanf("%d%d%d%d", &n, &m, &s, &t);
-    while (m--) {
-        int u, v, c, w;
-        scanf("%d%d%d%d", &u, &v, &c, &w);
-        f.ae(u, v, 0, c, w, 0);
+    int n;
+    scanf("%d", &n);
+    for (int i = 1; i <= n; i++) {
+        int m, v, w;
+        scanf("%d", &m);
+        while (m--) {
+            scanf("%d%d", &v, &w);
+            f.addedge(i, v, 1, INF, w);
+        }
+        if (i > 1) f.addedge(i, n + 1, 0, INF, 0);
     }
-    auto ans = f.run(n + 1, n + 2, s, t);
-    printf("%d %d", ans.first, ans.second);
+    auto res = f.run(n + 2, n + 3, 1, n + 1, 3);
+    printf("%d\n", res.second);
     return 0;
 }
