@@ -22,7 +22,7 @@ typedef pair<ll, ll> pi;
 mt19937_64 myrand(chrono::system_clock::now().time_since_epoch().count());
 //}}}
 const ll INF = 1e18;
-const ll P = 1e9 + 7;
+ll P = 1e9 + 7;
 const ll MXN = 1e6 + 5;
 //{{{ Func
 ll redu(const ll &x) {
@@ -59,7 +59,8 @@ ld randdb(ld l, ld r) {
 }
 //}}}
 //{{{ Type
-const pi go[] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
+const pi go[] = {{1, 0}, {-1, 0}, {0, 1},  {0, -1},
+                 {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 pi operator+(const pi &x, const pi &y) { return pi(x.fi + y.fi, x.se + y.se); }
 pi operator-(const pi &x, const pi &y) { return pi(x.fi - y.fi, x.se - y.se); }
 pi operator*(const pi &x, const ll &y) { return pi(x.fi * y, x.se * y); }
@@ -70,12 +71,16 @@ struct mll {
     mll operator+(const mll &y) const { return mll(redu(v + y.v)); }
     mll operator-(const mll &y) const { return mll(redu(P + v - y.v)); }
     mll operator*(const mll &y) const { return mll(redu(v * y.v)); }
-    mll operator/(const mll &y) const { return mll(redu(v * (ll)qpow(y, P - 2))); }
+    mll operator/(const mll &y) const {
+        return mll(redu(v * (ll)qpow(y, P - 2)));
+    }
     mll &operator=(const mll &y) { return v = y.v, *this; }
     mll &operator+=(const mll &y) { return v = redu(v + y.v), *this; }
     mll &operator-=(const mll &y) { return v = redu(P + v - y.v), *this; }
     mll &operator*=(const mll &y) { return v = redu(v * y.v), *this; }
-    mll &operator/=(const mll &y) { return v = redu(v * (ll)qpow(y, P - 2)), *this; }
+    mll &operator/=(const mll &y) {
+        return v = redu(v * (ll)qpow(y, P - 2)), *this;
+    }
     bool operator==(const mll &y) const { return v == y.v; }
     bool operator!=(const mll &y) const { return v != y.v; }
 };
@@ -100,16 +105,32 @@ struct myvec {
 };
 //}}}
 ll n, m;
-ll arr[MXN];
-ld InvSqrt(ld x) {
-    ld xhalf = 0.5f * x;
-    x = 0.5;
-    for (int i = 0; i < 30; i++) x = x * (1.5 - xhalf * x * x); // 牛顿迭代法
-    return x;
-}
+mll inv[MXN];
 
+mll c(ll x,ll y){
+	if(y>x || y<0)return mll(0);
+	mll res(1);
+	for(int i=1;i<=y;i++)
+		res*=inv[i]*ltm(x+1-i);
+	return res;
+}
 int main(int argc, char *argv[]) {
-    cout << InvSqrt(100);
+	freopen("dream.in","r",stdin);
+	freopen("dream.out","w",stdout);
+	ll t;
+	scanf("%lld",&t);
+	while(t--){
+		scanf("%lld%lld%lld",&n,&m,&P);
+		for(int i=1;i<=m;i++)
+			inv[i]=(mll)1/ltm(i);
+		mll ans(0);
+		for(int i=0;i<=m;i++)
+			if(n-m+i>=0)
+				ans+=c(m-1,i)*c(n,m-i)*qpow(mll(2),n-m+i);
+		for(int i=1;i<=m;i++)
+			ans*=ltm(i);
+		printf("%lld\n",(ll)ans);
+	}
 
     return 0;
 }

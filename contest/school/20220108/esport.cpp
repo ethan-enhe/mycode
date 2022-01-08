@@ -1,5 +1,6 @@
-
 #include <bits/stdc++.h>
+
+#include <vector>
 using namespace std;
 //{{{ Def
 #define fi first
@@ -23,7 +24,7 @@ mt19937_64 myrand(chrono::system_clock::now().time_since_epoch().count());
 //}}}
 const ll INF = 1e18;
 const ll P = 1e9 + 7;
-const ll MXN = 1e6 + 5;
+const ll MXN = 5e5 + 5, LG = 31 - __builtin_clz(MXN);
 //{{{ Func
 ll redu(const ll &x) {
     if (x < P) return x;
@@ -100,16 +101,106 @@ struct myvec {
 };
 //}}}
 ll n, m;
-ll arr[MXN];
-ld InvSqrt(ld x) {
-    ld xhalf = 0.5f * x;
-    x = 0.5;
-    for (int i = 0; i < 30; i++) x = x * (1.5 - xhalf * x * x); // 牛顿迭代法
-    return x;
+ll tmp[MXN], w[MXN], ans;
+vector<ll> g[MXN];
+struct fwt {
+    ll data[MXN];
+    void mod(ll x, ll y) {
+        for (; x <= n; x += x & (-x)) data[x] += y;
+    }
+    ll pre(ll x) {
+        ll r = 0;
+        for (; x; x ^= x & (-x)) r += data[x];
+        return r;
+    }
+} anc, cnt;
+ll fa[MXN][LG + 1], dpth[MXN], dfn[MXN], sz[MXN], id[MXN], dfnc;
+void dfs(ll p) {
+    ++dpth[p], sz[p] = 1;
+    id[dfn[p] = ++dfnc] = p;
+    for (ll i = 1; i < LG; i++) fa[p][i] = fa[fa[p][i - 1]][i - 1];
+    for (ll nx : g[p])
+        if (nx != fa[p][0]) {
+            fa[nx][0] = p;
+            dpth[nx] = dpth[p];
+            dfs(nx);
+            sz[p] += sz[nx];
+        }
+}
+void modw(ll x, ll y) {
+    ll _cnt = cnt.pre(dfn[x] + sz[x] - 1) - cnt.pre(dfn[x] - 1), delt = y - w[x];
+    if (_cnt) ans += delt;
+    anc.mod(dfn[x], delt);
+    anc.mod(dfn[x] + sz[x], -delt);
+    w[x] = y;
+}
+ll lca(ll x, ll y) {
+    if (dpth[x] < dpth[y]) swap(x, y);
+    ll tmp = dpth[x] - dpth[y];
+    for (ll i = LG; ~i; i--)
+        if ((tmp >> i) & 1) x = fa[x][i];
+    if (x == y) return x;
+    for (ll i = LG; ~i; i--)
+        if (fa[x][i] != fa[y][i]) x = fa[x][i], y = fa[y][i];
+    return fa[x][0];
+}
+ll lca(ll x, ll y, ll z) {
+    ll a = lca(x, y), b = lca(y, z);
+    return dpth[a] > dpth[b] ? a : b;
+}
+set<ll> q;
+void add(ll p) {
+    auto cur = q.insert(dfn[p]).fi, pre = cur, suf = cur;
+    --pre, ++suf;
+    ll _lca = lca(id[*pre], id[*cur], id[*suf]);
+    ans += anc.pre(dfn[p]) - anc.pre(dfn[_lca]);
+	cnt.mod(dfn[p],1);
+}
+void del(ll p) {
+    auto cur = q.find(dfn[p]), pre = cur, suf = cur;
+    --pre, ++suf;
+    ll _lca = lca(id[*pre], id[*cur], id[*suf]);
+    ans -= anc.pre(dfn[p]) - anc.pre(dfn[_lca]);
+    q.erase(cur);
+	cnt.mod(dfn[p],-1);
 }
 
 int main(int argc, char *argv[]) {
-    cout << InvSqrt(100);
-
+    freopen("esport.in", "r", stdin);
+    freopen("esport.out","w",stdout);
+    scanf("%lld", &n);
+    for (ll i = 1; i <= n; i++) scanf("%lld", tmp + i);
+    for (ll i = 1; i < n; i++) {
+        ll u, v;
+        scanf("%lld%lld", &u, &v);
+        g[u].push_back(v);
+        g[v].push_back(u);
+    }
+    dfs(1);
+    for (ll i = 1; i <= n; i++) modw(i, tmp[i]);
+    // for (ll i = 1; i <= n; i++) printf("%lld %lld %lld\n", i, dfn[i], anc.pre(dfn[i]));
+    q.insert(0);
+    q.insert(n + 1);
+    scanf("%lld", &m);
+    for (ll i = 1; i <= m; i++) {
+        ll tmp;
+        scanf("%lld", &tmp);
+        add(tmp);
+    }
+    printf("%lld\n", ans);
+    scanf("%lld", &m);
+    while (m--) {
+        ll opt, x, y;
+        scanf("%lld%lld", &opt, &x);
+        if (opt == 1)
+            add(x);
+        else if (opt == 2)
+            del(x);
+        else {
+            scanf("%lld", &y);
+            modw(x, y);
+        }
+		printf("%lld\n", ans);
+    }
     return 0;
 }

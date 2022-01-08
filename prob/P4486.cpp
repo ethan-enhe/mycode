@@ -5,10 +5,10 @@
 
 #include <bits/stdc++.h>
 
-using namespace std;
 
+typedef long long ll;
+using namespace std;
 // {{{ flow
-// 原始版费用流
 template <const int MXN, typename T = int>
 struct flow {
     const T INF = numeric_limits<T>::max();
@@ -78,14 +78,12 @@ struct flow {
         return res;
     }
 };
-// 封装的上下界网络流
 template <const int MXN, typename T = int>
 struct limflow {
     const T INF = numeric_limits<T>::max();
     flow<MXN, T> f;
     T deg[MXN];
     pair<T, T> res;
-    // 加边函数 起点 终点 流量下界 流量上界 [是否有负环=false]
     void addedge(int u, int v, T l, T r, T w, bool cycle = 0) {
         if (cycle && w < 0) {
             w = -w;
@@ -96,16 +94,14 @@ struct limflow {
         res.second += l * w;
         f.addedge(u, v, r - l, w);
     }
-    // 加单位边的函数（只求最大流，不求费用的时候用这个加边，跑的比较快）
     void adduedge(int u, int v, T l, T r) {
         deg[u] -= l, deg[v] += l;
         f.adduedge(u, v, r - l);
     }
-    // 超级源点 超级汇点 源点 汇点 [选项=1]
-    // 选项：
-    // 0->最小费用可行流
-    // 1->最小费用最大流
-    // 2->最小费用最小流
+    // Option:
+    // 0->min_cost_valid_flow
+    // 1->min_cost_max_flow
+    // 2->min_cost_min_flow
     pair<T, T> run(int ss, int st, int s, int t, int opt = 1) {
         T all = 0;
         for (int i = 1; i < MXN; i++) {
@@ -132,17 +128,61 @@ struct limflow {
     }
 };
 // }}}
-
-limflow<230> f;
+const ll MXN = 35, INF = 1e9;
+ll n, m;
+ll type[MXN][MXN], id[MXN][MXN][2], va[MXN][MXN][2];
+ll nodec = 4;
+limflow<1100,ll> f;
 int main() {
-    int n, m, s, t;
-    scanf("%d%d%d%d", &n, &m, &s, &t);
-    while (m--) {
-        int u, v, c, w;
-        scanf("%d%d%d%d", &u, &v, &c, &w);
-        f.addedge(u, v, 0, c, w);
-    }
-    auto ans = f.run(n + 1, n + 2, s, t);
-    printf("%d %d", ans.first, ans.second);
+    // freopen("P4486.in", "r", stdin);
+    // freopen("P4486.out","w",stdout);
+    scanf("%lld%lld", &n, &m);
+    for (ll i = 1; i <= n; i++)
+        for (ll j = 1; j <= m; j++) scanf("%lld", &type[i][j]);
+    for (ll i = 1; i <= n; i++)
+        for (ll j = 1; j <= m; j++) {
+            if (type[i][j]==4) scanf("%lld", &va[i][j][0]);
+            if ((type[i][j] >> 0) & 1) {
+                scanf("%lld", &va[i][j][0]);
+                ++nodec;
+                for (ll k = i; k <= n; k++) id[k][j][0] = nodec;
+            }
+            if ((type[i][j] >> 1) & 1) {
+                scanf("%lld", &va[i][j][1]);
+                ++nodec;
+                for (ll k = j; k <= m; k++) id[i][k][1] = nodec;
+            }
+            // printf("(%2d,%2d) ", id[i][j][0], id[i][j][1]);
+        }
+    for (ll i = 1; i <= n; i++)
+        for (ll j = 1; j <= m; j++) {
+            ll tmp;
+            if (type[i][j]==4) {
+                scanf("%lld", &tmp);
+                f.addedge(id[i][j][0], id[i][j][1], va[i][j][0], va[i][j][0], 0);
+                if (~tmp) {
+                    f.addedge(id[i][j][0], id[i][j][1], 0, INF, tmp);
+                    f.addedge(id[i][j][1], id[i][j][0], 0, va[i][j][0]-1, tmp);
+                }
+            }
+            if ((type[i][j] >> 0) & 1) {
+                scanf("%lld", &tmp);
+                f.addedge(3, id[i][j][0], va[i][j][0], va[i][j][0], 0);
+                if (~tmp) {
+                    f.addedge(3, id[i][j][0], 0, INF, tmp);
+                    f.addedge(id[i][j][0], 3, 0, va[i][j][0]-1, tmp);
+                }
+            }
+            if ((type[i][j] >> 1) & 1) {
+                scanf("%lld", &tmp);
+                f.addedge(id[i][j][1], 4, va[i][j][1], va[i][j][1], 0);
+                if (~tmp) {
+                    f.addedge(id[i][j][1], 4, 0, INF, tmp);
+                    f.addedge(4, id[i][j][1], 0, va[i][j][1], tmp);
+                }
+            }
+        }
+	auto res=f.run(1, 2, 3, 4,0);
+	printf("%lld",res.second);
     return 0;
 }

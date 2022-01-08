@@ -123,6 +123,7 @@ nnoremap bn :bn<CR>
 nnoremap bo :enew<CR>
 nnoremap bd :bd<CR>
 nnoremap bl :ls<CR>
+nnoremap <F10> :NERDTreeToggle<CR>
 
 let mapleader=" "
 map <leader>/ :bel 10sp term://curl cht.sh/cpp/
@@ -131,7 +132,7 @@ map <F8> :call RunCode()<CR>
 map <F9> :call CompileCode('-O2')<CR>
 map <leader><F9> :call CompileCode('-O2 -Wall -fsanitize=address,undefined')<CR>
 "map <F10> :NERDTreeToggle<CR>
-map <F10> :MarkdownPreviewToggle<CR>
+map <leader><F10> :MarkdownPreviewToggle<CR>
 map<c-c> :Commentary<CR>
 autocmd FileType cpp setlocal commentstring=//%s
 
@@ -177,12 +178,14 @@ endif
 " PLUG
 let g:mirror='https://github.com.cnpmjs.org/'
 call plug#begin()
-"Plug g:mirror.'scrooloose/nerdtree'
+Plug g:mirror.'scrooloose/nerdtree'
 Plug g:mirror.'luochen1990/rainbow'
 Plug g:mirror.'morhetz/gruvbox'
 Plug g:mirror.'tomasr/molokai'
 Plug g:mirror.'rakr/vim-one'
+Plug g:mirror.'joshdick/onedark.vim'
 Plug g:mirror.'chriskempson/base16-vim'
+Plug g:mirror.'ryanoasis/vim-devicons'
 Plug g:mirror.'tpope/vim-surround'
 Plug g:mirror.'tpope/vim-commentary'
 Plug g:mirror.'vim-airline/vim-airline'
@@ -208,12 +211,16 @@ let g:rehash256 = 1
 let g:molokai_original = 1
 let g:one_allow_italics = 1 " I love italic for comments
 let g:gruvbox_italic=1
-let g:gruvbox_number_column='bg1'
+let g:gruvbox_sign_column='bg0'
+" let g:gruvbox_number_column='bg1'
+" let g:gruvbox_color_column='bg0'
+let g:gruvbox_vert_split='bg0'
 let g:gruvbox_invert_signs=1
+
 " let g:gruvbox_improved_strings=1
 " let g:gruvbox_improved_warnings=1
 
-
+" autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
 colorscheme gruvbox
 
 syntax enable
@@ -234,6 +241,8 @@ set noshowmode
 "	  \   'cocstatus': 'coc#status'
 "	  \ },
 "	  \ }
+
+" let g:airline_theme='onedark'
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1      "tabline中当前buffer两端的分隔字符
 let g:airline#extensions#whitespace#enabled = 0
@@ -242,7 +251,9 @@ let g:airline#extensions#tabline#buffer_nr_show=1
 
 
 " highlight Normal guibg=NONE ctermbg=None
-" autocmd vimenter * NERDTree
+autocmd VimEnter * NERDTree | wincmd p
+autocmd BufWinEnter * if getcmdwintype() == '' | silent NERDTreeMirror | endif
+autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
 " autocmd BufNewFile *.cpp 0 r ~/code/template/other/cf.cpp
 
 
@@ -410,6 +421,7 @@ if g:usecoc
 	nnoremap <silent><nowait> <space>c  :<C-u>CocList commands<cr>
 	" Find symbol of current document.
 	nnoremap <silent><nowait> <space>o  :<C-u>CocList outline<cr>
+	nnoremap <silent><nowait> <space>r  :<C-u>CocList grep<cr>
 	" Search workspace symbols.
 	nnoremap <silent><nowait> <space>s  :<C-u>CocList -I symbols<cr>
 	" Do default action for next item.

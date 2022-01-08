@@ -1,14 +1,12 @@
 // File:             mcmf.cpp
 // Author:           ethan
 // Created:          01/07/22
-// Description:      mcmf
+// Description:      mxmf
 
 #include <bits/stdc++.h>
 
 using namespace std;
-
 // {{{ flow
-// 原始版费用流
 template <const int MXN, typename T = int>
 struct flow {
     const T INF = numeric_limits<T>::max();
@@ -78,14 +76,12 @@ struct flow {
         return res;
     }
 };
-// 封装的上下界网络流
 template <const int MXN, typename T = int>
 struct limflow {
     const T INF = numeric_limits<T>::max();
-    flow<MXN, T> f;
+    flow<MXN> f;
     T deg[MXN];
     pair<T, T> res;
-    // 加边函数 起点 终点 流量下界 流量上界 [是否有负环=false]
     void addedge(int u, int v, T l, T r, T w, bool cycle = 0) {
         if (cycle && w < 0) {
             w = -w;
@@ -96,16 +92,14 @@ struct limflow {
         res.second += l * w;
         f.addedge(u, v, r - l, w);
     }
-    // 加单位边的函数（只求最大流，不求费用的时候用这个加边，跑的比较快）
     void adduedge(int u, int v, T l, T r) {
         deg[u] -= l, deg[v] += l;
         f.adduedge(u, v, r - l);
     }
-    // 超级源点 超级汇点 源点 汇点 [选项=1]
-    // 选项：
-    // 0->最小费用可行流
-    // 1->最小费用最大流
-    // 2->最小费用最小流
+    // Option:
+    // 0->min_cost_valid_flow
+    // 1->min_cost_max_flow
+    // 2->min_cost_min_flow
     pair<T, T> run(int ss, int st, int s, int t, int opt = 1) {
         T all = 0;
         for (int i = 1; i < MXN; i++) {
@@ -132,17 +126,37 @@ struct limflow {
     }
 };
 // }}}
-
-limflow<230> f;
+const int INF=1e9,MXN=310;
+limflow<MXN> f;
+#define out(x) x+n
+#define in(x) x
+int n,m,k;
+int dis[MXN][MXN];
 int main() {
-    int n, m, s, t;
-    scanf("%d%d%d%d", &n, &m, &s, &t);
-    while (m--) {
-        int u, v, c, w;
-        scanf("%d%d%d%d", &u, &v, &c, &w);
-        f.addedge(u, v, 0, c, w);
-    }
-    auto ans = f.run(n + 1, n + 2, s, t);
-    printf("%d %d", ans.first, ans.second);
+	memset(dis,0x3f,sizeof(dis));
+	scanf("%d%d%d",&n,&m,&k);
+	++n;
+	while(m--){
+		int u,v,w;
+		scanf("%d%d%d",&u,&v,&w);
+		++u,++v;
+		dis[u][v]=min(dis[u][v],w);
+		dis[v][u]=min(dis[v][u],w);
+	}
+	for(int i=1;i<=n;i++)
+		for(int j=1;j<=n;j++)
+			for(int k=j<i?i:1;k<=n;k++)
+				dis[j][k]=min(dis[j][i]+dis[i][k],dis[j][k]);
+	for(int i=1;i<=n;i++)
+		for(int j=i+1;j<=n;j++)
+			if(dis[i][j]<(1e9))
+				f.addedge(out(i), in(j), 0, INF, dis[i][j]);
+	for(int i=1;i<=n;i++){
+		if(i==1)f.addedge(in(i), out(i), k, k, 0);
+		else f.addedge(in(i), out(i), 1, 1, 0);
+		f.addedge(out(i), n*2+1, 0, INF, 0);
+	}
+	printf("%d\n",f.run(n*2+2, n*2+3, in(1), n*2+1,0).second);
     return 0;
 }
+

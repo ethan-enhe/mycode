@@ -17,3 +17,8 @@
 - [ ] <https://atcoder.jp/contests/agc022/tasks/agc022_f>
 - [ ] <https://atcoder.jp/contests/agc024/tasks/agc024_e>
 - [ ] <https://atcoder.jp/contests/agc028/tasks/agc028_d>
+
+## Day 3
+
+- [ ] <https://codeforces.com/contest/1361/problem/C>
+- [ ] <https://codeforces.com/contest/962/problem/F>

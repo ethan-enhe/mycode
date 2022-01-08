@@ -1,4 +1,3 @@
-
 #include <bits/stdc++.h>
 using namespace std;
 //{{{ Def
@@ -22,8 +21,8 @@ typedef pair<ll, ll> pi;
 mt19937_64 myrand(chrono::system_clock::now().time_since_epoch().count());
 //}}}
 const ll INF = 1e18;
-const ll P = 1e9 + 7;
-const ll MXN = 1e6 + 5;
+const ll P = 998244353;
+const ll MXN = 5e3 + 5;
 //{{{ Func
 ll redu(const ll &x) {
     if (x < P) return x;
@@ -99,17 +98,43 @@ struct myvec {
     }
 };
 //}}}
-ll n, m;
-ll arr[MXN];
-ld InvSqrt(ld x) {
-    ld xhalf = 0.5f * x;
-    x = 0.5;
-    for (int i = 0; i < 30; i++) x = x * (1.5 - xhalf * x * x); // 牛顿迭代法
-    return x;
-}
+ll n, q, m, tot;
+char str[MXN], tmp[MXN];
+mll inv[MXN],ans;
 
 int main(int argc, char *argv[]) {
-    cout << InvSqrt(100);
+	freopen("future.in","r",stdin);
+	freopen("future.out","w",stdout);
+    scanf("%s", str + 1);
+    n = strlen(str + 1);
+	inv[0]=(mll)1,inv[1]=(mll)1/(mll)26;
+    for (int i = 1; i <= n; i++)
+        if (str[i] == '?') {
+			++tot;
+			inv[tot]=inv[tot-1]*inv[1];
+        }
+    scanf("%lld", &q);
+    while (q--) {
+        scanf("%s", tmp + 1);
+        m = strlen(tmp + 1);
+        for (int i = 1; i + m - 1 <= n; i++) {
+			bool f=1;
+			ll cnt=0;
+			for(int j=1;j<=m;j++){
+				char cur=str[i+j-1];
+				if(cur!=tmp[j]){
+					if(cur=='?')++cnt;
+					else{
+						f=0;
+						break;
+					}
+				}
+			}
+			if(f)
+				ans+=inv[cnt];
+        }
+    }
+	printf("%lld\n",(ll)ans);
 
     return 0;
 }
