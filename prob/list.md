@@ -22,3 +22,5 @@
 
 - [ ] <https://codeforces.com/contest/1361/problem/C>
 - [ ] <https://codeforces.com/contest/962/problem/F>
+- [ ] <https://codeforces.com/gym/103470/problem/k>
+- [ ] <https://codeforces.com/gym/103427/problem/D>

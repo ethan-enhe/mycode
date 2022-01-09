@@ -1,8 +1,10 @@
-" :CocConfig
-" {
+"{
 "    "clangd.semanticHighlighting": true,
 "    "coc.preferences.semanticTokensHighlights": false,
-"	 "diagnostic.warningSign":"!!",
+"	"diagnostic.errorSign": "✘",
+"    "diagnostic.warningSign": "",
+"    "diagnostic.infoSign": "",
+"    "diagnostic.hintSign": "•",
 "	  "suggest.completionItemKindLabels": {
 "		"keyword": "\uf1de",
 "		"variable": "\ue79b",
@@ -31,7 +33,7 @@
 "		"typeParameter": "\uf728",
 "		"default": "\uf29c"
 "	},
-"	"suggest.labelMaxLength": 50
+"  "suggest.labelMaxLength": 50
 "}
 "
 "~/.clang-format
@@ -105,6 +107,7 @@ set autowrite
 set autoread
 set hlsearch
 set incsearch
+" set inccommand=nosplit
 set diffopt+=vertical
 
 " MAP
@@ -123,7 +126,7 @@ nnoremap bn :bn<CR>
 nnoremap bo :enew<CR>
 nnoremap bd :bd<CR>
 nnoremap bl :ls<CR>
-nnoremap <F10> :NERDTreeToggle<CR>
+" nnoremap <F10> :NERDTreeToggle<CR>
 
 let mapleader=" "
 map <leader>/ :bel 10sp term://curl cht.sh/cpp/
@@ -132,7 +135,7 @@ map <F8> :call RunCode()<CR>
 map <F9> :call CompileCode('-O2')<CR>
 map <leader><F9> :call CompileCode('-O2 -Wall -fsanitize=address,undefined')<CR>
 "map <F10> :NERDTreeToggle<CR>
-map <leader><F10> :MarkdownPreviewToggle<CR>
+map <F10> :MarkdownPreviewToggle<CR>
 map<c-c> :Commentary<CR>
 autocmd FileType cpp setlocal commentstring=//%s
 
@@ -178,7 +181,7 @@ endif
 " PLUG
 let g:mirror='https://github.com.cnpmjs.org/'
 call plug#begin()
-Plug g:mirror.'scrooloose/nerdtree'
+" Plug g:mirror.'scrooloose/nerdtree'
 Plug g:mirror.'luochen1990/rainbow'
 Plug g:mirror.'morhetz/gruvbox'
 Plug g:mirror.'tomasr/molokai'
@@ -192,13 +195,16 @@ Plug g:mirror.'vim-airline/vim-airline'
 Plug g:mirror.'vim-airline/vim-airline-themes'
 Plug g:mirror.'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 
-Plug g:mirror.'ethan-enhe/vim-snippets/'
+" Plug g:mirror.'tribela/vim-transparent'
+
+" Plug g:mirror.'SirVer/ultisnips'
 if g:usecoc
+	Plug g:mirror.'ethan-enhe/vim-snippets/'
 	Plug g:mirror.'neoclide/coc.nvim', {'branch': 'release'}
 	Plug g:mirror.'jackguo380/vim-lsp-cxx-highlight'
 else
 
-	Plug g:mirror.'jayli/vim-easycomplete'
+	" Plug g:mirror.'jayli/vim-easycomplete'
 	" Plug g:mirror.'skywind3000/vim-auto-popmenu'
 	" Plug g:mirror.'w0rp/ale'
 endif
@@ -215,7 +221,7 @@ let g:gruvbox_sign_column='bg0'
 " let g:gruvbox_number_column='bg1'
 " let g:gruvbox_color_column='bg0'
 let g:gruvbox_vert_split='bg0'
-let g:gruvbox_invert_signs=1
+" let g:gruvbox_invert_signs=1
 
 " let g:gruvbox_improved_strings=1
 " let g:gruvbox_improved_warnings=1
@@ -249,11 +255,13 @@ let g:airline#extensions#whitespace#enabled = 0
 let g:airline#extensions#whitespace#symbol = '!'
 let g:airline#extensions#tabline#buffer_nr_show=1
 
+" let g:airline_section_z = ' %{strftime("%-I:%M %p")}'
+
 
 " highlight Normal guibg=NONE ctermbg=None
-autocmd VimEnter * NERDTree | wincmd p
-autocmd BufWinEnter * if getcmdwintype() == '' | silent NERDTreeMirror | endif
-autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+" autocmd VimEnter * NERDTree | wincmd p
+" autocmd BufWinEnter * if getcmdwintype() == '' | silent NERDTreeMirror | endif
+" autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
 " autocmd BufNewFile *.cpp 0 r ~/code/template/other/cf.cpp
 
 
@@ -421,7 +429,7 @@ if g:usecoc
 	nnoremap <silent><nowait> <space>c  :<C-u>CocList commands<cr>
 	" Find symbol of current document.
 	nnoremap <silent><nowait> <space>o  :<C-u>CocList outline<cr>
-	nnoremap <silent><nowait> <space>r  :<C-u>CocList grep<cr>
+	nnoremap <silent><nowait> <space>g  :<C-u>CocList grep<cr>
 	" Search workspace symbols.
 	nnoremap <silent><nowait> <space>s  :<C-u>CocList -I symbols<cr>
 	" Do default action for next item.
