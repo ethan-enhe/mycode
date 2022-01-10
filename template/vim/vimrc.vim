@@ -72,9 +72,9 @@ set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
 set termencoding=utf-8
 set encoding=utf-8
 set number
+" set relativenumber
 "set cul
 "set cuc
-"set relativenumber
 set ruler
 set showcmd
 set mouse=a
@@ -165,13 +165,11 @@ func! RunCode()
 	let s:pre=has("nvim")?"bel 10sp term://":"!"
 	if &filetype == 'cpp'
 		let s:suf=g:iswindows?expand('%<').'.exe':'\\time -f \"\\n----\\n\%Mkb \%Us\" ./'.expand('%<')
-		" let s:suf=g:iswindows?expand('%<').'.exe':'\time -f "\n----\n%Mkb %Us" ./'.expand('%<')
 	elseif &filetype == 'python'
 		let s:suf='python3 '.expand('%')
 	elseif &filetype == 'lua'
 		let s:suf='lua '.expand('%')
 	endif
-	" exec 'H '.s:suf
 	exec s:pre.s:suf
 endfunction
 if empty(glob(stdpath('config')."/autoload/"))
@@ -195,9 +193,6 @@ Plug g:mirror.'vim-airline/vim-airline'
 Plug g:mirror.'vim-airline/vim-airline-themes'
 Plug g:mirror.'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 
-" Plug g:mirror.'tribela/vim-transparent'
-
-" Plug g:mirror.'SirVer/ultisnips'
 if g:usecoc
 	Plug g:mirror.'ethan-enhe/vim-snippets/'
 	Plug g:mirror.'neoclide/coc.nvim', {'branch': 'release'}
@@ -234,19 +229,6 @@ syntax enable
 set termguicolors
 set background=dark
 set noshowmode
-"let g:lightline = {
-"	  \ 'colorscheme': 'gruvbox',
-"	  "\ 'colorscheme': 'solarized',
-"	  \ 'active': {
-"	  \   'left': [ [ 'mode', 'paste' ],
-"	  \             [ 'cocstatus', 'readonly', 'filename', 'modified' ] ]
-"	  \ },
-"	  \ 'separator':{ 'left': "\ue0bc", 'right': "\ue0be" },
-"	  \ 'subseparator':{ 'left': "\ue0bd", 'right': "\ue0bf" },
-"	  \ 'component_function': {
-"	  \   'cocstatus': 'coc#status'
-"	  \ },
-"	  \ }
 
 " let g:airline_theme='onedark'
 let g:airline_powerline_fonts = 1
@@ -258,12 +240,7 @@ let g:airline#extensions#tabline#buffer_nr_show=1
 " let g:airline_section_z = ' %{strftime("%-I:%M %p")}'
 
 
-" highlight Normal guibg=NONE ctermbg=None
-" autocmd VimEnter * NERDTree | wincmd p
-" autocmd BufWinEnter * if getcmdwintype() == '' | silent NERDTreeMirror | endif
-" autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
 " autocmd BufNewFile *.cpp 0 r ~/code/template/other/cf.cpp
-
 
 if g:usecoc
 	"{{{ coc.nvim
