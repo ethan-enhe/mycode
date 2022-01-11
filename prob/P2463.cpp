@@ -2,6 +2,7 @@
 #define log(fmt...) fprintf
 using namespace std;
 const int MXM=1005,MXN=MXM*MXM,LG=31-__builtin_clz(MXN);
+//asdaadd
 
 namespace SA{
 	typedef int arrn[MXN];
