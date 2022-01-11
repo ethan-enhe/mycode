@@ -4,7 +4,6 @@
 // Description:      mcmf
 
 #include <bits/stdc++.h>
-#include <limits>
 
 using namespace std;
 
@@ -136,25 +135,37 @@ template <const int MXN, typename T = int> struct limflow {
 };
 // }}}
 
-#define in(x) x
-#define out(x) x + n
-#define s 2 * n + 1
-#define t 2 * n + 2
-int n, m;
-limflow<305> f;
+const int MXN=500;
+flow<MXN> f;
+int m,n,tot;
+#define comp(x) x
+#define table(x) m+x
+#define s m+n+1
+#define t m+n+2
 int main() {
-
-	scanf("%d%d", &n, &m);
-	for (int i = 1; i <= n; i++) {
-		f.addedge(in(i), out(i), 1, 1, 0);
-		f.addedge(s, in(i), 0, 1, 1);
-		f.addedge(out(i), t, 0, 1, 0);
+	scanf("%d%d",&m,&n);
+	for(int i=1;i<=m;i++){
+		int tmp;
+		scanf("%d",&tmp);
+		tot+=tmp;
+		f.adduedge(s, comp(i), tmp);
+		for(int j=1;j<=n;j++)
+			f.adduedge(comp(i),table(j), 1);
 	}
-	while (m--) {
-		int u, v;
-		scanf("%d%d", &u, &v);
-		f.addedge(out(u), in(v), 0, 1, 0);
+	for(int i=1;i<=n;i++){
+		int tmp;
+		scanf("%d",&tmp);
+		f.adduedge(table(i), t, tmp);
 	}
-	auto res=f.run()
+	auto delt=f.run(s, t).first;
+	if(delt==tot)puts("1");
+	else return puts("0"),0;
+	for(int i=1;i<=m;i++){
+		for(auto j:f.g[i])
+			if(!j.c)
+				printf("%d ",j.v-m);
+		putchar('\n');
+	}
 	return 0;
 }
+

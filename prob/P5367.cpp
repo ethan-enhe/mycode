@@ -22,7 +22,7 @@ typedef pair<ll, ll> pi;
 mt19937_64 myrand(chrono::system_clock::now().time_since_epoch().count());
 //}}}
 ce ll INF = 1e18;
-ce ll P = 1e9 + 7;
+ce ll P = 998244353;
 ce ll MXN = 1e6 + 5;
 //{{{ Func
 ce ll redu(const ll &x) {
@@ -107,10 +107,27 @@ template <typename T> struct myvec {
 	}
 };
 //}}}
-ll n, m;
-ll arr[MXN];
-
+ll n, m, sum[MXN],arr[MXN];
+mll fac(1),ans(1);
+void add(ll x){
+	for(;x<=n;x+=x&(-x))
+		sum[x]++;
+}
+ll pre(ll x){
+	ll r=0;
+	for(;x;x^=x&(-x))
+		r += sum[x];
+	return r;
+}
 int main(int argc, char *argv[]) {
-	// asdad
+	scanf("%lld",&n);
+	for(int i=1;i<=n;i++)
+		scanf("%lld", arr + i);
+	for(int i=n;i;i--){
+		ans += (mll)pre(arr[i]) * fac;
+		fac*=(mll)(n-i+1);
+		add(arr[i]);
+	}
+	printf("%lld\n",(ll)ans);
 	return 0;
 }

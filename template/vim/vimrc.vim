@@ -1,10 +1,10 @@
 "{
-"    "clangd.semanticHighlighting": true,
-"    "coc.preferences.semanticTokensHighlights": false,
+"	"clangd.semanticHighlighting": true,
+"	"coc.preferences.semanticTokensHighlights": false,
 "	"diagnostic.errorSign": "✘",
-"    "diagnostic.warningSign": "",
-"    "diagnostic.infoSign": "",
-"    "diagnostic.hintSign": "•",
+"	"diagnostic.warningSign": "",
+"	"diagnostic.infoSign": "",
+"	"diagnostic.hintSign": "•",
 "	  "suggest.completionItemKindLabels": {
 "		"keyword": "\uf1de",
 "		"variable": "\ue79b",
@@ -37,8 +37,9 @@
 "}
 "
 "~/.clang-format
-"BasedOnStyle: google
-"IndentWidth: 4
+" IndentWidth: 4
+" TabWidth: 4
+" UseTab: ForContinuationAndIndentation
 "
 "call mkdir(stdpath('config'),'p')
 "exe 'edit' stdpath('config').'/init.vim'
@@ -207,12 +208,13 @@ endif
 call plug#end()
 
 " COLOR
+let g:indentLine_char_list = ['|', '¦', '┆', '┊']
 let g:rainbow_active = 1
 let base16colorspace=256
 let g:rehash256 = 1
 let g:molokai_original = 1
-let g:one_allow_italics = 1 " I love italic for comments
-let g:gruvbox_italic=1
+" let g:one_allow_italics = 1 " I love italic for comments
+" let g:gruvbox_italic=1
 let g:gruvbox_sign_column='bg0'
 " let g:gruvbox_number_column='bg1'
 " let g:gruvbox_color_column='bg0'
@@ -235,7 +237,7 @@ set noshowmode
 
 " let g:airline_theme='onedark'
 let g:airline_powerline_fonts = 1
-let g:airline#extensions#tabline#enabled = 1      "tabline中当前buffer两端的分隔字符
+let g:airline#extensions#tabline#enabled = 1	  "tabline中当前buffer两端的分隔字符
 let g:airline#extensions#whitespace#enabled = 0
 let g:airline#extensions#whitespace#symbol = '!'
 let g:airline#extensions#tabline#buffer_nr_show=1
@@ -282,9 +284,9 @@ if g:usecoc
 	" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
 	" other plugin before putting this into your config.
 	inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
+	  \ pumvisible() ? "\<C-n>" :
+	  \ <SID>check_back_space() ? "\<TAB>" :
+	  \ coc#refresh()
 
 	inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
@@ -391,10 +393,10 @@ if g:usecoc
 	command! -nargs=0 Format :call CocAction('format')
 
 	" Add `:Fold` command to fold current buffer.
-	command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+	command! -nargs=? Fold :call	 CocAction('fold', <f-args>)
 
 	" Add `:OR` command for organize imports of the current buffer.
-	command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
+	command! -nargs=0 OR   :call	 CocAction('runCommand', 'editor.action.organizeImport')
 	" Add (Neo)Vim's native statusline support.
 	" NOTE: Please see `:h coc-status` for integrations with external plugins that
 	" provide custom statusline: lightline.vim, vim-airline.
