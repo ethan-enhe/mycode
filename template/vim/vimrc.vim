@@ -192,6 +192,7 @@ Plug g:mirror.'tpope/vim-commentary'
 Plug g:mirror.'vim-airline/vim-airline'
 Plug g:mirror.'vim-airline/vim-airline-themes'
 Plug g:mirror.'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
+" Plug g:mirror.'Yggdroot/indentLine'
 
 if g:usecoc
 	Plug g:mirror.'ethan-enhe/vim-snippets/'
@@ -226,6 +227,8 @@ colorscheme gruvbox
 
 syntax enable
 
+
+set list lcs=tab:\|\ 
 set termguicolors
 set background=dark
 set noshowmode
