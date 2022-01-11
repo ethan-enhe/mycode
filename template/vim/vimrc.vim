@@ -184,7 +184,7 @@ call plug#begin()
 Plug g:mirror.'luochen1990/rainbow'
 Plug g:mirror.'morhetz/gruvbox'
 Plug g:mirror.'tomasr/molokai'
-Plug g:mirror.'rakr/vim-one'
+" Plug g:mirror.'rakr/vim-one'
 Plug g:mirror.'joshdick/onedark.vim'
 Plug g:mirror.'chriskempson/base16-vim'
 Plug g:mirror.'ryanoasis/vim-devicons'
@@ -225,7 +225,7 @@ let g:gruvbox_vert_split='bg0'
 " let g:gruvbox_improved_warnings=1
 
 " autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
-colorscheme gruvbox
+colorscheme onedark
 
 syntax enable
 
