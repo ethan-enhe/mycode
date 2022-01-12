@@ -1,41 +1,3 @@
-"{
-"	"clangd.semanticHighlighting": true,
-"	"coc.preferences.semanticTokensHighlights": false,
-"	"diagnostic.errorSign": "✘",
-"	"diagnostic.warningSign": "",
-"	"diagnostic.infoSign": "",
-"	"diagnostic.hintSign": "•",
-"	  "suggest.completionItemKindLabels": {
-"		"keyword": "\uf1de",
-"		"variable": "\ue79b",
-"		"value": "\uf89f",
-"		"operator": "\u03a8",
-"		"constructor": "\uf0ad",
-"		"function": "\u0192",
-"		"reference": "\ufa46",
-"		"constant": "\uf8fe",
-"		"method": "\uf09a",
-"		"struct": "\ufb44",
-"		"class": "\uf0e8",
-"		"interface": "\uf417",
-"		"text": "\ue612",
-"		"enum": "\uf435",
-"		"enumMember": "\uf02b",
-"		"module": "\uf40d",
-"		"color": "\ue22b",
-"		"property": "\ue624",
-"		"field": "\uf9be",
-"		"unit": "\uf475",
-"		"event": "\ufacd",
-"		"file": "\uf723",
-"		"folder": "\uf114",
-"		"snippet": "\ue60b",
-"		"typeParameter": "\uf728",
-"		"default": "\uf29c"
-"	},
-"  "suggest.labelMaxLength": 50
-"}
-"
 "~/.clang-format
 " IndentWidth: 4
 " TabWidth: 4
@@ -43,13 +5,8 @@
 "
 "call mkdir(stdpath('config'),'p')
 "exe 'edit' stdpath('config').'/init.vim'
-"
-"set runtimepath^=~/.vim runtimepath+=~/.vim/after
-"let &packpath = &runtimepath
-"source ~/.vimrc
 
-
-" Basic
+" {{{ BASIC
 set guifont=Consolas:h14
 set backspace=indent,eol,start
 set guioptions=
@@ -110,8 +67,8 @@ set hlsearch
 set incsearch
 " set inccommand=nosplit
 set diffopt+=vertical
-
-" MAP
+"}}}
+" {{{ MAP
 if !g:usecoc
 	inoremap ' ''<LEFT>
 	inoremap " ""<LEFT>
@@ -138,8 +95,9 @@ map <leader><F9> :call CompileCode('-O2 -Wall -fsanitize=address,undefined')<CR>
 "map <F10> :NERDTreeToggle<CR>
 map <F10> :MarkdownPreviewToggle<CR>
 map<c-c> :Commentary<CR>
+"}}}
+"{{{ CPP SETTING
 autocmd FileType cpp setlocal commentstring=//%s
-
 let s:res=""
 function! s:OnEvent(job_id, data, event) dict
 	if a:event == 'exit'
@@ -173,11 +131,12 @@ func! RunCode()
 	endif
 	exec s:pre.s:suf
 endfunction
+"}}}
+" {{{ PLUG
 if empty(glob(stdpath('config')."/autoload/"))
 	exec "!curl -fLo ".stdpath('config')."/autoload/plug.vim --create-dirs https://ethan_enhe.coding.net/p/code/d/code/git/raw/master/template/vim/plug.vim"
 endif
 
-" PLUG
 let g:mirror='https://github.com.cnpmjs.org/'
 call plug#begin()
 " Plug g:mirror.'scrooloose/nerdtree'
@@ -200,6 +159,8 @@ Plug g:mirror.'kana/vim-textobj-indent'
 " Plug g:mirror.'kana/vim-textobj-syntax'
 " Plug g:mirror.'kana/vim-textobj-function', { 'for':['c', 'cpp', 'vim', 'java'] }
 Plug g:mirror.'sgur/vim-textobj-parameter'
+
+" Plug g:mirror.'voldikss/vim-floaterm'
 if g:usecoc
 	Plug g:mirror.'ethan-enhe/vim-snippets/'
 	Plug g:mirror.'neoclide/coc.nvim', {'branch': 'release'}
@@ -211,8 +172,8 @@ else
 	" Plug g:mirror.'w0rp/ale'
 endif
 call plug#end()
-
-" COLOR
+"}}}
+" {{{ COLOR
 let g:indentLine_char_list = ['|', '¦', '┆', '┊']
 let g:rainbow_active = 1
 let base16colorspace=256
@@ -249,12 +210,47 @@ let g:airline#extensions#tabline#buffer_nr_show=1
 
 " let g:airline_section_z = ' %{strftime("%-I:%M %p")}'
 
-
-" autocmd BufNewFile *.cpp 0 r ~/code/template/other/cf.cpp
-
+"}}}
 if g:usecoc
-	"{{{ coc.nvim
-	let g:coc_global_extensions = ['coc-clangd','coc-markdownlint', 'coc-pairs','coc-json','coc-snippets','coc-lists']
+	"{{{ COC_CONFIG
+	call coc#config("suggest.labelMaxLength", 50)
+	call coc#config("clangd.semanticHighlighting",v:true)
+	call coc#config("coc.preferences.semanticTokensHighlights", v:false)
+	call coc#config("diagnostic.errorSign", "✘")
+	call coc#config("diagnostic.warningSign", "")
+	call coc#config("diagnostic.infoSign", "")
+	call coc#config("diagnostic.hintSign", "•")
+	call coc#config("suggest.completionItemKindLabels",{
+				\		"keyword": "\uf1de",
+				\		"variable": "\ue79b",
+				\		"value": "\uf89f",
+				\		"operator": "\u03a8",
+				\		"constructor": "\uf0ad",
+				\		"function": "\u0192",
+				\		"reference": "\ufa46",
+				\		"constant": "\uf8fe",
+				\		"method": "\uf09a",
+				\		"struct": "\ufb44",
+				\		"class": "\uf0e8",
+				\		"interface": "\uf417",
+				\		"text": "\ue612",
+				\		"enum": "\uf435",
+				\		"enumMember": "\uf02b",
+				\		"module": "\uf40d",
+				\		"color": "\ue22b",
+				\		"property": "\ue624",
+				\		"field": "\uf9be",
+				\		"unit": "\uf475",
+				\		"event": "\ufacd",
+				\		"file": "\uf723",
+				\		"folder": "\uf114",
+				\		"snippet": "\ue60b",
+				\		"typeParameter": "\uf728",
+				\		"default": "\uf29c"
+				\	})
+	"}}}
+	"{{{ COC
+	let g:coc_global_extensions = ['coc-clangd','coc-markdownlint', 'coc-pairs','coc-json','coc-snippets','coc-lists','coc-explorer']
 	autocmd FileType * let b:coc_pairs_disabled = ['<']
 	" Use autocmd to force lightline update.
 	"autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
@@ -411,7 +407,8 @@ if g:usecoc
 	" Show all diagnostics.
 	nnoremap <silent><nowait> <space>a  :<C-u>CocList diagnostics<cr>
 	" Manage extensions.
-	nnoremap <silent><nowait> <space>e  :<C-u>CocList extensions<cr>
+	" nnoremap <silent><nowait> <space>e  :<C-u>CocList extensions<cr>
+	nnoremap <silent><nowait> <space>e  <Cmd>CocCommand explorer<CR>
 	" Show commands.
 	nnoremap <silent><nowait> <space>c  :<C-u>CocList commands<cr>
 	" Find symbol of current document.
@@ -426,7 +423,7 @@ if g:usecoc
 	" Resume latest coc list.
 	nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 	"}}}
-	"{{{ coc-snippets
+	"{{{ COC-SNIP
 	" Use <C-l> for trigger snippet expand.
 	imap <C-l> <Plug>(coc-snippets-expand)
 	" Use <C-j> for select text for visual placeholder of snippet.
@@ -440,8 +437,91 @@ if g:usecoc
 	" Use <leader>x for convert visual selected code to snippet
 	xmap <leader>x  <Plug>(coc-convert-snippet)
 	"}}}
+	" {{{ COC-EXP
+	augroup vime_coc_explorer_group
+        autocmd!
+        " autocmd WinEnter * if &filetype == 'coc-explorer' && winnr('$') == 1 | q | endif
+        autocmd TabLeave * if &filetype == 'coc-explorer' | wincmd w | endif
+    augroup END
+	call coc#config("explorer.icon.enableNerdfont", v:true)
+    call coc#config("explorer.contentWidthType", "win-width")
+    call coc#config("explorer.bookmark.child.template", "[selection | 1] [filename] [position] - [annotation]")
+    call coc#config("explorer.file.column.icon.modified", "•")
+    call coc#config("explorer.file.column.icon.deleted", "✗")
+    call coc#config("explorer.file.column.icon.untracked", "★")
+    call coc#config("explorer.file.column.icon.renamed", "➜")
+    call coc#config("explorer.file.column.icon.unmerged", "")
+    call coc#config("explorer.file.column.icon.ignored", "ⁱ")
+    call coc#config("explorer.keyMappings.global", {
+                \ 's': v:false,
+                \ 't': v:false,
+                \ 'E': v:false,
+                \ 'e': v:false,
+                \ 'zh': v:false,
+                \ 'g.': v:false,
+                \ 'p': v:false,
+    \ })
+    call coc#config("explorer.keyMappings.global", {
+      \ 'k': 'nodePrev',
+      \ 'j': 'nodeNext',
+      \ 'h': ["wait", 'collapse'],
+      \ 'l': ["wait", 'expandable?', 'expand', 'open'],
+      \ 'L': ["wait", 'expand:recursive'],
+      \ 'H': ["wait", 'collapse:recursive'],
+      \ 'K': ["wait", 'expandablePrev'],
+      \ 'J': ["wait", 'expandableNext'],
+      \ 'o': ["wait", 'expanded?', 'collapse', 'expand'],
+      \ '<cr>': ["wait", 'expandable?', 'cd', 'open'],
+      \ '<bs>': ["wait", 'gotoParent'],
+      \ 'r': 'refresh',
+      \
+      \ 's': ["wait", 'toggleSelection', 'normal:j'],
+      \ 'S': ["wait", 'toggleSelection', 'normal:k'],
+      \ '*': ["wait", 'toggleSelection'],
+      \ 'gs': ["wait", "reveal:select"],
+      \ '<dot>': 'toggleHidden',
+      \
+      \ '<c-s>': 'open:split',
+      \ '<c-v>': 'open:vsplit',
+      \ '<c-t>': 'open:tab',
+      \
+      \ 'dd': 'cutFile',
+      \ 'Y': 'copyFile',
+      \ 'D': 'delete',
+      \ 'P': 'pasteFile',
+      \ 'R': 'rename',
+      \ 'N': 'addFile',
+      \ 'yp': 'copyFilepath',
+      \ 'yn': 'copyFilename',
+      \
+      \ 'pl': 'previewOnHover:toggle:labeling',
+      \ 'pc': 'previewOnHover:toggle:content',
+      \
+      \ '<M-x>': 'systemExecute',
+      \ 'f': 'search',
+      \ 'F': 'searchRecursive',
+      \
+      \ '<tab>': 'actionMenu',
+      \ '?': 'help',
+      \ 'q': 'quit',
+      \ '<esc>': 'esc',
+      \
+      \ 'gf': 'gotoSource:file',
+      \ 'gb': 'gotoSource:buffer',
+      \ '[[': ["wait", 'indentPrev'],
+      \ ']]': ["wait", 'indentNext'],
+      \
+      \ '<M-k>': ["wait", 'markPrev:diagnosticError'],
+      \ '<M-j>': ["wait", 'markNext:diagnosticError'],
+      \
+      \ '<leader>gk': ["wait", 'markPrev:git'],
+      \ '<leader>gj': ["wait", 'markNext:git'],
+      \ '<leader>gh': 'gitStage',
+      \ '<leader>gu': 'gitUnstage'
+    \ })
+	" }}}
 else
-	" ale-setting {{{
+	" {{{ ALE
 	"let g:ale_set_highlights = 0
 	""自定义error和warning图标
 	"let g:ale_sign_error = '>>'
@@ -487,7 +567,7 @@ else
 	"		\			[ 'percent' ],
 	"		\			[ 'fileformat', 'fileencoding', 'filetype'] ] }
 	" }}}
-	" {{{vap
+	" {{{ VAP
 	" enable this plugin for filetypes, '*' for all files.
 	let g:apc_enable_ft = {'*':1}
 

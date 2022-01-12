@@ -1,7 +1,7 @@
 #include<bits/stdc++.h>
 using namespace std;
 int main(){
-	freopen("test.in","r",stdin);
+	cout<<__PRETTY_FUNCTION__<<":"<<123<<endl;
 	return 0;
 
 }
