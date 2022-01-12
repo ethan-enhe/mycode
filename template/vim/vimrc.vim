@@ -230,7 +230,7 @@ let g:gruvbox_vert_split='bg0'
 " let g:gruvbox_improved_warnings=1
 
 " autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
-colorscheme onedark
+colorscheme gruvbox
 
 syntax enable
 
