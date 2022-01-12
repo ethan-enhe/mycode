@@ -374,10 +374,10 @@ if g:usecoc
 	omap if <Plug>(coc-funcobj-i)
 	xmap af <Plug>(coc-funcobj-a)
 	omap af <Plug>(coc-funcobj-a)
-	xmap ic <Plug>(coc-classobj-i)
-	omap ic <Plug>(coc-classobj-i)
-	xmap ac <Plug>(coc-classobj-a)
-	omap ac <Plug>(coc-classobj-a)
+	xmap is <Plug>(coc-classobj-i)
+	omap is <Plug>(coc-classobj-i)
+	xmap as <Plug>(coc-classobj-a)
+	omap as <Plug>(coc-classobj-a)
 
 	" Remap <C-f> and <C-b> for scroll float windows/popups.
 	if has('nvim-0.4.0') || has('patch-8.2.0750')
