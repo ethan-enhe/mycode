@@ -1,3 +1,4 @@
+
 #include <bits/stdc++.h>
 using namespace std;
 //{{{ Def
@@ -23,23 +24,21 @@ typedef __uint128_t u128;
 mt19937_64 myrand(chrono::system_clock::now().time_since_epoch().count());
 //}}}
 //{{{ FastMod
-struct fastmod {
-	typedef unsigned long long ull;
-	typedef __uint128_t u128;
+struct brt {
 	ull m, b;
-	constexpr fastmod(const ull &m = 1) : m(m), b((u128(1) << 64) / m) {}
-	friend constexpr inline ull operator/(const ull &a, const fastmod &mod) {
+	ce brt(const ull &m = 1) : m(m), b((u128(1) << 64) / m) {}
+	friend ce ull operator/(const ull &a, const brt &mod) {
 		ull r = (u128(mod.b) * a >> 64) + 1;
 		return r - ((a - r * mod.m) >> 63);
 	}
-	friend constexpr inline ull operator%(const ull &a, const fastmod &mod) {
+	friend ce ull operator%(const ull &a, const brt &mod) {
 		ull r = a - mod.m * (u128(mod.b) * a >> 64);
 		return r >= mod.m ? r - mod.m : r;
 	}
 };
 //}}}
 ce ll INF = 1e18;
-ce fastmod P(1e9 + 7);
+ce brt P(1e9 + 7);
 ce ll MXN = 1e6 + 5;
 //{{{ Func
 template <typename T> ce T qpow(T x, ll y) {
@@ -100,18 +99,18 @@ ce mll ltm(const ll &x) { return mll(x % P); }
 template <typename T> struct myvec {
 	T *v;
 	int sz, dsz;
-	ce myvec() { v = NULL, sz = dsz = 0; }
+	myvec() { v = NULL, sz = dsz = 0; }
 	~myvec() { free(v); }
-	ce operator T *() const { return v; }
-	ce T *begin() { return v; }
-	ce T *end() { return v + sz; }
-	ce void rsz(int x) { v = (T *)realloc(v, sizeof(T) * (dsz = sz = x)); }
-	ce void pb(T x) {
+	operator T *() const { return v; }
+	T *begin() { return v; }
+	T *end() { return v + sz; }
+	void rsz(int x) { v = (T *)realloc(v, sizeof(T) * (dsz = sz = x)); }
+	void pb(T x) {
 		if (sz == dsz)
 			v = (T *)realloc(v, sizeof(T) * (dsz = dsz << 1 | 1));
 		v[sz++] = x;
 	}
-	ce void fill(T x) {
+	void fill(T x) {
 		for (int i = 0; i < sz; i++)
 			v[i] = x;
 	}
