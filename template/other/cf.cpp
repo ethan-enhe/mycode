@@ -23,23 +23,23 @@ typedef __uint128_t u128;
 mt19937_64 myrand(chrono::system_clock::now().time_since_epoch().count());
 //}}}
 //{{{ FastMod
-struct fastmod {
+struct brt {
 	typedef unsigned long long ull;
 	typedef __uint128_t u128;
-	ull b, m;
-	constexpr fastmod(const ull &m = 1) : m(m), b((u128(1) << 64) / m) {}
-	friend constexpr inline ull operator/(const ull &a, const fastmod &mod) {
+	ull m, b;
+	constexpr brt(const ull &m = 1) : m(m), b((u128(1) << 64) / m) {}
+	friend constexpr inline ull operator/(const ull &a, const brt &mod) {
 		ull r = (u128(mod.b) * a >> 64) + 1;
 		return r - ((a - r * mod.m) >> 63);
 	}
-	friend constexpr inline ull operator%(const ull &a, const fastmod &mod) {
+	friend constexpr inline ull operator%(const ull &a, const brt &mod) {
 		ull r = a - mod.m * (u128(mod.b) * a >> 64);
 		return r >= mod.m ? r - mod.m : r;
 	}
 };
 //}}}
 ce ll INF = 1e18;
-ce ll P = 1e9 + 7;
+ce brt P(1e9 + 7);
 ce ll MXN = 1e6 + 5;
 //{{{ Func
 template <typename T> ce T qpow(T x, ll y) {
@@ -81,17 +81,17 @@ struct mll {
 	ce explicit mll(ll _v = 0) : v(_v) {}
 	ce explicit operator ll() const { return v; }
 	ce mll operator+(const mll &y) const { return mll((v + y.v) % P); }
-	ce mll operator-(const mll &y) const { return mll((P + v - y.v) % P); }
+	ce mll operator-(const mll &y) const { return mll((P.m + v - y.v) % P); }
 	ce mll operator*(const mll &y) const { return mll((v * y.v) % P); }
 	ce mll operator/(const mll &y) const {
-		return mll((v * (ll)qpow(y, P - 2)) % P);
+		return mll((v * (ll)qpow(y, P.m - 2)) % P);
 	}
 	ce mll &operator=(const mll &y) { return v = y.v, *this; }
 	ce mll &operator+=(const mll &y) { return v = (v + y.v) % P, *this; }
-	ce mll &operator-=(const mll &y) { return v = (P + v - y.v) % P, *this; }
+	ce mll &operator-=(const mll &y) { return v = (P.m + v - y.v) % P, *this; }
 	ce mll &operator*=(const mll &y) { return v = v * y.v % P, *this; }
 	ce mll &operator/=(const mll &y) {
-		return v = v * (ll)qpow(y, P - 2) % P, *this;
+		return v = v * (ll)qpow(y, P.m - 2) % P, *this;
 	}
 	ce bool operator==(const mll &y) const { return v == y.v; }
 	ce bool operator!=(const mll &y) const { return v != y.v; }
