@@ -19,19 +19,29 @@ typedef unsigned long long ull;
 typedef double db;
 typedef long double ld;
 typedef pair<ll, ll> pi;
+typedef __uint128_t u128;
 mt19937_64 myrand(chrono::system_clock::now().time_since_epoch().count());
+//}}}
+//{{{ FastMod
+struct fastmod {
+	typedef unsigned long long ull;
+	typedef __uint128_t u128;
+	ull b, m;
+	constexpr fastmod(const ull &m = 1) : m(m), b((u128(1) << 64) / m) {}
+	friend constexpr inline ull operator/(const ull &a, const fastmod &mod) {
+		ull r = (u128(mod.b) * a >> 64) + 1;
+		return r - ((a - r * mod.m) >> 63);
+	}
+	friend constexpr inline ull operator%(const ull &a, const fastmod &mod) {
+		ull r = a - mod.m * (u128(mod.b) * a >> 64);
+		return r >= mod.m ? r - mod.m : r;
+	}
+};
 //}}}
 ce ll INF = 1e18;
 ce ll P = 1e9 + 7;
 ce ll MXN = 1e6 + 5;
 //{{{ Func
-ce ll redu(const ll &x) {
-	if (x < P)
-		return x;
-	if (x < (P << 1))
-		return x - P;
-	return x % P;
-}
 template <typename T> ce T qpow(T x, ll y) {
 	T r(1);
 	while (y) {
@@ -70,23 +80,23 @@ struct mll {
 	ll v;
 	ce explicit mll(ll _v = 0) : v(_v) {}
 	ce explicit operator ll() const { return v; }
-	ce mll operator+(const mll &y) const { return mll(redu(v + y.v)); }
-	ce mll operator-(const mll &y) const { return mll(redu(P + v - y.v)); }
-	ce mll operator*(const mll &y) const { return mll(redu(v * y.v)); }
+	ce mll operator+(const mll &y) const { return mll((v + y.v) % P); }
+	ce mll operator-(const mll &y) const { return mll((P + v - y.v) % P); }
+	ce mll operator*(const mll &y) const { return mll((v * y.v) % P); }
 	ce mll operator/(const mll &y) const {
-		return mll(redu(v * (ll)qpow(y, P - 2)));
+		return mll((v * (ll)qpow(y, P - 2)) % P);
 	}
 	ce mll &operator=(const mll &y) { return v = y.v, *this; }
-	ce mll &operator+=(const mll &y) { return v = redu(v + y.v), *this; }
-	ce mll &operator-=(const mll &y) { return v = redu(P + v - y.v), *this; }
-	ce mll &operator*=(const mll &y) { return v = redu(v * y.v), *this; }
+	ce mll &operator+=(const mll &y) { return v = (v + y.v) % P, *this; }
+	ce mll &operator-=(const mll &y) { return v = (P + v - y.v) % P, *this; }
+	ce mll &operator*=(const mll &y) { return v = v * y.v % P, *this; }
 	ce mll &operator/=(const mll &y) {
-		return v = redu(v * (ll)qpow(y, P - 2)), *this;
+		return v = v * (ll)qpow(y, P - 2) % P, *this;
 	}
 	ce bool operator==(const mll &y) const { return v == y.v; }
 	ce bool operator!=(const mll &y) const { return v != y.v; }
 };
-ce mll ltm(const ll &x) { return mll(redu(x % P + P)); }
+ce mll ltm(const ll &x) { return mll(x % P); }
 template <typename T> struct myvec {
 	T *v;
 	int sz, dsz;
@@ -111,6 +121,6 @@ ll n, m;
 ll arr[MXN];
 
 int main(int argc, char *argv[]) {
-	// asdad
+	// code
 	return 0;
 }
