@@ -78,17 +78,17 @@ struct mll {
 	ll v;
 	ce explicit mll(ll _v = 0) : v(_v) {}
 	ce explicit operator ll() const { return v; }
-	mll operator+(const mll &y) const { return mll((v + y.v) % P); }
-	mll operator-(const mll &y) const { return mll((P.m + v - y.v) % P); }
-	mll operator*(const mll &y) const { return mll((v * y.v) % P); }
-	mll operator/(const mll &y) const {
+	ce mll operator+(const mll &y) const { return mll((v + y.v) % P); }
+	ce mll operator-(const mll &y) const { return mll((P.m + v - y.v) % P); }
+	ce mll operator*(const mll &y) const { return mll((v * y.v) % P); }
+	ce mll operator/(const mll &y) const {
 		return mll((v * (ll)qpow(y, P.m - 2)) % P);
 	}
-	mll &operator=(const mll &y) { return v = y.v, *this; }
-	mll &operator+=(const mll &y) { return v = (v + y.v) % P, *this; }
-	mll &operator-=(const mll &y) { return v = (P.m + v - y.v) % P, *this; }
-	mll &operator*=(const mll &y) { return v = v * y.v % P, *this; }
-	mll &operator/=(const mll &y) {
+	ce mll &operator=(const mll &y) { return v = y.v, *this; }
+	ce mll &operator+=(const mll &y) { return v = (v + y.v) % P, *this; }
+	ce mll &operator-=(const mll &y) { return v = (P.m + v - y.v) % P, *this; }
+	ce mll &operator*=(const mll &y) { return v = v * y.v % P, *this; }
+	ce mll &operator/=(const mll &y) {
 		return v = v * (ll)qpow(y, P.m - 2) % P, *this;
 	}
 	ce bool operator==(const mll &y) const { return v == y.v; }

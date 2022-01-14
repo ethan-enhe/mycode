@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include <vector>
 using namespace std;
 //{{{ Def
 #define fi first
@@ -38,7 +39,7 @@ struct brt {
 //}}}
 ce ll INF = 1e18;
 ce brt P(1e9 + 7);
-ce ll MXN = 1e6 + 5;
+ce ll MXN = 5e3+5;
 //{{{ Func
 template <typename T> ce T qpow(T x, ll y) {
 	T r(1);
@@ -78,17 +79,17 @@ struct mll {
 	ll v;
 	ce explicit mll(ll _v = 0) : v(_v) {}
 	ce explicit operator ll() const { return v; }
-	mll operator+(const mll &y) const { return mll((v + y.v) % P); }
-	mll operator-(const mll &y) const { return mll((P.m + v - y.v) % P); }
-	mll operator*(const mll &y) const { return mll((v * y.v) % P); }
-	mll operator/(const mll &y) const {
+	ce mll operator+(const mll &y) const { return mll((v + y.v) % P); }
+	ce mll operator-(const mll &y) const { return mll((P.m + v - y.v) % P); }
+	ce mll operator*(const mll &y) const { return mll((v * y.v) % P); }
+	ce mll operator/(const mll &y) const {
 		return mll((v * (ll)qpow(y, P.m - 2)) % P);
 	}
-	mll &operator=(const mll &y) { return v = y.v, *this; }
-	mll &operator+=(const mll &y) { return v = (v + y.v) % P, *this; }
-	mll &operator-=(const mll &y) { return v = (P.m + v - y.v) % P, *this; }
-	mll &operator*=(const mll &y) { return v = v * y.v % P, *this; }
-	mll &operator/=(const mll &y) {
+	ce mll &operator=(const mll &y) { return v = y.v, *this; }
+	ce mll &operator+=(const mll &y) { return v = (v + y.v) % P, *this; }
+	ce mll &operator-=(const mll &y) { return v = (P.m + v - y.v) % P, *this; }
+	ce mll &operator*=(const mll &y) { return v = v * y.v % P, *this; }
+	ce mll &operator/=(const mll &y) {
 		return v = v * (ll)qpow(y, P.m - 2) % P, *this;
 	}
 	ce bool operator==(const mll &y) const { return v == y.v; }
@@ -117,8 +118,36 @@ template <typename T> struct myvec {
 //}}}
 ll n, m;
 ll arr[MXN];
-
+vector<pi> g[MXN];
+queue<ll> q;
+ll dis[MXN],len[MXN];
+void spfa(){
+	memset(dis,0x3f,sizeof(dis));
+	q.push(0);dis[0]=1;
+	while(!q.empty()){
+		ll p=q.front();q.pop();
+		for(pi &nx:g[p]){
+			ll nd=dis[p]+nx.se;
+			if(nd<dis[nx.fi]){
+				dis[nx.fi]=nd;
+				if((len[nx.fi]=len[p]+1)>n)return puts("NO"),void();
+				q.push(nx.fi);
+			}
+		}
+	}
+	for(int i=1;i<=n;i++)
+		printf("%lld ",dis[i]);
+}
 int main(int argc, char *argv[]) {
-	// code
+	scanf("%lld%lld",&n,&m);
+	for(int i=1;i<=n;i++)
+		g[0].push_back({i,0});
+	while(m--){
+		ll u,v,w;
+		scanf("%lld%lld%lld",&v,&u,&w);
+		// cerr<<u<<" "<<v<<" "<<<<endl;
+		g[u].push_back({v,w});
+	}
+	spfa();
 	return 0;
 }

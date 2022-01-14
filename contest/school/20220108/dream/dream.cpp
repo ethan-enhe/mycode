@@ -115,8 +115,8 @@ mll c(ll x,ll y){
 	return res;
 }
 int main(int argc, char *argv[]) {
-	freopen("dream.in","r",stdin);
-	freopen("dream.out","w",stdout);
+	// freopen("dream.in","r",stdin);
+	// freopen("dream.out","w",stdout);
 	ll t;
 	scanf("%lld",&t);
 	while(t--){
