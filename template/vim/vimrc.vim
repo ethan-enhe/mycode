@@ -95,8 +95,10 @@ map <leader><F9> :call CompileCode('-O2 -Wall -fsanitize=address,undefined')<CR>
 "map <F10> :NERDTreeToggle<CR>
 map <F10> :MarkdownPreviewToggle<CR>
 map<c-c> :Commentary<CR>
+let g:smoothie_experimental_mappings=1
 "}}}
 "{{{ CPP SETTING
+
 autocmd FileType cpp setlocal commentstring=//%s
 let s:res=""
 function! s:OnEvent(job_id, data, event) dict
@@ -142,11 +144,15 @@ call plug#begin()
 " Plug g:mirror.'scrooloose/nerdtree'
 Plug g:mirror.'luochen1990/rainbow'
 Plug g:mirror.'morhetz/gruvbox'
+Plug g:mirror.'sainnhe/gruvbox-material'
+
 " Plug g:mirror.'tomasr/molokai'
 " Plug g:mirror.'rakr/vim-one'
 Plug g:mirror.'joshdick/onedark.vim'
 Plug g:mirror.'mhartington/oceanic-next'
 " Plug g:mirror.'chriskempson/base16-vim'
+Plug g:mirror.'psliwka/vim-smoothie'
+
 Plug g:mirror.'ryanoasis/vim-devicons'
 Plug g:mirror.'tpope/vim-surround'
 Plug g:mirror.'tpope/vim-commentary'
@@ -161,7 +167,7 @@ Plug g:mirror.'kana/vim-textobj-indent'
 " Plug g:mirror.'kana/vim-textobj-function', { 'for':['c', 'cpp', 'vim', 'java'] }
 Plug g:mirror.'sgur/vim-textobj-parameter'
 
-" Plug g:mirror.'voldikss/vim-floaterm'
+Plug g:mirror.'voldikss/vim-floaterm'
 if g:usecoc
 	Plug g:mirror.'ethan-enhe/vim-snippets/'
 	Plug g:mirror.'neoclide/coc.nvim', {'branch': 'release'}
@@ -191,8 +197,8 @@ let g:gruvbox_vert_split='bg0'
 " let g:gruvbox_improved_strings=1
 " let g:gruvbox_improved_warnings=1
 
-" autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
 colorscheme gruvbox
+" autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
 
 syntax enable
 
@@ -211,6 +217,15 @@ let g:airline#extensions#tabline#buffer_nr_show=1
 
 " let g:airline_section_z = ' %{strftime("%-I:%M %p")}'
 
+"}}}
+"{{{ floaterm
+" Set floaterm window's background to black
+" hi Floaterm guibg=none
+" Set floating window border line color to cyan, and background to orange
+" hi FloatermBorder guibg=none guifg=cyan
+let g:floaterm_keymap_toggle = '<f12>'
+hi FloatermBorder guibg=none
+" hi FloatermNC guifg=gray
 "}}}
 if g:usecoc
 	"{{{ COC_CONFIG
@@ -378,12 +393,12 @@ if g:usecoc
 
 	" Remap <C-f> and <C-b> for scroll float windows/popups.
 	if has('nvim-0.4.0') || has('patch-8.2.0750')
-	  nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-	  nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-	  inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
-	  inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
-	  vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-	  vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+	  nmap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<Plug>(SmoothieForwards)"
+	  nmap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<Plug>(SmoothieBackwards)"
+	  imap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+	  imap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+	  vmap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<Plug>(SmoothieForwards)"
+	  vmap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<Plug>(SmoothieBackwards)"
 	endif
 
 	" Use CTRL-S for selections ranges.
