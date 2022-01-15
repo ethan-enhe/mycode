@@ -59,6 +59,12 @@ set foldmethod=marker
 "set foldlevel=99
 
 " AUTO
+" TextEdit might fail if hidden is not set.
+set hidden
+
+" Some servers have issues with backup files, see #649.
+set nobackup
+set nowritebackup
 set autochdir
 set autowrite
 set autoread
@@ -278,13 +284,6 @@ if g:usecoc
 	autocmd FileType * let b:coc_pairs_disabled = ['<']
 	" Use autocmd to force lightline update.
 	"autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
-
-	" TextEdit might fail if hidden is not set.
-	set hidden
-
-	" Some servers have issues with backup files, see #649.
-	set nobackup
-	set nowritebackup
 
 	" Give more space for displaying messages.
 	set cmdheight=2
