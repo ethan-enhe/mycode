@@ -5,7 +5,6 @@
 "
 "call mkdir(stdpath('config'),'p')
 "exe 'edit' stdpath('config').'/init.vim'
-
 " {{{ BASIC
 set guifont=Consolas:h14
 set backspace=indent,eol,start
@@ -125,13 +124,16 @@ func! RunCode()
 	exec "w"
 	let s:pre=has("nvim")?"bel 10sp term://":"!"
 	if &filetype == 'cpp'
-		let s:suf=g:iswindows?expand('%<').'.exe':'\\time -f \"\\n----\\n\%Mkb \%Us\" ./'.expand('%<')
+		" let s:suf=g:iswindows?expand('%<').'.exe':'\\time -f \"\\n----\\n\%Mkb \%Us\" ./'.expand('%<')
+		let s:suf=g:iswindows?expand('%<').'.exe':'\time -f "\n----\n\%Mkb \%Us" ./'.expand('%<')
 	elseif &filetype == 'python'
 		let s:suf='python3 '.expand('%')
 	elseif &filetype == 'lua'
 		let s:suf='lua '.expand('%')
 	endif
-	exec s:pre.s:suf
+	exec 'FloatermSend cd '.expand('%:p:h').' && '.s:suf
+	exec 'FloatermShow'
+	" exec s:pre.s:suf
 endfunction
 "}}}
 " {{{ PLUG
@@ -223,8 +225,13 @@ let g:airline#extensions#tabline#buffer_nr_show=1
 " hi Floaterm guibg=none
 " Set floating window border line color to cyan, and background to orange
 " hi FloatermBorder guibg=none guifg=cyan
-let g:floaterm_keymap_toggle = '<f12>'
+" let g:floaterm_keymap_new    = '<F7>'
+" let g:floaterm_keymap_prev   = '<F8>'
+" let g:floaterm_keymap_next   = '<F9>'
+let g:floaterm_keymap_toggle = '<F12>'
+let g:floaterm_position='bottomright'
 hi FloatermBorder guibg=none
+autocmd VimEnter * FloatermNew --silent
 " hi FloatermNC guifg=gray
 "}}}
 if g:usecoc
