@@ -146,7 +146,7 @@ call plug#begin()
 " Plug g:mirror.'scrooloose/nerdtree'
 Plug g:mirror.'luochen1990/rainbow'
 Plug g:mirror.'morhetz/gruvbox'
-Plug g:mirror.'sainnhe/gruvbox-material'
+" Plug g:mirror.'sainnhe/gruvbox-material'
 
 " Plug g:mirror.'tomasr/molokai'
 " Plug g:mirror.'rakr/vim-one'
