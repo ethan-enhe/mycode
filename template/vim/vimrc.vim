@@ -230,6 +230,7 @@ let g:airline#extensions#tabline#buffer_nr_show=1
 " let g:floaterm_keymap_next   = '<F9>'
 let g:floaterm_keymap_toggle = '<F12>'
 let g:floaterm_position='bottomright'
+let g:floaterm_opener='vsplit'
 hi FloatermBorder guibg=none
 autocmd VimEnter * FloatermNew --silent
 " hi FloatermNC guifg=gray
@@ -273,7 +274,7 @@ if g:usecoc
 				\	})
 	"}}}
 	"{{{ COC
-	let g:coc_global_extensions = ['coc-clangd','coc-markdownlint', 'coc-pairs','coc-json','coc-snippets','coc-lists','coc-explorer']
+	let g:coc_global_extensions = ['coc-clangd','coc-markdownlint', 'coc-pairs','coc-json','coc-snippets','coc-lists','coc-explorer','coc-floaterm']
 	autocmd FileType * let b:coc_pairs_disabled = ['<']
 	" Use autocmd to force lightline update.
 	"autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
