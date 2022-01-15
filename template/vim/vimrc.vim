@@ -65,6 +65,8 @@ set hidden
 " Some servers have issues with backup files, see #649.
 set nobackup
 set nowritebackup
+" Give more space for displaying messages.
+set cmdheight=2
 set autochdir
 set autowrite
 set autoread
@@ -285,8 +287,6 @@ if g:usecoc
 	" Use autocmd to force lightline update.
 	"autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
 
-	" Give more space for displaying messages.
-	set cmdheight=2
 
 	" Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 	" delays and poor user experience.
