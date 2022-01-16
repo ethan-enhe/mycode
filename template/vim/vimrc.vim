@@ -139,8 +139,9 @@ func! RunCode()
 	elseif &filetype == 'lua'
 		let s:suf='lua '.expand('%')
 	endif
+	let s:pauser='bash -c "read -p Press\ any\ key\ to\ continue..."'
 
-	exec 'FloatermNew --autoclose=2 '.s:suf.' && pauser'
+	exec 'FloatermNew --autoclose=2 '.s:suf.' && '.s:pauser
 	" exec 'FloatermSend cd '.expand('%:p:h').' && '.s:suf
 	" exec 'FloatermShow'
 	" exec s:pre.s:suf
@@ -235,16 +236,16 @@ let g:airline#extensions#tabline#buffer_nr_show=1
 " hi Floaterm guibg=none
 " Set floating window border line color to cyan, and background to orange
 " hi FloatermBorder guibg=none guifg=cyan
-" let g:floaterm_keymap_kill   = '<leader>fd'
-" let g:floaterm_keymap_new    = '<leader>fo'
-" let g:floaterm_keymap_prev   = '<leader>fp'
-" let g:floaterm_keymap_next   = '<leader>fn'
+let g:floaterm_keymap_kill   = '<leader>fd'
+let g:floaterm_keymap_new    = '<leader>fo'
+let g:floaterm_keymap_prev   = '<leader>fp'
+let g:floaterm_keymap_next   = '<leader>fn'
 let g:floaterm_keymap_toggle = '<f12>'
 let g:floaterm_position='bottomright'
 let g:floaterm_opener='vsplit'
 hi FloatermBorder guibg=none
-hi FloatermNC guibg=gray
-autocmd VimEnter * FloatermNew --silent
+hi FloatermNC guifg=gray
+" autocmd VimEnter * FloatermNew --silent
 " hi FloatermNC guifg=gray
 "}}}
 if g:usecoc
@@ -439,6 +440,7 @@ if g:usecoc
 	nnoremap <silent><nowait> <space>e  <Cmd>CocCommand explorer<CR>
 	" Show commands.
 	nnoremap <silent><nowait> <space>c  :<C-u>CocList commands<cr>
+	nnoremap <silent><nowait> <space>f  :<C-u>CocList --auto-preview floaterm<cr>
 	" Find symbol of current document.
 	nnoremap <silent><nowait> <space>o  :<C-u>CocList outline<cr>
 	nnoremap <silent><nowait> <space>g  :<C-u>CocList grep<cr>
