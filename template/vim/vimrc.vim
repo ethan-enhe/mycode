@@ -299,6 +299,8 @@ Plug g:mirror.'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }
 " Plug g:mirror.'sgur/vim-textobj-parameter'
 
 Plug g:mirror.'voldikss/vim-floaterm'
+" Plug g:mirror.'thaerkh/vim-indentguides'
+
 if g:usecoc
 	Plug g:mirror.'ethan-enhe/vim-snippets/'
 	Plug g:mirror.'neoclide/coc.nvim', {'branch': 'release'}
