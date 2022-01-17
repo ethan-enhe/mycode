@@ -4,7 +4,6 @@ using namespace std;
 #define fi first
 #define se second
 #define pb push_back
-#define ce constexpr
 
 #ifdef ONLINE_JUDGE
 #define log(fmt...) void()
@@ -19,28 +18,39 @@ typedef unsigned long long ull;
 typedef double db;
 typedef long double ld;
 typedef pair<ll, ll> pi;
-typedef __uint128_t u128;
 mt19937_64 myrand(chrono::system_clock::now().time_since_epoch().count());
 //}}}
 //{{{ FastMod
+#ifdef __SIZEOF_INT128__
+constexpr ull top64(ull x, ull y) { return (__uint128_t)x * y >> 64; }
+#else
+constexpr ull top64(ull x, ull y) {
+	ull a = x >> 32, b = x & 0xffffffff;
+	ull c = y >> 32, d = y & 0xffffffff;
+	ull ac = a * c, bc = b * c, ad = a * d, bd = b * d;
+	ull mid34 = (bd >> 32) + (bc & 0xffffffff) + (ad & 0xffffffff);
+	ull upper64 = ac + (bc >> 32) + (ad >> 32) + (mid34 >> 32);
+	return upper64;
+}
+#endif
 struct brt {
 	ull m, b;
-	ce brt(const ull &m = 1) : m(m), b((u128(1) << 64) / m) {}
-	friend ce ull operator/(const ull &a, const brt &mod) {
-		ull r = (u128(mod.b) * a >> 64) + 1;
+	constexpr brt(const ull &m = 1) : m(m), b(((ull)1 << 63) / m << 1) {}
+	friend constexpr ull operator/(const ull &a, const brt &mod) {
+		ull r = top64(mod.b, a) + 1;
 		return r - ((a - r * mod.m) >> 63);
 	}
-	friend ce ull operator%(const ull &a, const brt &mod) {
-		ull r = a - mod.m * (u128(mod.b) * a >> 64);
+	friend constexpr ull operator%(const ull &a, const brt &mod) {
+		ull r = a - mod.m * top64(mod.b, a);
 		return r >= mod.m ? r - mod.m : r;
 	}
 };
 //}}}
-ce ll INF = 1e18;
-ce brt P(1e9 + 7);
-ce ll MXN = 1e6 + 5;
+constexpr ll INF = 1e18;
+constexpr brt P(1e9 + 7);
+constexpr ll MXN = 1e6 + 5;
 //{{{ Func
-template <typename T> ce T qpow(T x, ll y) {
+template <typename T> constexpr T qpow(T x, ll y) {
 	T r(1);
 	while (y) {
 		if (y & 1)
@@ -49,10 +59,10 @@ template <typename T> ce T qpow(T x, ll y) {
 	}
 	return r;
 }
-ce ll gcd(ll x, ll y) { return y ? gcd(y, x % y) : x; }
-template <typename T> ce void umx(T &x, T y) { x = max(x, y); }
-template <typename T> ce void umn(T &x, T y) { x = min(x, y); }
-ce ll abs(pi x) {
+constexpr ll gcd(ll x, ll y) { return y ? gcd(y, x % y) : x; }
+template <typename T> constexpr void umx(T &x, T y) { x = max(x, y); }
+template <typename T> constexpr void umn(T &x, T y) { x = min(x, y); }
+constexpr ll abs(pi x) {
 	return (x.fi < 0 ? -x.fi : x.fi) + (x.se < 0 ? -x.se : x.se);
 }
 ll randint(ll l, ll r) {
@@ -65,19 +75,21 @@ ld randdb(ld l, ld r) {
 }
 //}}}
 //{{{ Type
-ce pi go[] = {{1, 0}, {-1, 0}, {0, 1},  {0, -1},
-			  {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
-ce pi operator+(const pi &x, const pi &y) {
+constexpr pi go[] = {{1, 0}, {-1, 0}, {0, 1},  {0, -1},
+					 {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
+constexpr pi operator+(const pi &x, const pi &y) {
 	return pi(x.fi + y.fi, x.se + y.se);
 }
-ce pi operator-(const pi &x, const pi &y) {
+constexpr pi operator-(const pi &x, const pi &y) {
 	return pi(x.fi - y.fi, x.se - y.se);
 }
-ce pi operator*(const pi &x, const ll &y) { return pi(x.fi * y, x.se * y); }
+constexpr pi operator*(const pi &x, const ll &y) {
+	return pi(x.fi * y, x.se * y);
+}
 struct mll {
 	ll v;
-	ce explicit mll(ll _v = 0) : v(_v) {}
-	ce explicit operator ll() const { return v; }
+	constexpr explicit mll(ll _v = 0) : v(_v) {}
+	constexpr explicit operator ll() const { return v; }
 	mll operator+(const mll &y) const { return mll((v + y.v) % P); }
 	mll operator-(const mll &y) const { return mll((P.m + v - y.v) % P); }
 	mll operator*(const mll &y) const { return mll((v * y.v) % P); }
@@ -91,10 +103,10 @@ struct mll {
 	mll &operator/=(const mll &y) {
 		return v = v * (ll)qpow(y, P.m - 2) % P, *this;
 	}
-	ce bool operator==(const mll &y) const { return v == y.v; }
-	ce bool operator!=(const mll &y) const { return v != y.v; }
+	constexpr bool operator==(const mll &y) const { return v == y.v; }
+	constexpr bool operator!=(const mll &y) const { return v != y.v; }
 };
-ce mll ltm(const ll &x) { return mll(x % P); }
+constexpr mll ltm(const ll &x) { return mll(x % P); }
 template <typename T> struct myvec {
 	T *v;
 	int sz, dsz;
