@@ -292,6 +292,7 @@ Plug g:mirror.'tpope/vim-commentary'
 Plug g:mirror.'vim-airline/vim-airline'
 Plug g:mirror.'vim-airline/vim-airline-themes'
 Plug g:mirror.'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
+" Plug g:mirror.'nathanaelkane/vim-indent-guides'
 " Plug g:mirror.'kana/vim-textobj-user'
 " Plug g:mirror.'glts/vim-textobj-comment'
 " Plug g:mirror.'kana/vim-textobj-indent'
