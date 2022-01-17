@@ -6,8 +6,11 @@
 "call mkdir(stdpath('config'),'p')
 "exe 'edit' stdpath('config').'/init.vim'
 " {{{ BASIC
+filetype plugin on
+filetype indent on
 set guifont=Consolas:h14
 set backspace=indent,eol,start
+set whichwrap+=<,>,h,l
 set guioptions=
 set winaltkeys=no
 if has('nvim')
@@ -28,22 +31,62 @@ let g:usecoc = 1
 set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
 set termencoding=utf-8
 set encoding=utf-8
+set ffs=unix,dos,mac
+noremap <Leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
 set number
-" set relativenumber
-"set cul
-"set cuc
-set ruler
 set showcmd
 set mouse=a
-set laststatus=2
-set scrolloff=2
 set clipboard+=unnamedplus
 
-" Indent+Cursor
-set smartindent
-if &filetype == 'cpp'
-	set cindent
+" TextEdit might fail if hidden is not set.
+set hidden
+
+" Give more space for displaying messages.
+set autochdir
+set autowrite
+
+set autoread
+au FocusGained,BufEnter * checktime
+
+let mapleader=","
+map <leader>cd :cd %:p:h<cr>:pwd<cr>
+nmap <leader>w :w!<cr>
+"}}}
+"{{{ BACKUP
+" Some servers have issues with backup files, see #649.
+set nobackup
+set nowritebackup
+set noswapfile
+"}}}
+"{{{ INTERFACE
+set cmdheight=2
+set ruler
+set laststatus=2
+set scrolloff=7
+let $LANG='en'
+set langmenu=en
+" Ignore compiled files
+set wildignore=*.o,*~,*.pyc
+if has("win16") || has("win32")
+    set wildignore+=.git\*,.hg\*,.svn\*
+else
+    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
 endif
+set hlsearch
+set incsearch
+set ignorecase
+set smartcase
+set diffopt+=vertical
+set lazyredraw
+set magic
+set showmatch
+set mat=2
+set noerrorbells
+set novisualbell
+set t_vb=
+set tm=500
+"}}}
+"{{{ TEXT
 set ts=4
 set sw=4
 " 代码折叠
@@ -57,23 +100,70 @@ set foldenable
 " marker	使用标记进行折叠, 默认标记是 {{{ 和 }}}
 set foldmethod=marker
 "set foldlevel=99
+" Indent+Cursor
+set smartindent
+set autoindent
+if &filetype == 'cpp'
+	set cindent
+endif
+"}}}
+"{{{ VISUAL
+vnoremap <silent> * :<C-u>call VisualSelection('', '')<CR>/<C-R>=@/<CR><CR>
+vnoremap <silent> # :<C-u>call VisualSelection('', '')<CR>?<C-R>=@/<CR><CR>
+"}}}
+"{{{ MOVING
+" map <space> /
+" map <C-space> ?
+" Close the current buffer
+map <leader>bd :Bclose<cr>
 
-" AUTO
-" TextEdit might fail if hidden is not set.
-set hidden
+" Close all the buffers
+map <leader>ba :bufdo bd<cr>
 
-" Some servers have issues with backup files, see #649.
-set nobackup
-set nowritebackup
-" Give more space for displaying messages.
-set cmdheight=2
-set autochdir
-set autowrite
-set autoread
-set hlsearch
-set incsearch
-" set inccommand=nosplit
-set diffopt+=vertical
+map <leader>l :bnext<cr>
+map <leader>h :bprevious<cr>
+
+" Useful mappings for managing tabs
+map <leader>tn :tabnew<cr>
+map <leader>to :tabonly<cr>
+map <leader>tc :tabclose<cr>
+map <leader>tm :tabmove
+map <leader>t<leader> :tabnext
+" Let 'tl' toggle between this and the last accessed tab
+let g:lasttab = 1
+nmap <Leader>tl :exe "tabn ".g:lasttab<CR>
+au TabLeave * let g:lasttab = tabpagenr()
+" Opens a new tab with the current buffer's path
+" Super useful when editing files in the same directory
+map <leader>te :tabedit <C-r>=expand("%:p:h")<cr>/
+" Specify the behavior when switching between buffers
+try
+  set switchbuf=useopen,usetab,newtab
+  set stal=2
+catch
+endtry
+command! Bclose call <SID>BufcloseCloseIt()
+function! <SID>BufcloseCloseIt()
+    let l:currentBufNum = bufnr("%")
+    let l:alternateBufNum = bufnr("#")
+
+    if buflisted(l:alternateBufNum)
+        buffer #
+    else
+        bnext
+    endif
+
+    if bufnr("%") == l:currentBufNum
+        new
+    endif
+
+    if buflisted(l:currentBufNum)
+        execute("bdelete! ".l:currentBufNum)
+    endif
+endfunction
+" Return to last edit position when opening files (You want this!)
+au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+let g:smoothie_experimental_mappings=1
 "}}}
 " {{{ MAP
 if !g:usecoc
@@ -83,30 +173,50 @@ if !g:usecoc
 	inoremap [ []<LEFT>
 	inoremap { {}<LEFT>
 endif
+map 0 ^
 inoremap jj <ESC>
 tnoremap jj <c-\><c-n>
 tnoremap <ESC> <c-\><c-n>
-nnoremap bp :bp<CR>
-nnoremap bn :bn<CR>
-nnoremap bo :enew<CR>
-nnoremap bd :bd<CR>
-nnoremap bl :ls<CR>
-" nnoremap <F10> :NERDTreeToggle<CR>
+" Quickly open a buffer for scribble
+map <leader>q :e ~/buffer<cr>
 
-let mapleader=" "
-map <leader>/ :bel 10sp term://curl cht.sh/cpp/
-map <leader>t :r ~/code/template/other/cf.cpp<cr>
-map <F8> :call RunCode()<CR>
-map <F9> :call CompileCode('-O2')<CR>
-map <leader><F9> :call CompileCode('-O2 -Wall -fsanitize=address,undefined')<CR>
+" Quickly open a markdown buffer for scribble
+map <leader>x :e ~/buffer.md<cr>
+
+" Toggle paste mode on and off
+map <leader>pp :setlocal paste!<cr>
+
+function! CmdLine(str)
+    call feedkeys(":" . a:str)
+endfunction
+
+function! VisualSelection(direction, extra_filter) range
+    let l:saved_reg = @"
+    execute "normal! vgvy"
+
+    let l:pattern = escape(@", "\\/.*'$^~[]")
+    let l:pattern = substitute(l:pattern, "\n$", "", "")
+
+    if a:direction == 'gv'
+        call CmdLine("Ack '" . l:pattern . "' " )
+    elseif a:direction == 'replace'
+        call CmdLine("%s" . '/'. l:pattern . '/')
+    endif
+
+    let @/ = l:pattern
+    let @" = l:saved_reg
+endfunction
+
 "map <F10> :NERDTreeToggle<CR>
-map <F10> :MarkdownPreviewToggle<CR>
-map<c-c> :Commentary<CR>
-let g:smoothie_experimental_mappings=1
 "}}}
 "{{{ CPP SETTING
-
+map <F10> :MarkdownPreviewToggle<CR>
+map <leader>tt :r ~/code/template/other/cf.cpp<cr>
+map<c-c> :Commentary<CR>
 autocmd FileType cpp setlocal commentstring=//%s
+map <F8> :call RunCode()<CR>
+map <F9> :call CompileCode('-O2')<CR>
+" map <leader><F9> :call CompileCode('-O2 -Wall -fsanitize=address,undefined')<CR>
 let s:res=""
 function! s:OnEvent(job_id, data, event) dict
 	if a:event == 'exit'
@@ -146,6 +256,18 @@ func! RunCode()
 	" exec 'FloatermShow'
 	" exec s:pre.s:suf
 endfunction
+" Delete trailing white space on save, useful for some filetypes ;)
+fun! CleanExtraSpaces()
+    let save_cursor = getpos(".")
+    let old_query = getreg('/')
+    silent! %s/\s\+$//e
+    call setpos('.', save_cursor)
+    call setreg('/', old_query)
+endfun
+
+if has("autocmd")
+    autocmd BufWritePre *.cpp,*.txt,*.js,*.py,*.wiki,*.sh,*.coffee :call CleanExtraSpaces()
+endif
 "}}}
 " {{{ PLUG
 if empty(glob(stdpath('config')."/autoload/"))
@@ -154,7 +276,6 @@ endif
 
 let g:mirror='https://github.com.cnpmjs.org/'
 call plug#begin()
-" Plug g:mirror.'scrooloose/nerdtree'
 Plug g:mirror.'luochen1990/rainbow'
 Plug g:mirror.'morhetz/gruvbox'
 " Plug g:mirror.'sainnhe/gruvbox-material'
@@ -163,7 +284,6 @@ Plug g:mirror.'morhetz/gruvbox'
 " Plug g:mirror.'rakr/vim-one'
 Plug g:mirror.'joshdick/onedark.vim'
 Plug g:mirror.'mhartington/oceanic-next'
-" Plug g:mirror.'chriskempson/base16-vim'
 Plug g:mirror.'psliwka/vim-smoothie'
 
 Plug g:mirror.'ryanoasis/vim-devicons'
@@ -172,13 +292,10 @@ Plug g:mirror.'tpope/vim-commentary'
 Plug g:mirror.'vim-airline/vim-airline'
 Plug g:mirror.'vim-airline/vim-airline-themes'
 Plug g:mirror.'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
-" Plug g:mirror.'Yggdroot/indentLine'
-Plug g:mirror.'kana/vim-textobj-user'
-Plug g:mirror.'glts/vim-textobj-comment'
-Plug g:mirror.'kana/vim-textobj-indent'
-" Plug g:mirror.'kana/vim-textobj-syntax'
-" Plug g:mirror.'kana/vim-textobj-function', { 'for':['c', 'cpp', 'vim', 'java'] }
-Plug g:mirror.'sgur/vim-textobj-parameter'
+" Plug g:mirror.'kana/vim-textobj-user'
+" Plug g:mirror.'glts/vim-textobj-comment'
+" Plug g:mirror.'kana/vim-textobj-indent'
+" Plug g:mirror.'sgur/vim-textobj-parameter'
 
 Plug g:mirror.'voldikss/vim-floaterm'
 if g:usecoc
@@ -189,31 +306,23 @@ else
 
 	" Plug g:mirror.'jayli/vim-easycomplete'
 	" Plug g:mirror.'skywind3000/vim-auto-popmenu'
-	" Plug g:mirror.'w0rp/ale'
+	Plug g:mirror.'w0rp/ale'
 endif
 call plug#end()
 "}}}
 " {{{ COLOR
-let g:indentLine_char_list = ['|', '¦', '┆', '┊']
+if $COLORTERM == 'gnome-terminal'
+    set t_Co=256
+endif
 let g:rainbow_active = 1
-let base16colorspace=256
-let g:rehash256 = 1
-let g:molokai_original = 1
-" let g:one_allow_italics = 1 " I love italic for comments
-" let g:gruvbox_italic=1
 let g:gruvbox_sign_column='bg0'
-" let g:gruvbox_number_column='bg1'
-" let g:gruvbox_color_column='bg0'
 let g:gruvbox_vert_split='bg0'
-" let g:gruvbox_invert_signs=1
-
-" let g:gruvbox_improved_strings=1
-" let g:gruvbox_improved_warnings=1
 
 colorscheme gruvbox
 " autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
 
 syntax enable
+map <silent> <leader><cr> :noh<cr>
 
 
 set list lcs=tab:\|\ 
@@ -231,22 +340,20 @@ let g:airline#extensions#tabline#buffer_nr_show=1
 " let g:airline_section_z = ' %{strftime("%-I:%M %p")}'
 
 "}}}
-"{{{ floaterm
+"{{{ FLOATERM
 " Set floaterm window's background to black
 " hi Floaterm guibg=none
 " Set floating window border line color to cyan, and background to orange
 " hi FloatermBorder guibg=none guifg=cyan
-let g:floaterm_keymap_kill   = '<leader>fd'
-let g:floaterm_keymap_new    = '<leader>fo'
-let g:floaterm_keymap_prev   = '<leader>fp'
-let g:floaterm_keymap_next   = '<leader>fn'
+" let g:floaterm_keymap_kill   = '<leader>fd'
+" let g:floaterm_keymap_new    = '<leader>fo'
+" let g:floaterm_keymap_prev   = '<leader>fp'
+" let g:floaterm_keymap_next   = '<leader>fn'
 let g:floaterm_keymap_toggle = '<f12>'
 let g:floaterm_position='bottomright'
 let g:floaterm_opener='vsplit'
 hi FloatermBorder guibg=none
 hi FloatermNC guifg=gray
-" autocmd VimEnter * FloatermNew --silent
-" hi FloatermNC guifg=gray
 "}}}
 if g:usecoc
 	"{{{ COC_CONFIG
@@ -370,8 +477,8 @@ if g:usecoc
 
 
 	" Formatting selected code.
-	" xmap <leader>f  <Plug>(coc-format-selected)
-	" nmap <leader>f  <Plug>(coc-format-selected)
+	xmap <leader>f  <Plug>(coc-format-selected)
+	nmap <leader>f  <Plug>(coc-format-selected)
 
 
 	augroup mygroup
@@ -429,15 +536,14 @@ if g:usecoc
 	" Add (Neo)Vim's native statusline support.
 	" NOTE: Please see `:h coc-status` for integrations with external plugins that
 	" provide custom statusline: lightline.vim, vim-airline.
-	set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+	" set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
 	" Mappings for CoCList
 	nnoremap <silent><nowait> <space>l  :<C-u>CocList<cr>
 	" Show all diagnostics.
 	nnoremap <silent><nowait> <space>a  :<C-u>CocList diagnostics<cr>
 	" Manage extensions.
-	" nnoremap <silent><nowait> <space>e  :<C-u>CocList extensions<cr>
-	nnoremap <silent><nowait> <space>e  <Cmd>CocCommand explorer<CR>
+	nnoremap <silent><nowait> <space>e  :<C-u>CocList extensions<cr>
 	" Show commands.
 	nnoremap <silent><nowait> <space>c  :<C-u>CocList commands<cr>
 	nnoremap <silent><nowait> <space>f  :<C-u>CocList --auto-preview floaterm<cr>
@@ -468,6 +574,7 @@ if g:usecoc
 	xmap <leader>x  <Plug>(coc-convert-snippet)
 	"}}}
 	" {{{ COC-EXP
+	nnoremap <silent><nowait> <leader>e  <Cmd>CocCommand explorer<CR>
 	augroup vime_coc_explorer_group
         autocmd!
         " autocmd WinEnter * if &filetype == 'coc-explorer' && winnr('$') == 1 | q | endif
@@ -552,50 +659,35 @@ if g:usecoc
 	" }}}
 else
 	" {{{ ALE
-	"let g:ale_set_highlights = 0
-	""自定义error和warning图标
-	"let g:ale_sign_error = '>>'
-	"let g:ale_sign_warning = '--'
-	""显示Linter名称,出错或警告等相关信息
-	"let g:ale_echo_msg_error_str = 'E'
-	"let g:ale_echo_msg_warning_str = 'W'
-	"let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
-	""打开文件时不进行检查
-	""let g:ale_lint_on_enter = 0
+	
+	" let g:airline#extensions#ale#enabled = 1
+	let g:ale_set_highlights = 0
 
-	""普通模式下，sp前往上一个错误或警告，sn前往下一个错误或警告
-	"nmap sp <Plug>(ale_previous_wrap)
-	"nmap sn <Plug>(ale_next_wrap)
-	""<Leader>s触发/关闭语法检查
-	"nmap <Leader>s :ALEToggle<CR>
-	""<Leader>d查看错误或警告的详细信息
-	"nmap <Leader>d :ALEDetail<CR>
-	""使用clang对c和c++进行语法检查，对python使用pylint进行语法检查
-	"let g:ale_linters = {
-	"\   'c++': ['clang'],
-	"\   'c': ['clang'],
-	"\}
-	"let g:lightline.component_expand = {
-	"	  \  'linter_checking': 'lightline#ale#checking',
-	"	  \  'linter_infos': 'lightline#ale#infos',
-	"	  \  'linter_warnings': 'lightline#ale#warnings',
-	"	  \  'linter_errors': 'lightline#ale#errors',
-	"	  \  'linter_ok': 'lightline#ale#ok',
-	"	  \ }
-	"let g:lightline.component_type = {
-	"	  \	 'linter_checking': 'right',
-	"	  \	 'linter_infos': 'right',
-	"	  \	 'linter_warnings': 'warning',
-	"	  \	 'linter_errors': 'error',
-	"	  \	 'linter_ok': 'right',
-	"	  \ }
-	"let g:lightline.active = { 'right': [[ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_infos', 'linter_ok' ]] }
+	let g:ale_completion_autoimport = 1
+	"自定义error和warning图标
+	" let g:ale_sign_error = '>>'
+	" let g:ale_sign_warning = '--'
+	"显示Linter名称,出错或警告等相关信息
+	let g:ale_echo_msg_error_str = 'E'
+	let g:ale_echo_msg_warning_str = 'W'
+	let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+	"打开文件时不进行检查
+	"let g:ale_lint_on_enter = 0
 
-	"let g:lightline.active = {
-	"		\ 'right': [ [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_infos', 'linter_ok' ],
-	"		\			[ 'lineinfo' ],
-	"		\			[ 'percent' ],
-	"		\			[ 'fileformat', 'fileencoding', 'filetype'] ] }
+	"普通模式下，sp前往上一个错误或警告，sn前往下一个错误或警告
+	nmap sp <Plug>(ale_previous_wrap)
+	nmap sn <Plug>(ale_next_wrap)
+
+	let g:ale_completion_enabled = 1
+	"<Leader>s触发/关闭语法检查
+	nmap <Leader>s :ALEToggle<CR>
+	"<Leader>d查看错误或警告的详细信息
+	nmap <Leader>d :ALEDetail<CR>
+	"使用clang对c和c++进行语法检查，对python使用pylint进行语法检查
+	let g:ale_linters = {
+	\   'c++': ['clang'],
+	\   'c': ['clang'],
+	\}
 	" }}}
 	" {{{ VAP
 	" enable this plugin for filetypes, '*' for all files.
