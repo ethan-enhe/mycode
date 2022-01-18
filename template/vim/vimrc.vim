@@ -6,6 +6,7 @@
 "call mkdir(stdpath('config'),'p')
 "exe 'edit' stdpath('config').'/init.vim'
 " {{{ BASIC
+let mapleader=","
 set nocompatible
 filetype on
 filetype plugin on
@@ -36,6 +37,8 @@ set encoding=utf-8
 set ffs=unix,dos,mac
 noremap <Leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
 set number
+set relativenumber
+map <silent> <leader>rl :set relativenumber!<cr>
 set showcmd
 set mouse=a
 set clipboard+=unnamedplus
@@ -50,7 +53,6 @@ set autowrite
 set autoread
 au FocusGained,BufEnter * checktime
 
-let mapleader=","
 map <leader>cd :cd %:p:h<cr>:pwd<cr>
 nmap <leader>w :w!<cr>
 "}}}
@@ -71,9 +73,9 @@ set langmenu=en
 " Ignore compiled files
 set wildignore=*.o,*~,*.pyc
 if has("win16") || has("win32")
-    set wildignore+=.git\*,.hg\*,.svn\*
+	set wildignore+=.git\*,.hg\*,.svn\*
 else
-    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
+	set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
 endif
 set hlsearch
 set incsearch
@@ -101,8 +103,8 @@ set foldenable
 " syntax	使用语法定义折叠
 " diff	  对没有更改的文本进行折叠
 " marker	使用标记进行折叠, 默认标记是 {{{ 和 }}}
-set foldmethod=marker
-"set foldlevel=99
+set foldmethod=syntax
+set foldlevel=99
 " Indent+Cursor
 set smartindent
 set autoindent
@@ -151,22 +153,22 @@ catch
 endtry
 command! Bclose call <SID>BufcloseCloseIt()
 function! <SID>BufcloseCloseIt()
-    let l:currentBufNum = bufnr("%")
-    let l:alternateBufNum = bufnr("#")
+	let l:currentBufNum = bufnr("%")
+	let l:alternateBufNum = bufnr("#")
 
-    if buflisted(l:alternateBufNum)
-        buffer #
-    else
-        bnext
-    endif
+	if buflisted(l:alternateBufNum)
+	    buffer #
+	else
+	    bnext
+	endif
 
-    if bufnr("%") == l:currentBufNum
-        new
-    endif
+	if bufnr("%") == l:currentBufNum
+	    new
+	endif
 
-    if buflisted(l:currentBufNum)
-        execute("bdelete! ".l:currentBufNum)
-    endif
+	if buflisted(l:currentBufNum)
+	    execute("bdelete! ".l:currentBufNum)
+	endif
 endfunction
 " Return to last edit position when opening files (You want this!)
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
@@ -199,24 +201,24 @@ map <leader>x :e ~/buffer.md<cr>
 map <leader>pp :setlocal paste!<cr>
 
 function! CmdLine(str)
-    call feedkeys(":" . a:str)
+	call feedkeys(":" . a:str)
 endfunction
 
 function! VisualSelection(direction, extra_filter) range
-    let l:saved_reg = @"
-    execute "normal! vgvy"
+	let l:saved_reg = @"
+	execute "normal! vgvy"
 
-    let l:pattern = escape(@", "\\/.*'$^~[]")
-    let l:pattern = substitute(l:pattern, "\n$", "", "")
+	let l:pattern = escape(@", "\\/.*'$^~[]")
+	let l:pattern = substitute(l:pattern, "\n$", "", "")
 
-    if a:direction == 'gv'
-        call CmdLine("Ack '" . l:pattern . "' " )
-    elseif a:direction == 'replace'
-        call CmdLine("%s" . '/'. l:pattern . '/')
-    endif
+	if a:direction == 'gv'
+	    call CmdLine("Ack '" . l:pattern . "' " )
+	elseif a:direction == 'replace'
+	    call CmdLine("%s" . '/'. l:pattern . '/')
+	endif
 
-    let @/ = l:pattern
-    let @" = l:saved_reg
+	let @/ = l:pattern
+	let @" = l:saved_reg
 endfunction
 
 "map <F10> :NERDTreeToggle<CR>
@@ -270,15 +272,15 @@ func! RunCode()
 endfunction
 " Delete trailing white space on save, useful for some filetypes ;)
 fun! CleanExtraSpaces()
-    let save_cursor = getpos(".")
-    let old_query = getreg('/')
-    silent! %s/\s\+$//e
-    call setpos('.', save_cursor)
-    call setreg('/', old_query)
+	let save_cursor = getpos(".")
+	let old_query = getreg('/')
+	silent! %s/\s\+$//e
+	call setpos('.', save_cursor)
+	call setreg('/', old_query)
 endfun
 
 if has("autocmd")
-    autocmd BufWritePre *.cpp,*.txt,*.js,*.py,*.wiki,*.sh,*.coffee :call CleanExtraSpaces()
+	autocmd BufWritePre *.cpp,*.txt,*.js,*.py,*.wiki,*.sh,*.coffee :call CleanExtraSpaces()
 endif
 "}}}
 " {{{ PLUG
@@ -327,11 +329,14 @@ call plug#end()
 "}}}
 " {{{ COLOR
 if $COLORTERM == 'gnome-terminal'
-    set t_Co=256
+	set t_Co=256
 endif
 let g:rainbow_active = 1
 let g:gruvbox_sign_column='bg0'
+let g:gruvbox_color_column='bg0'
+let g:gruvbox_number_column='bg0'
 let g:gruvbox_vert_split='bg0'
+" let g:gruvbox_invert_indent_guides=1
 
 colorscheme gruvbox
 " autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
@@ -361,7 +366,7 @@ let g:airline#extensions#tabline#buffer_nr_show=1
 " Set floating window border line color to cyan, and background to orange
 " hi FloatermBorder guibg=none guifg=cyan
 " let g:floaterm_keymap_kill   = '<leader>fd'
-" let g:floaterm_keymap_new    = '<leader>fo'
+" let g:floaterm_keymap_new	= '<leader>fo'
 " let g:floaterm_keymap_prev   = '<leader>fp'
 " let g:floaterm_keymap_next   = '<leader>fn'
 let g:floaterm_keymap_toggle = '<f12>'
@@ -591,86 +596,86 @@ if g:usecoc
 	" {{{ COC-EXP
 	nnoremap <silent><nowait> <leader>e  <Cmd>CocCommand explorer<CR>
 	augroup vime_coc_explorer_group
-        autocmd!
-        " autocmd WinEnter * if &filetype == 'coc-explorer' && winnr('$') == 1 | q | endif
-        autocmd TabLeave * if &filetype == 'coc-explorer' | wincmd w | endif
-    augroup END
+	    autocmd!
+	    " autocmd WinEnter * if &filetype == 'coc-explorer' && winnr('$') == 1 | q | endif
+	    autocmd TabLeave * if &filetype == 'coc-explorer' | wincmd w | endif
+	augroup END
 	call coc#config("explorer.icon.enableNerdfont", v:true)
-    call coc#config("explorer.contentWidthType", "win-width")
-    call coc#config("explorer.bookmark.child.template", "[selection | 1] [filename] [position] - [annotation]")
-    call coc#config("explorer.file.column.icon.modified", "•")
-    call coc#config("explorer.file.column.icon.deleted", "✗")
-    call coc#config("explorer.file.column.icon.untracked", "★")
-    call coc#config("explorer.file.column.icon.renamed", "➜")
-    call coc#config("explorer.file.column.icon.unmerged", "")
-    call coc#config("explorer.file.column.icon.ignored", "ⁱ")
-    call coc#config("explorer.keyMappings.global", {
-                \ 's': v:false,
-                \ 't': v:false,
-                \ 'E': v:false,
-                \ 'e': v:false,
-                \ 'zh': v:false,
-                \ 'g.': v:false,
-                \ 'p': v:false,
-    \ })
-    call coc#config("explorer.keyMappings.global", {
-      \ 'k': 'nodePrev',
-      \ 'j': 'nodeNext',
-      \ 'h': ["wait", 'collapse'],
-      \ 'l': ["wait", 'expandable?', 'expand', 'open'],
-      \ 'L': ["wait", 'expand:recursive'],
-      \ 'H': ["wait", 'collapse:recursive'],
-      \ 'K': ["wait", 'expandablePrev'],
-      \ 'J': ["wait", 'expandableNext'],
-      \ 'o': ["wait", 'expanded?', 'collapse', 'expand'],
-      \ '<cr>': ["wait", 'expandable?', 'cd', 'open'],
-      \ '<bs>': ["wait", 'gotoParent'],
-      \ 'r': 'refresh',
-      \
-      \ 's': ["wait", 'toggleSelection', 'normal:j'],
-      \ 'S': ["wait", 'toggleSelection', 'normal:k'],
-      \ '*': ["wait", 'toggleSelection'],
-      \ 'gs': ["wait", "reveal:select"],
-      \ '<dot>': 'toggleHidden',
-      \
-      \ '<c-s>': 'open:split',
-      \ '<c-v>': 'open:vsplit',
-      \ '<c-t>': 'open:tab',
-      \
-      \ 'dd': 'cutFile',
-      \ 'Y': 'copyFile',
-      \ 'D': 'delete',
-      \ 'P': 'pasteFile',
-      \ 'R': 'rename',
-      \ 'N': 'addFile',
-      \ 'yp': 'copyFilepath',
-      \ 'yn': 'copyFilename',
-      \
-      \ 'pl': 'previewOnHover:toggle:labeling',
-      \ 'pc': 'previewOnHover:toggle:content',
-      \
-      \ '<M-x>': 'systemExecute',
-      \ 'f': 'search',
-      \ 'F': 'searchRecursive',
-      \
-      \ '<tab>': 'actionMenu',
-      \ '?': 'help',
-      \ 'q': 'quit',
-      \ '<esc>': 'esc',
-      \
-      \ 'gf': 'gotoSource:file',
-      \ 'gb': 'gotoSource:buffer',
-      \ '[[': ["wait", 'indentPrev'],
-      \ ']]': ["wait", 'indentNext'],
-      \
-      \ '<M-k>': ["wait", 'markPrev:diagnosticError'],
-      \ '<M-j>': ["wait", 'markNext:diagnosticError'],
-      \
-      \ '<leader>gk': ["wait", 'markPrev:git'],
-      \ '<leader>gj': ["wait", 'markNext:git'],
-      \ '<leader>gh': 'gitStage',
-      \ '<leader>gu': 'gitUnstage'
-    \ })
+	call coc#config("explorer.contentWidthType", "win-width")
+	call coc#config("explorer.bookmark.child.template", "[selection | 1] [filename] [position] - [annotation]")
+	call coc#config("explorer.file.column.icon.modified", "•")
+	call coc#config("explorer.file.column.icon.deleted", "✗")
+	call coc#config("explorer.file.column.icon.untracked", "★")
+	call coc#config("explorer.file.column.icon.renamed", "➜")
+	call coc#config("explorer.file.column.icon.unmerged", "")
+	call coc#config("explorer.file.column.icon.ignored", "ⁱ")
+	call coc#config("explorer.keyMappings.global", {
+	            \ 's': v:false,
+	            \ 't': v:false,
+	            \ 'E': v:false,
+	            \ 'e': v:false,
+	            \ 'zh': v:false,
+	            \ 'g.': v:false,
+	            \ 'p': v:false,
+	\ })
+	call coc#config("explorer.keyMappings.global", {
+	  \ 'k': 'nodePrev',
+	  \ 'j': 'nodeNext',
+	  \ 'h': ["wait", 'collapse'],
+	  \ 'l': ["wait", 'expandable?', 'expand', 'open'],
+	  \ 'L': ["wait", 'expand:recursive'],
+	  \ 'H': ["wait", 'collapse:recursive'],
+	  \ 'K': ["wait", 'expandablePrev'],
+	  \ 'J': ["wait", 'expandableNext'],
+	  \ 'o': ["wait", 'expanded?', 'collapse', 'expand'],
+	  \ '<cr>': ["wait", 'expandable?', 'cd', 'open'],
+	  \ '<bs>': ["wait", 'gotoParent'],
+	  \ 'r': 'refresh',
+	  \
+	  \ 's': ["wait", 'toggleSelection', 'normal:j'],
+	  \ 'S': ["wait", 'toggleSelection', 'normal:k'],
+	  \ '*': ["wait", 'toggleSelection'],
+	  \ 'gs': ["wait", "reveal:select"],
+	  \ '<dot>': 'toggleHidden',
+	  \
+	  \ '<c-s>': 'open:split',
+	  \ '<c-v>': 'open:vsplit',
+	  \ '<c-t>': 'open:tab',
+	  \
+	  \ 'dd': 'cutFile',
+	  \ 'Y': 'copyFile',
+	  \ 'D': 'delete',
+	  \ 'P': 'pasteFile',
+	  \ 'R': 'rename',
+	  \ 'N': 'addFile',
+	  \ 'yp': 'copyFilepath',
+	  \ 'yn': 'copyFilename',
+	  \
+	  \ 'pl': 'previewOnHover:toggle:labeling',
+	  \ 'pc': 'previewOnHover:toggle:content',
+	  \
+	  \ '<M-x>': 'systemExecute',
+	  \ 'f': 'search',
+	  \ 'F': 'searchRecursive',
+	  \
+	  \ '<tab>': 'actionMenu',
+	  \ '?': 'help',
+	  \ 'q': 'quit',
+	  \ '<esc>': 'esc',
+	  \
+	  \ 'gf': 'gotoSource:file',
+	  \ 'gb': 'gotoSource:buffer',
+	  \ '[[': ["wait", 'indentPrev'],
+	  \ ']]': ["wait", 'indentNext'],
+	  \
+	  \ '<M-k>': ["wait", 'markPrev:diagnosticError'],
+	  \ '<M-j>': ["wait", 'markNext:diagnosticError'],
+	  \
+	  \ '<leader>gk': ["wait", 'markPrev:git'],
+	  \ '<leader>gj': ["wait", 'markNext:git'],
+	  \ '<leader>gh': 'gitStage',
+	  \ '<leader>gu': 'gitUnstage'
+	\ })
 	" }}}
 else
 	" {{{ ALE
