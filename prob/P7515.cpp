@@ -40,7 +40,7 @@ int main() {
 		scanf("%lld%lld", &n, &m);
 		for (int i = 0; i <= n + m; i++)
 			g[i].clear();
-		//偶数行，奇数列shift
+		//偶数行，奇数列flip
 		for (int i = 2; i <= n; i++)
 			for (int j = 2; j <= m; j++) {
 				scanf("%lld", &arr[i][j]);

@@ -51,7 +51,7 @@ set autochdir
 set autowrite
 
 set autoread
-au FocusGained,BufEnter * checktime
+" au FocusGained,BufEnter * checktime
 
 map <leader>cd :cd %:p:h<cr>:pwd<cr>
 nmap <leader>w :w!<cr>
@@ -103,8 +103,8 @@ set foldenable
 " syntax	使用语法定义折叠
 " diff	  对没有更改的文本进行折叠
 " marker	使用标记进行折叠, 默认标记是 {{{ 和 }}}
-set foldmethod=syntax
-set foldlevel=99
+set foldmethod=marker
+" set foldlevel=99
 " Indent+Cursor
 set smartindent
 set autoindent

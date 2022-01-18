@@ -1,4 +1,6 @@
 #include <bits/stdc++.h>
+#include <iostream>
+
 using namespace std;
 //{{{ Def
 #define fi first
@@ -132,8 +134,6 @@ ll arr[MXN];
 
 int main(int argc, char *argv[]) {
 	// code
+
 	return 0;
 }
-
-
-
