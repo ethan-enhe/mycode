@@ -374,6 +374,7 @@ let g:floaterm_position='bottomright'
 let g:floaterm_opener='vsplit'
 hi FloatermBorder guibg=none
 hi FloatermNC guifg=gray
+au VimEnter * FloatermNew --silent
 "}}}
 if g:usecoc
 	"{{{ COC_CONFIG
