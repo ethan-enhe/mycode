@@ -6,6 +6,8 @@
 "call mkdir(stdpath('config'),'p')
 "exe 'edit' stdpath('config').'/init.vim'
 " {{{ BASIC
+set nocompatible
+filetype on
 filetype plugin on
 filetype indent on
 set guifont=Consolas:h14
@@ -59,6 +61,7 @@ set nowritebackup
 set noswapfile
 "}}}
 "{{{ INTERFACE
+set wildmenu
 set cmdheight=2
 set ruler
 set laststatus=2
@@ -112,6 +115,10 @@ vnoremap <silent> * :<C-u>call VisualSelection('', '')<CR>/<C-R>=@/<CR><CR>
 vnoremap <silent> # :<C-u>call VisualSelection('', '')<CR>?<C-R>=@/<CR><CR>
 "}}}
 "{{{ MOVING
+map <C-h> <C-W>h
+map <C-j> <C-W>j
+map <C-k> <C-W>k
+map <C-l> <C-W>l
 " map <space> /
 " map <C-space> ?
 " Close the current buffer
