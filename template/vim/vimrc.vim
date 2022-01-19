@@ -30,7 +30,7 @@ if(has("win32") || has("win64") || has("win95") || has("win16"))
 	let g:iswindows = 1
 endif
 let g:usecoc = 1
-let g:hasfont=1
+let g:usefont=1
 
 set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
 set termencoding=utf-8
@@ -320,8 +320,9 @@ let g:gruvbox_sign_column='bg0'
 let g:gruvbox_color_column='bg0'
 let g:gruvbox_number_column='bg0'
 let g:gruvbox_vert_split='bg0'
+let g:onedark_terminal_italics=1
 
-colorscheme gruvbox
+colorscheme onedark
 " autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
 
 syntax enable
@@ -334,7 +335,7 @@ set background=dark
 set noshowmode
 
 " let g:airline_theme='onedark'
-let g:airline_powerline_fonts = g:hasfont
+let g:airline_powerline_fonts = g:usefont
 let g:airline#extensions#tabline#enabled = 1 "tabline中当前buffer两端的分隔字符
 let g:airline#extensions#whitespace#enabled = 0
 let g:airline#extensions#whitespace#symbol = '!'
@@ -390,7 +391,7 @@ if g:usecoc
 				\	})
 	"}}}
 	"{{{ COC
-	let g:coc_global_extensions = ['coc-clangd','coc-markdownlint', 'coc-pairs','coc-json','coc-snippets','coc-lists','coc-explorer','coc-floaterm']
+	let g:coc_global_extensions = ['coc-clangd','coc-markdownlint','coc-vimlsp', 'coc-pairs','coc-json','coc-snippets','coc-lists','coc-explorer','coc-floaterm']
 	autocmd FileType * let b:coc_pairs_disabled = ['<']
 	" Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 	" delays and poor user experience.
@@ -568,7 +569,7 @@ if g:usecoc
 		" autocmd WinEnter * if &filetype == 'coc-explorer' && winnr('$') == 1 | q | endif
 		autocmd TabLeave * if &filetype == 'coc-explorer' | wincmd w | endif
 	augroup END
-	call coc#config("explorer.icon.enableNerdfont", g:hasfont)
+	call coc#config("explorer.icon.enableNerdfont", g:usefont)
 	call coc#config("explorer.contentWidthType", "win-width")
 	call coc#config("explorer.bookmark.child.template", "[selection | 1] [filename] [position] - [annotation]")
 	call coc#config("explorer.file.column.icon.modified", "•")
