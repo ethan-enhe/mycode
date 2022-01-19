@@ -6,9 +6,9 @@ using namespace std;
 #define pb push_back
 
 #ifdef ONLINE_JUDGE
-#define log(fmt...) void()
+#define logf(fmt...) void()
 #else
-#define log(fmt...) fprintf(stderr, fmt)
+#define logf(fmt...) fprintf(stderr, fmt)
 #endif
 
 #define va2d(x, y) x[(y.fi)][(y.se)]
