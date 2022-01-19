@@ -9,6 +9,11 @@
 filetype on
 filetype plugin on
 filetype indent on
+try
+	call rpcnotify(1, 'Gui', 'Option', 'Tabline', 0)
+	call rpcnotify(1, 'Gui', 'Option', 'Popupmenu', 0)
+catch
+endtry
 let mapleader=","
 set guifont=Consolas:h14
 set guioptions=
@@ -16,14 +21,6 @@ set guioptions=
 set backspace=indent,eol,start
 set whichwrap+=<,>,h,l
 set winaltkeys=no
-if has('nvim')
-	try
-		call rpcnotify(1, 'Gui', 'Option', 'Tabline', 0)
-		call rpcnotify(1, 'Gui', 'Option', 'Popupmenu', 0)
-	catch
-	endtry
-endif
-
 
 let g:iswindows = 0
 if(has("win32") || has("win64") || has("win95") || has("win16"))
@@ -41,7 +38,6 @@ noremap <Leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
 set number
 set relativenumber
 map <silent> <leader>rl :set relativenumber!<cr>
-set showcmd
 set mouse=a
 set clipboard+=unnamedplus
 
@@ -64,12 +60,13 @@ set noswapfile
 "}}}
 "{{{ INTERFACE
 set ruler
-set wildmenu
+set showcmd
 set cmdheight=2
 set laststatus=2
 set scrolloff=7
 let $LANG='en'
 set langmenu=en
+set wildmenu
 " Ignore compiled files
 set wildignore=*.o,*~,*.pyc
 if has("win16") || has("win32")
@@ -84,25 +81,16 @@ set smartcase
 set diffopt+=vertical
 set lazyredraw
 set magic
-set showmatch
-set mat=2
+" set showmatch
+" set mat=2
 set noerrorbells
 set novisualbell
-set t_vb=
 set tm=500
 "}}}
 "{{{ TEXT
 set ts=4
 set sw=4
-" 代码折叠
 set foldenable
-" 折叠方法
-" manual	手工折叠
-" indent	使用缩进表示折叠
-" expr		使用表达式定义折叠
-" syntax	使用语法定义折叠
-" diff		对没有更改的文本进行折叠
-" marker	使用标记进行折叠, 默认标记是 {{{ 和 }}}
 set foldmethod=marker
 " set foldlevel=99
 " Indent+Cursor
@@ -220,10 +208,10 @@ endfunction
 
 "map <F10> :NERDTreeToggle<CR>
 "}}}
-"{{{ CPP SETTING
+"{{{ FILE SETTING
 map <F10> :MarkdownPreviewToggle<CR>
 map <leader>tt :r ~/code/template/other/cf.cpp<cr>
-map<c-c> :Commentary<CR>
+map <C-c> :Commentary<CR>
 autocmd FileType cpp setlocal commentstring=//%s cindent
 map <F8> :call RunCode()<CR>
 map <F9> :call CompileCode('-O2')<CR>
