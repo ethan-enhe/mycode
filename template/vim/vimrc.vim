@@ -269,33 +269,31 @@ if empty(glob(stdpath('config')."/autoload/"))
 	exec "!curl -fLo ".stdpath('config')."/autoload/plug.vim --create-dirs https://ethan_enhe.coding.net/p/code/d/code/git/raw/master/template/vim/plug.vim"
 endif
 
-let g:mirror='https://github.com.cnpmjs.org/'
+let g:plug_url_format='https://github.com.cnpmjs.org/%s'
 call plug#begin()
-Plug g:mirror.'luochen1990/rainbow'
-Plug g:mirror.'morhetz/gruvbox'
-" Plug g:mirror.'sainnhe/gruvbox-material'
+Plug 'luochen1990/rainbow'
+Plug 'morhetz/gruvbox'
+Plug 'sainnhe/gruvbox-material'
+Plug 'sainnhe/edge'
+Plug 'joshdick/onedark.vim'
+Plug 'mhartington/oceanic-next'
+Plug 'psliwka/vim-smoothie'
 
-" Plug g:mirror.'tomasr/molokai'
-" Plug g:mirror.'rakr/vim-one'
-Plug g:mirror.'joshdick/onedark.vim'
-Plug g:mirror.'mhartington/oceanic-next'
-Plug g:mirror.'psliwka/vim-smoothie'
+Plug 'ryanoasis/vim-devicons'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-commentary'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 
-Plug g:mirror.'ryanoasis/vim-devicons'
-Plug g:mirror.'tpope/vim-surround'
-Plug g:mirror.'tpope/vim-commentary'
-Plug g:mirror.'vim-airline/vim-airline'
-Plug g:mirror.'vim-airline/vim-airline-themes'
-Plug g:mirror.'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
-
-Plug g:mirror.'voldikss/vim-floaterm'
+Plug 'voldikss/vim-floaterm'
 
 if g:usecoc
-	Plug g:mirror.'ethan-enhe/vim-snippets/'
-	Plug g:mirror.'neoclide/coc.nvim', {'branch': 'release'}
-	Plug g:mirror.'jackguo380/vim-lsp-cxx-highlight'
+	Plug 'ethan-enhe/vim-snippets/'
+	Plug 'neoclide/coc.nvim', {'branch': 'release'}
+	Plug 'jackguo380/vim-lsp-cxx-highlight'
 else
-	Plug g:mirror.'w0rp/ale'
+	Plug 'w0rp/ale'
 endif
 call plug#end()
 "}}}
@@ -310,17 +308,19 @@ let g:gruvbox_number_column='bg0'
 let g:gruvbox_vert_split='bg0'
 let g:onedark_terminal_italics=1
 
+" let g:edge_style = 'aura'
+" let g:edge_transparent_background = 1
+
 colorscheme onedark
 " autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
 
-syntax enable
-map <silent> <leader><cr> :noh<cr>
-
-
+set background=dark
 set list lcs=tab:\|\ 
 set termguicolors
-set background=dark
 set noshowmode
+
+syntax enable
+map <silent> <leader><cr> :noh<cr>
 
 " let g:airline_theme='onedark'
 let g:airline_powerline_fonts = g:usefont
