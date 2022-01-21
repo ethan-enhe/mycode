@@ -66,7 +66,7 @@ int main() {
 					ll s = i, t = n + j;
 					if ((i + j) & 1)
 						swap(s, t);
-					printf("%lld ", brr[i][j] + dis[s] - dis[t]);
+					printf("%lld ", brr[i][j] + dis[s] - dis[t])
 				}
 		}
 	}

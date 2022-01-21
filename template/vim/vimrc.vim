@@ -27,7 +27,7 @@ if(has("win32") || has("win64") || has("win95") || has("win16"))
 	let g:iswindows = 1
 endif
 let g:usecoc = 1
-let g:usefont=1
+let g:usefont = 1
 
 set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
 set termencoding=utf-8
@@ -157,7 +157,7 @@ function! <SID>BufcloseCloseIt()
 endfunction
 " Return to last edit position when opening files (You want this!)
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
-let g:smoothie_experimental_mappings=1
+" let g:smoothie_experimental_mappings=1
 "}}}
 " {{{ MAP
 if !g:usecoc
@@ -308,8 +308,9 @@ let g:gruvbox_number_column='bg0'
 let g:gruvbox_vert_split='bg0'
 let g:onedark_terminal_italics=1
 
-" let g:edge_style = 'aura'
+" let g:edge_style = 'neon'
 " let g:edge_transparent_background = 1
+" let g:edge_diagnostic_text_highlight = 1
 
 colorscheme onedark
 " autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
@@ -326,11 +327,7 @@ map <silent> <leader><cr> :noh<cr>
 let g:airline_powerline_fonts = g:usefont
 let g:airline#extensions#tabline#enabled = 1 "tabline中当前buffer两端的分隔字符
 let g:airline#extensions#whitespace#enabled = 0
-let g:airline#extensions#whitespace#symbol = '!'
-let g:airline#extensions#tabline#buffer_nr_show=1
-
-" let g:airline_section_d = ' %{strftime("%-I:%M %p")}'
-
+" let g:airline#extensions#tabline#buffer_nr_show=1
 "}}}
 "{{{ FLOATERM
 let g:floaterm_keymap_toggle = '<f12>'
@@ -342,6 +339,8 @@ au VimEnter * FloatermNew --silent
 "}}}
 if g:usecoc
 	"{{{ COC_CONFIG
+	call coc#config("coc.source.around.enable", v:false)
+	call coc#config("coc.source.buffer.enable", v:false)
 	call coc#config("suggest.labelMaxLength", 50)
 	call coc#config("clangd.semanticHighlighting",v:true)
 	call coc#config("coc.preferences.semanticTokensHighlights", v:false)
