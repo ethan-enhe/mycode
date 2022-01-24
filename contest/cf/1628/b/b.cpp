@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-using namespace std;
+#include <cstring>
 using namespace std;
 //{{{ Def
 #define fi first
@@ -49,7 +49,7 @@ struct brt {
 //}}}
 constexpr ll INF = 1e18;
 constexpr brt P(1e9 + 7);
-constexpr ll MXN = 1e6 + 5;
+constexpr ll MXN = 1e5 + 5,MXC=26*26*26+100;
 //{{{ Func
 template <typename T> constexpr T qpow(T x, ll y) {
 	T r(1);
@@ -129,23 +129,42 @@ template <typename T> struct myvec {
 };
 //}}}
 ll n, m;
-ll arr[MXN];
+char str[MXN][5];
+bool vis22[MXC],vis32[MXC],vis33[MXC];
+ll h(char x,char y,char c='a'){
+	return x-'a'+(y-'a')*26+(c-'a')*26*26;
+}
 
 int main(int argc, char *argv[]) {
 	// code
-	scanf("%lld",&n);
-	ll mx=0;
-	for(int i=1;i<=100;i++){
-		for(int i=1;i<=n;i++)
-			arr[i]=pow(-1,i);
-		shuffle(arr+1, arr+1+n, myrand);
-		ll tmp=0;
+	ll t;
+	scanf("%lld",&t);
+	while(t--){
+		scanf("%lld",&n);
+		bool f=0;
 		for(int i=1;i<=n;i++){
-			arr[i]+=arr[i-1];
-			umx(tmp,abs(arr[i]));
+			scanf("%s",str[i]+1);
+			ll len=strlen(str[i]+1);
+			if(len==1)
+				f=1;
+			else if(len==2){
+				vis22[h(str[i][1],str[i][2])]=1;
+				ll rh=h(str[i][len],str[i][len-1]);
+				f|=vis32[rh]|vis22[rh];
+			}
+			else{
+				vis32[h(str[i][1],str[i][2])]=1;
+				vis33[h(str[i][1],str[i][2],str[i][3])]=1;
+				ll rh2=h(str[i][len],str[i][len-1]);
+				f|=vis22[rh2];
+				ll rh3=h(str[i][len],str[i][len-1],str[i][len-2]);
+				f|=vis33[rh3];
+			}
 		}
-		cout<<tmp<<endl;
+		puts(f?"YES":"NO");
+		memset(vis22,0,sizeof(vis22));
+		memset(vis32,0,sizeof(vis22));
+		memset(vis33,0,sizeof(vis22));
 	}
-	printf("%lld",mx);
 	return 0;
 }

@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-using namespace std;
+#include <cstdio>
 using namespace std;
 //{{{ Def
 #define fi first
@@ -49,7 +49,7 @@ struct brt {
 //}}}
 constexpr ll INF = 1e18;
 constexpr brt P(1e9 + 7);
-constexpr ll MXN = 1e6 + 5;
+constexpr ll MXN = 2e3 + 5;
 //{{{ Func
 template <typename T> constexpr T qpow(T x, ll y) {
 	T r(1);
@@ -128,24 +128,38 @@ template <typename T> struct myvec {
 	}
 };
 //}}}
-ll n, m;
-ll arr[MXN];
+ll n, m, k;
 
+ld tdp[MXN][MXN];
+mll dp[MXN][MXN],inv2=(mll)1/(mll)2;
 int main(int argc, char *argv[]) {
 	// code
-	scanf("%lld",&n);
-	ll mx=0;
-	for(int i=1;i<=100;i++){
-		for(int i=1;i<=n;i++)
-			arr[i]=pow(-1,i);
-		shuffle(arr+1, arr+1+n, myrand);
-		ll tmp=0;
-		for(int i=1;i<=n;i++){
-			arr[i]+=arr[i-1];
-			umx(tmp,abs(arr[i]));
+	ll t;
+	scanf("%lld", &t);
+	while (t--) {
+		scanf("%lld%lld%lld", &n, &m, &k);
+		m=n-m;
+		for(int i=0;i<=n;i++)
+		{
+			for(int j=0;j<=i;j++){
+				if (i == 0){
+					tdp[i][j] = 0;
+					dp[i][j]=(mll)0;
+				}
+				else if (j == 0){
+					tdp[i][j] = i;
+					dp[i][j]=(mll)i;
+				}
+				else{
+					dp[i][j]=(mll)(dp[i-1][j-1]+dp[i-1][j])*inv2;
+					tdp[i][j] = max(tdp[i - 1][j - 1] - k,
+							(tdp[i - 1][j - 1] + tdp[i - 1][j]) / 2);
+				}
+				printf("%5.5Lf ", tdp[i][j]);
+			}
+			putchar('\n');
 		}
-		cout<<tmp<<endl;
+		printf("%lld\n",(ll)(dp[n][m]*(mll)k));
 	}
-	printf("%lld",mx);
 	return 0;
 }

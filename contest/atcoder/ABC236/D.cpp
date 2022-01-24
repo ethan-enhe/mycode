@@ -1,5 +1,5 @@
+
 #include <bits/stdc++.h>
-using namespace std;
 using namespace std;
 //{{{ Def
 #define fi first
@@ -49,7 +49,7 @@ struct brt {
 //}}}
 constexpr ll INF = 1e18;
 constexpr brt P(1e9 + 7);
-constexpr ll MXN = 1e6 + 5;
+constexpr ll MXN = 20;
 //{{{ Func
 template <typename T> constexpr T qpow(T x, ll y) {
 	T r(1);
@@ -128,24 +128,37 @@ template <typename T> struct myvec {
 	}
 };
 //}}}
-ll n, m;
-ll arr[MXN];
-
+ll n, m,ans;
+ll arr[MXN][MXN];
+bool used[MXN];
+void dfs(ll va){
+	bool f=0;
+	for(int i=n;i;i--)
+		if(!used[i]){
+			f=1;
+			used[i]=1;
+			for(int j=1;j<i;j++)
+				if(!used[j]){
+					used[j]=1;
+					dfs(va^arr[i][j]);
+					used[j]=0;
+				}
+			used[i]=0;
+			break;
+		}
+	if(!f)umx(ans,va);
+}
 int main(int argc, char *argv[]) {
 	// code
 	scanf("%lld",&n);
-	ll mx=0;
-	for(int i=1;i<=100;i++){
-		for(int i=1;i<=n;i++)
-			arr[i]=pow(-1,i);
-		shuffle(arr+1, arr+1+n, myrand);
-		ll tmp=0;
-		for(int i=1;i<=n;i++){
-			arr[i]+=arr[i-1];
-			umx(tmp,abs(arr[i]));
+	n*=2;
+	for(int i=1;i<=n;i++)
+		for(int j=i+1;j<=n;j++){
+			scanf("%lld",&arr[i][j]);
+			arr[j][i]=arr[i][j];
 		}
-		cout<<tmp<<endl;
-	}
-	printf("%lld",mx);
+	dfs(0);
+	printf("%lld",ans);
+
 	return 0;
 }

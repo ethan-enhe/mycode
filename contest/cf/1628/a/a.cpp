@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-using namespace std;
+#include <cstdio>
 using namespace std;
 //{{{ Def
 #define fi first
@@ -129,23 +129,54 @@ template <typename T> struct myvec {
 };
 //}}}
 ll n, m;
-ll arr[MXN];
+ll arr[MXN],suf[MXN],ans[MXN],ansc;
+bool vis[MXN];
+stack<ll> p;
+void mod(ll x){
+	if(!vis[x]){
+		vis[x]=1;
+		p.push(x);
+	}
+}
+void clr(){
+	while(!p.empty()){
+		vis[p.top()]=0;
+		p.pop();
+	}
+}
 
 int main(int argc, char *argv[]) {
 	// code
-	scanf("%lld",&n);
-	ll mx=0;
-	for(int i=1;i<=100;i++){
-		for(int i=1;i<=n;i++)
-			arr[i]=pow(-1,i);
-		shuffle(arr+1, arr+1+n, myrand);
-		ll tmp=0;
+	ll t;
+	scanf("%lld",&t);
+	while(t--){
+		scanf("%lld",&n);
 		for(int i=1;i<=n;i++){
-			arr[i]+=arr[i-1];
-			umx(tmp,abs(arr[i]));
+			scanf("%lld",arr+i);
 		}
-		cout<<tmp<<endl;
+		suf[n+1]=0;
+		for(int i=n;i;i--){
+			suf[i]=suf[i+1];
+			mod(arr[i]);
+			while(vis[suf[i]])++suf[i];
+		}
+		clr();
+		ll mex=0,last=suf[1];
+		ansc=0;
+		for(int i=1;i<=n;i++){
+			mod(arr[i]);
+			while(vis[mex])++mex;
+			if(mex==last){
+				ans[++ansc]=last;
+				mex=0;
+				clr();
+				last=suf[i+1];
+			}
+		}
+		printf("%lld\n",ansc);
+		for(int i=1;i<=ansc;i++)
+			printf("%lld ",ans[i]);
+		putchar('\n');
 	}
-	printf("%lld",mx);
 	return 0;
 }

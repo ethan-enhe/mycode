@@ -1,5 +1,5 @@
+
 #include <bits/stdc++.h>
-using namespace std;
 using namespace std;
 //{{{ Def
 #define fi first
@@ -49,7 +49,7 @@ struct brt {
 //}}}
 constexpr ll INF = 1e18;
 constexpr brt P(1e9 + 7);
-constexpr ll MXN = 1e6 + 5;
+constexpr ll MXN = 105;
 //{{{ Func
 template <typename T> constexpr T qpow(T x, ll y) {
 	T r(1);
@@ -128,24 +128,46 @@ template <typename T> struct myvec {
 	}
 };
 //}}}
-ll n, m;
-ll arr[MXN];
 
+int n,t,l;
+struct mat{
+	int v[MXN][MXN];
+	mat(bool unit=0){
+		memset(v,0x3f,sizeof(v));
+		if(unit)
+			for(int i=0;i<MXN;i++)
+				v[i][i]=0;
+	}
+	mat operator * (const mat &b)const{
+		mat res;
+		for(int i=1;i<=n;i++)
+			for(int j=1;j<=n;j++)
+				for(int k=1;k<=n;k++)
+					umn(res.v[i][j],max(v[i][k],b.v[k][j]));
+		return res;
+	}
+	mat operator ^ (int b)const{
+		mat r(1),v=*this;
+		while(b){
+			if(b&1)r=r*v;
+			v=v*v,b>>=1;
+		}
+		return r;
+	}
+}init,trans;
 int main(int argc, char *argv[]) {
 	// code
-	scanf("%lld",&n);
-	ll mx=0;
-	for(int i=1;i<=100;i++){
-		for(int i=1;i<=n;i++)
-			arr[i]=pow(-1,i);
-		shuffle(arr+1, arr+1+n, myrand);
-		ll tmp=0;
-		for(int i=1;i<=n;i++){
-			arr[i]+=arr[i-1];
-			umx(tmp,abs(arr[i]));
-		}
-		cout<<tmp<<endl;
+	scanf("%d%d%d",&n,&t,&l);
+	for(int i=1;i<=t;i++){
+		int u,v;
+		scanf("%d%d",&u,&v);
+		trans.v[u][v]=i;
 	}
-	printf("%lld",mx);
+	assert(init.v[1][1]>1e9);
+	trans=trans^l;
+	init.v[1][1]=1;
+	init=init*trans;
+	for(int i=1;i<=n;i++)
+		printf("%d ",init.v[1][i]>t?-1:init.v[1][i]);
 	return 0;
 }

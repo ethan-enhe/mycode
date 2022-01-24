@@ -1,6 +1,5 @@
 #include <bits/stdc++.h>
 using namespace std;
-using namespace std;
 //{{{ Def
 #define fi first
 #define se second
@@ -128,24 +127,39 @@ template <typename T> struct myvec {
 	}
 };
 //}}}
-ll n, m;
+ll n, m,k;
 ll arr[MXN];
 
+mll fac[MXN],ifac[MXN],pw2[MXN];
+mll c(ll x,ll y){
+	if(y>x || y<0)return (mll)0;
+	return fac[x]*ifac[y]*ifac[x-y];
+}
 int main(int argc, char *argv[]) {
 	// code
-	scanf("%lld",&n);
-	ll mx=0;
-	for(int i=1;i<=100;i++){
-		for(int i=1;i<=n;i++)
-			arr[i]=pow(-1,i);
-		shuffle(arr+1, arr+1+n, myrand);
-		ll tmp=0;
-		for(int i=1;i<=n;i++){
-			arr[i]+=arr[i-1];
-			umx(tmp,abs(arr[i]));
-		}
-		cout<<tmp<<endl;
+	fac[0]=pw2[0]=(mll)1;
+	pw2[1]=(mll)1/(mll)2;
+	for(int i=1;i<MXN;i++){
+		fac[i]=fac[i-1]*(mll)i;
+		pw2[i]=pw2[i-1]*pw2[1];
 	}
-	printf("%lld",mx);
+	ifac[MXN-1]=(mll)1/fac[MXN-1];
+	for(int i=MXN-1;i;i--)
+		ifac[i-1]=ifac[i]*(mll)i;
+	ll t;
+	scanf("%lld",&t);
+	while(t--){
+		scanf("%lld%lld%lld",&n,&m,&k);
+		m=n-m;
+		mll ans(0);
+		if(!m)ans=(mll)n;
+		else{
+			for(int i=1;i<=n;i++)
+				ans+=c(n-i-1,m-1)*pw2[n-i]*(mll)i;
+		}
+		printf("%lld\n",(ll)(ans*(mll)k));
+
+	}
+
 	return 0;
 }

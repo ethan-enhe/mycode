@@ -1,6 +1,5 @@
 #include <bits/stdc++.h>
 using namespace std;
-using namespace std;
 //{{{ Def
 #define fi first
 #define se second
@@ -129,23 +128,11 @@ template <typename T> struct myvec {
 };
 //}}}
 ll n, m;
-ll arr[MXN];
-
+char str[MXN];
 int main(int argc, char *argv[]) {
 	// code
-	scanf("%lld",&n);
-	ll mx=0;
-	for(int i=1;i<=100;i++){
-		for(int i=1;i<=n;i++)
-			arr[i]=pow(-1,i);
-		shuffle(arr+1, arr+1+n, myrand);
-		ll tmp=0;
-		for(int i=1;i<=n;i++){
-			arr[i]+=arr[i-1];
-			umx(tmp,abs(arr[i]));
-		}
-		cout<<tmp<<endl;
-	}
-	printf("%lld",mx);
+	scanf("%s %lld%lld",str+1,&n,&m);
+	swap(str[n],str[m]);
+	printf("%s",str+1);
 	return 0;
 }
