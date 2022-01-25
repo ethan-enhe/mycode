@@ -75,8 +75,8 @@ set autowrite
 set autoread
 " au FocusGained,BufEnter * checktime
 
-map <leader>cd :cd %:p:h<cr>:pwd<cr>
-nmap <leader>w :w!<cr>
+map <leader>cd <cmd>cd %:p:h<cr>:pwd<cr>
+nmap <leader>w <cmd>w!<cr>
 "}}}
 "{{{ BACKUP
 set nobackup
@@ -132,8 +132,8 @@ let g:AutoPairsMapSpace=0
 let g:AutoPairsMultilineClose=0
 "}}}
 "{{{ VISUAL
-vnoremap <silent> * :<C-u>call VisualSelection('', '')<CR>/<C-R>=@/<CR><CR>
-vnoremap <silent> # :<C-u>call VisualSelection('', '')<CR>?<C-R>=@/<CR><CR>
+vnoremap <silent> * :<C-u>call VisualSelection('', '')<cr>/<C-R>=@/<cr><cr>
+vnoremap <silent> # :<C-u>call VisualSelection('', '')<cr>?<C-R>=@/<cr><cr>
 "}}}
 "{{{ MOVING
 map <C-h> <C-W>h
@@ -143,27 +143,27 @@ map <C-l> <C-W>l
 " map <space> /
 " map <C-space> ?
 " Close the current buffer
-map <leader>bd :Bclose<cr>
+map <leader>bd <cmd>Bclose<cr>
 
 " Close all the buffers
-map <leader>ba :bufdo bd<cr>
+map <leader>ba <cmd>bufdo bd<cr>
 
-map <leader>l :bnext<cr>
-map <leader>h :bprevious<cr>
+map <leader>l <cmd>bnext<cr>
+map <leader>h <cmd>bprevious<cr>
 
 " Useful mappings for managing tabs
-map <leader>tn :tabnew<cr>
-map <leader>to :tabonly<cr>
-map <leader>tc :tabclose<cr>
-map <leader>tm :tabmove
-map <leader>t<leader> :tabnext
+map <leader>tn <cmd>tabnew<cr>
+map <leader>to <cmd>tabonly<cr>
+map <leader>tc <cmd>tabclose<cr>
+map <leader>tm <cmd>tabmove
+map <leader>t<leader> <cmd>tabnext
 " Let 'tl' toggle between this and the last accessed tab
 let g:lasttab = 1
-nmap <Leader>tl :exe "tabn ".g:lasttab<CR>
+nmap <Leader>tl <cmd>exe "tabn ".g:lasttab<cr>
 au TabLeave * let g:lasttab = tabpagenr()
 " Opens a new tab with the current buffer's path
 " Super useful when editing files in the same directory
-map <leader>te :tabedit <C-r>=expand("%:p:h")<cr>/
+map <leader>te <cmd>tabedit <C-r>=expand("%:p:h")<cr>/
 " Specify the behavior when switching between buffers
 try
     set switchbuf=useopen,usetab,newtab
@@ -202,22 +202,22 @@ au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g
 "   inoremap { {}<LEFT>
 " endif
 map 0 ^
-inoremap jj <ESC>
+inoremap jj <esc>
 tnoremap jj <c-\><c-n>
-tnoremap <ESC> <c-\><c-n>
+tnoremap <esc> <c-\><c-n>
 " Move a line of text using ALT+[jk] or Command+[jk] on mac
 nmap <M-j> mz:m+<cr>`z
 nmap <M-k> mz:m-2<cr>`z
-vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
-vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
+vmap <M-j> <cmd>m'>+<cr>`<my`>mzgv`yo`z
+vmap <M-k> <cmd>m'<-2<cr>`>my`<mzgv`yo`z
 " Quickly open a buffer for scribble
-map <leader>q :e ~/buffer<cr>
+map <leader>x <cmd>e ~/buffer<cr>
 
 " Quickly open a markdown buffer for scribble
-map <leader>x :e ~/buffer.md<cr>
+" map <leader>x <cmd>e ~/buffer.md<cr>
 
 " Toggle paste mode on and off
-map <leader>pp :setlocal paste!<cr>
+map <leader>pp <cmd>setlocal paste!<cr>
 
 function! CmdLine(str)
     call feedkeys(":" . a:str)
@@ -240,17 +240,19 @@ function! VisualSelection(direction, extra_filter) range
     let @" = l:saved_reg
 endfunction
 
-"map <F10> :NERDTreeToggle<CR>
+"map <F10> <cmd>NERDTreeToggle<cr>
 "}}}
 "{{{ FILE SETTING
-map <F10> :MarkdownPreviewToggle<CR>
-map <leader>tt :r ~/code/template/other/cf.cpp<cr>
-map <C-c> :Commentary<CR>
+map <F10> <cmd>MarkdownPreviewToggle<cr>
+map <leader>tt <cmd>r ~/code/template/other/cf.cpp<cr>
+map <C-c> :Commentary<cr>
 " autocmd FileType cpp setlocal commentstring=//%s cindent
 autocmd FileType cpp setlocal cindent
-map <F8> :call RunCode()<CR>
-map <F9> :call CompileCode('-O2')<CR>
-" map <leader><F9> :call CompileCode('-O2 -Wall -fsanitize=address,undefined')<CR>
+map <F8> <cmd>call RunCode()<cr>
+map <F9> <cmd>call CompileCode('-O2')<cr>
+map <leader>ts <cmd>call RunCmdinCwd('cf test')<cr>
+map <leader>sm <cmd>call RunCmdinCwd('cf submit')<cr>
+" map <leader><F9> <cmd>call CompileCode('-O2 -Wall -fsanitize=address,undefined')<cr>
 let s:res=""
 function! s:OnEvent(job_id, data, event) dict
     if a:event == 'exit'
@@ -269,13 +271,13 @@ let s:callbacks = {
 func! CompileCode(copt)
     exec "w"
     echo "compiling... ".a:copt
-    let cpl=jobstart((g:iswindows?"g++ -Wl,-stack=536870912":"clang++")."\ ".a:copt."\ ".expand("%")."\ -o\ ".expand("%<"),s:callbacks)
+    let cpl=jobstart((g:iswindows?"g++ -Wl,-stack=536870912":"clang++")."\ ".a:copt."\ ".expand("%")."\ -o\ ".expand("%:t:r"),s:callbacks)
 endfunction
 func! RunCode()
     exec "w"
     let s:pre=has("nvim")?"bel 10sp term://":"!"
     if &filetype == 'cpp'
-        let s:suf=g:iswindows?expand('%<').'.exe':'\time -f "\n----\n\%Mkb \%Us" ./'.expand('%<')
+        let s:suf=g:iswindows?expand('%:t:r').'.exe':'\time -f "\n----\n\%Mkb \%Us" ./'.expand('%:t:r')
     elseif &filetype == 'python'
         let s:suf='python3 '.expand('%')
     elseif &filetype == 'lua'
@@ -283,9 +285,17 @@ func! RunCode()
     endif
     let s:pauser='bash -c "read -p Press\ any\ key\ to\ continue..."'
 
-    exec 'FloatermNew --autoclose=2 '.s:suf.' && '.s:pauser
+    " exec 'FloatermNew --autoclose=2 '.s:suf.' && '.s:pauser
     " exec 'FloatermSend cd '.expand('%:p:h').' && '.s:suf
+    " exec 'FloatermShow'
+    " call RunCmdinCwd(s:suf)
+    exec 'FloatermSend cd '.expand('%:p:h').' && '.s:suf
+    exec 'FloatermShow'
 endfunction
+fun! RunCmdinCwd(cmd)
+    exec 'FloatermSend cd '.expand('%:p:h').' && '.a:cmd
+    exec 'FloatermShow'
+endfun
 " Delete trailing white space on save, useful for some filetypes ;)
 fun! CleanExtraSpaces()
     let save_cursor = getpos(".")
@@ -357,10 +367,10 @@ let g:gruvbox_vert_split='bg0'
 let g:onedark_terminal_italics=1
 
 " let g:edge_style = 'neon'
-" let g:edge_transparent_background = 1
+let g:edge_transparent_background = 1
 " let g:edge_diagnostic_text_highlight = 1
 
-colorscheme onedark
+colorscheme edge
 " autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
 let g:indent_guides_enable_on_vim_startup = 1
 let g:indentLine_char = '|'
@@ -480,7 +490,7 @@ if g:usecoc
         inoremap <silent><expr> <c-@> coc#refresh()
     endif
 
-    inoremap <silent><expr> <cr> pumvisible() ? "\<C-y>" : "\<CR>"
+    inoremap <silent><expr> <cr> pumvisible() ? "\<C-y>" : "\<cr>"
 
     " Use `[g` and `]g` to navigate diagnostics
     " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
@@ -493,11 +503,11 @@ if g:usecoc
     nmap <silent> gi <Plug>(coc-implementation)
     nmap <silent> gr <Plug>(coc-references)
 
-    map <leader>rs :CocRestart<cr>
-    map <leader>bs :CocBufSourceToggle<cr>
+    map <leader>rs <cmd>CocRestart<cr>
+    map <leader>bs <cmd>CocBufSourceToggle<cr>
 
     " Use K to show documentation in preview window.
-    nnoremap <silent> K :call <SID>show_documentation()<CR>
+    nnoremap <silent> K :call <SID>show_documentation()<cr>
     nnoremap <silent> H :h <c-r>=expand('<cword>')<cr><cr>
 
     function! s:show_documentation()
@@ -597,11 +607,11 @@ if g:usecoc
     " Search workspace symbols.
     nnoremap <silent><nowait> <space>s  :<C-u>CocList -I symbols<cr>
     " Do default action for next item.
-    nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
+    nnoremap <silent><nowait> <space>j  :<C-u>CocNext<cr>
     " Do default action for previous item.
-    nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
+    nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<cr>
     " Resume latest coc list.
-    nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
+    nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<cr>
     "}}}
     "{{{ COC-SNIP
     " Use <C-l> for trigger snippet expand.
@@ -618,8 +628,8 @@ if g:usecoc
     xmap <leader>x  <Plug>(coc-convert-snippet)
     "}}}
     " {{{ COC-EXP
-    nnoremap <silent><nowait> <space>e  <Cmd>CocCommand explorer<CR>
-    " nmap <space>el <Cmd>CocList explPresets<CR>
+    nnoremap <silent><nowait> <space>e  <Cmd>CocCommand explorer<cr>
+    " nmap <space>el <Cmd>CocList explPresets<cr>
     augroup vime_coc_explorer_group
         autocmd!
         " autocmd WinEnter * if &filetype == 'coc-explorer' && winnr('$') == 1 | q | endif
@@ -759,9 +769,9 @@ else
 
     "let g:ale_completion_enabled = 1
     ""<Leader>s触发/关闭语法检查
-    "nmap <Leader>s :ALEToggle<CR>
+    "nmap <Leader>s <cmd>ALEToggle<cr>
     ""<Leader>d查看错误或警告的详细信息
-    "nmap <Leader>d :ALEDetail<CR>
+    "nmap <Leader>d <cmd>ALEDetail<cr>
     ""使用clang对c和c++进行语法检查，对python使用pylint进行语法检查
     "let g:ale_linters = {
     "\   'c++': ['clang'],
@@ -843,7 +853,7 @@ end
 i = cmp.mapping.abort(),
 c = cmp.mapping.close(),
 }),
-['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+['<cr>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
 },
     sources = cmp.config.sources({
     { name = 'nvim_lsp' },
