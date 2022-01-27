@@ -1,6 +1,9 @@
 #include <bits/stdc++.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
 using namespace std;
-int n=4,arr[10];
 int main(int argc, char *argv[]) {
-	return 0;
+    cout<<"12313";
+
+    return 0;
 }

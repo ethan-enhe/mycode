@@ -101,7 +101,7 @@ void solve() {
 	for(int i=1;i<=1000;i++){
 		system("./gen>test.in");
 		system("./std<test.in>std.out");
-		system("./T217363<test.in>wr.out");
+		system("./zr2175<test.in>wr.out");
 		if(system("diff -Z wr.out std.out")){
 			break;
 

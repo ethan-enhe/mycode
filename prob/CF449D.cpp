@@ -49,7 +49,7 @@ struct brt {
 //}}}
 constexpr ll INF = 1e18;
 constexpr brt P(1e9 + 7);
-constexpr ll MXN = 1e6 + 5;
+constexpr ll LG = 20, MXN = 1 << LG;
 //{{{ Func
 template <typename T>
 constexpr T qpow(T x, ll y) {
@@ -121,35 +121,24 @@ struct myvec {
 };
 //}}}
 ll n, m;
-ll arr[MXN];
+mll arr[MXN];
 
 int main(int argc, char *argv[]) {
     // code
-    int n=10,m=10,c=2;
-    for(int i=1;i<=n;i++)
-        cout<<char('a'+rand()%c);
-    cout<<endl<<m<<endl;
-    for(int i=1;i<=m;i++){
-        int len=rand()%n*2/3+1;
-        while(1)
-        {
-            string ans;
-            for(int j=1;j<=len;j++){
-                int tmp=rand();
-                if(tmp%5<=1 && *ans.rbegin()!='*')ans+="*";
-                else if(tmp%3==2)ans+="?";
-                else ans+=char('a'+rand()%c);
-            }
-            bool f=1;
-            for(char x:ans)
-                f&=x=='*';
-            if(!f){
-                cout<<ans;
-                break;
-            }
-        }
-        cout<<endl;
+    scanf("%lld", &n);
+    for (int i = 1; i <= n; i++) {
+        ll tmp;
+        scanf("%lld", &tmp);
+        arr[tmp] += (mll)1;
     }
+    for (int i = 0; i < LG; i++)
+        for (int j = 0; j < MXN; j++)
+            if (!((j >> i) & 1)) arr[j] += arr[j ^ (1 << i)];
+    for (int i = 0; i < MXN; i++) arr[i] = qpow((mll)2, (ll)arr[i]) - (mll)1;
+    for (int i = 0; i < LG; i++)
+        for (int j = 0; j < MXN; j++)
+            if (!((j >> i) & 1)) arr[j] -= arr[j ^ (1 << i)];
+    printf("%lld",(ll)arr[0]);
 
     return 0;
 }

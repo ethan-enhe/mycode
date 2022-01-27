@@ -1,5 +1,7 @@
-
 #include <bits/stdc++.h>
+
+#include <array>
+#include <cstdio>
 using namespace std;
 //{{{ Def
 #define fi first
@@ -49,7 +51,7 @@ struct brt {
 //}}}
 constexpr ll INF = 1e18;
 constexpr brt P(1e9 + 7);
-constexpr ll MXN = 1e6 + 5;
+constexpr ll MXN = 805;
 //{{{ Func
 template <typename T>
 constexpr T qpow(T x, ll y) {
@@ -121,35 +123,40 @@ struct myvec {
 };
 //}}}
 ll n, m;
-ll arr[MXN];
-
+mll arr[MXN][MXN];
+void prt() {
+    for (ll i = 1; i <= n; i++)
+        for (ll j = 1; j <= n * 2; j++) cout << arr[i][j].v << " \n"[j == n * 2];
+    puts("---");
+}
 int main(int argc, char *argv[]) {
     // code
-    int n=10,m=10,c=2;
-    for(int i=1;i<=n;i++)
-        cout<<char('a'+rand()%c);
-    cout<<endl<<m<<endl;
-    for(int i=1;i<=m;i++){
-        int len=rand()%n*2/3+1;
-        while(1)
-        {
-            string ans;
-            for(int j=1;j<=len;j++){
-                int tmp=rand();
-                if(tmp%5<=1 && *ans.rbegin()!='*')ans+="*";
-                else if(tmp%3==2)ans+="?";
-                else ans+=char('a'+rand()%c);
-            }
-            bool f=1;
-            for(char x:ans)
-                f&=x=='*';
-            if(!f){
-                cout<<ans;
-                break;
-            }
+    scanf("%lld", &n);
+    for (ll i = 1; i <= n; i++)
+        for (ll j = 1; j <= n; j++) {
+            scanf("%lld", &arr[i][j].v);
+            if (i == j) arr[i][j + n] = (mll)1;
         }
-        cout<<endl;
+    /* prt(); */
+    for (ll i = 1; i <= n; i++) {
+        ll k(-1);
+        for (ll j = i; j <= n; j++)
+            if (arr[j][i].v) k = j;
+        if (k == -1) {
+            puts("No Solution");
+            return 0;
+        }
+        if (i != k) swap(arr[k], arr[i]);
+        mll rate = (mll)1 / arr[i][i];
+        for (ll j = i; j <= n * 2; j++) arr[i][j] *= rate;
+        for (ll j = 1; j <= n; j++)
+            if (j != i) {
+                rate = arr[j][i];
+                for (ll k = i; k <= n * 2; k++) arr[j][k] -= rate * arr[i][k];
+            }
+        /* prt(); */
     }
-
+    for (int i = 1; i <= n; i++)
+        for (int j = n + 1; j <= n * 2; j++) printf("%lld%c", arr[i][j].v, " \n"[j == n * 2]);
     return 0;
 }

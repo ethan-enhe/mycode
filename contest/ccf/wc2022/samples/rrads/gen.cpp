@@ -1,5 +1,6 @@
 
 #include <bits/stdc++.h>
+#include <algorithm>
 using namespace std;
 //{{{ Def
 #define fi first
@@ -125,31 +126,22 @@ ll arr[MXN];
 
 int main(int argc, char *argv[]) {
     // code
-    int n=10,m=10,c=2;
-    for(int i=1;i<=n;i++)
-        cout<<char('a'+rand()%c);
-    cout<<endl<<m<<endl;
-    for(int i=1;i<=m;i++){
-        int len=rand()%n*2/3+1;
-        while(1)
-        {
-            string ans;
-            for(int j=1;j<=len;j++){
-                int tmp=rand();
-                if(tmp%5<=1 && *ans.rbegin()!='*')ans+="*";
-                else if(tmp%3==2)ans+="?";
-                else ans+=char('a'+rand()%c);
-            }
-            bool f=1;
-            for(char x:ans)
-                f&=x=='*';
-            if(!f){
-                cout<<ans;
-                break;
-            }
-        }
-        cout<<endl;
+    /* freopen("gen.in","r",stdin); */
+    freopen("rrads.in","w",stdout);
+    ll n=5ee,m=n;
+    cout<<n<<" "<<m<<endl;
+    for(int i=1;i<=n;i++){
+        arr[i]=i;
     }
+    shuffle(arr+1, arr+1+n, myrand);
+    for(int i=1;i<=n;i++)
+        cout<<arr[i]<<" \n"[i==n];
+    while(m--){
+        ll l=randint(1, n);
+        ll r=randint(1, n);
+        if(l>r)swap(l,r);
+        cout<<l<<" "<<r<<"\n";
 
+    }
     return 0;
 }

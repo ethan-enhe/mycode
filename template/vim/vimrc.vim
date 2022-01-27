@@ -59,6 +59,7 @@ set termencoding=utf-8
 set encoding=utf-8
 set ffs=unix,dos,mac
 noremap <Leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
+noremap <leader>rt <cmd>ret<cr>
 
 set number
 set relativenumber
@@ -108,6 +109,8 @@ set lazyredraw
 set magic
 " set showmatch
 " set mat=2
+
+set updatetime=300
 set noerrorbells
 set novisualbell
 set tm=500
@@ -250,8 +253,8 @@ map <C-c> :Commentary<cr>
 autocmd FileType cpp setlocal cindent
 map <F8> <cmd>call RunCode()<cr>
 map <F9> <cmd>call CompileCode('-O2')<cr>
-map <leader>ts <cmd>call RunCmdinCwd('cf test')<cr>
-map <leader>sm <cmd>call RunCmdinCwd('cf submit')<cr>
+map <leader>ts <cmd>call RuninFloat('cf test')<cr>
+map <leader>sm <cmd>call RuninFloat('cf submit')<cr>
 " map <leader><F9> <cmd>call CompileCode('-O2 -Wall -fsanitize=address,undefined')<cr>
 let s:res=""
 function! s:OnEvent(job_id, data, event) dict
@@ -268,6 +271,7 @@ let s:callbacks = {
             \ 'on_exit': function('s:OnEvent')
             \ }
 
+let g:pauser='bash -c "read -p Press\ enter\ to\ continue..."'
 func! CompileCode(copt)
     exec "w"
     echo "compiling... ".a:copt
@@ -283,16 +287,18 @@ func! RunCode()
     elseif &filetype == 'lua'
         let s:suf='lua '.expand('%')
     endif
-    let s:pauser='bash -c "read -p Press\ any\ key\ to\ continue..."'
 
-    " exec 'FloatermNew --autoclose=2 '.s:suf.' && '.s:pauser
+    call RuninFloat(s:suf)
     " exec 'FloatermSend cd '.expand('%:p:h').' && '.s:suf
     " exec 'FloatermShow'
     " call RunCmdinCwd(s:suf)
-    exec 'FloatermSend cd '.expand('%:p:h').' && '.s:suf
-    exec 'FloatermShow'
+    " exec 'FloatermSend cd '.expand('%:p:h').' && '.s:suf
+    " exec 'FloatermShow'
 endfunction
-fun! RunCmdinCwd(cmd)
+fun! RuninFloat(cmd)
+    exec 'FloatermNew --autoclose=2 '.a:cmd.' && '.g:pauser
+endfun
+fun! RuninTerminal(cmd)
     exec 'FloatermSend cd '.expand('%:p:h').' && '.a:cmd
     exec 'FloatermShow'
 endfun
@@ -370,7 +376,7 @@ let g:onedark_terminal_italics=1
 let g:edge_transparent_background = 1
 " let g:edge_diagnostic_text_highlight = 1
 
-colorscheme edge
+colorscheme onedark
 " autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
 let g:indent_guides_enable_on_vim_startup = 1
 let g:indentLine_char = '|'
@@ -389,6 +395,11 @@ map <silent> <leader><cr> :noh<cr>
 
 " let g:airline_theme='onedark'
 let g:airline_powerline_fonts = g:usefont
+
+let g:airline_left_sep = "\ue0bc"
+let g:airline_left_alt_sep = "\ue0bd"
+let g:airline_right_sep = "\ue0be"
+let g:airline_right_alt_sep = "\ue0bf"
 let g:airline#extensions#tabline#enabled = 1 "tabline中当前buffer两端的分隔字符
 let g:airline#extensions#whitespace#enabled = 0
 " let g:airline#extensions#tabline#buffer_nr_show=1
@@ -397,6 +408,7 @@ let g:airline#extensions#whitespace#enabled = 0
 let g:floaterm_keymap_toggle = '<f12>'
 let g:floaterm_width=0.8
 let g:floaterm_height=0.8
+" let g:floaterm_autoinsert=0
 " let g:floaterm_position='bottomright'
 let g:floaterm_opener='vsplit'
 hi FloatermBorder guibg=none
@@ -460,7 +472,7 @@ if g:usecoc
     autocmd FileType * let b:coc_pairs_disabled = ['<']
     " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
     " delays and poor user experience.
-    set updatetime=300
+    " set updatetime=300
 
     " Don't pass messages to |ins-completion-menu|.
     set shortmess+=c
@@ -532,7 +544,6 @@ if g:usecoc
     " xmap <leader>f    <Plug>(coc-format-selected)
     " nmap <leader>f    <Plug>(coc-format-selected)
     map <leader>f   <cmd>Format<cr>
-    map <leader>rt <cmd>ret<cr>
 
 
     augroup mygroup
@@ -788,72 +799,72 @@ cmp.setup({
 snippet = {
     -- REQUIRED - you must specify a snippet engine
     expand = function(args)
-    --vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-    -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
-    -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
-    vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
-end,
+        --vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+        -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+        -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
+        vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+    end,
 },
 mapping = {
-["<Tab>"] = cmp.mapping({
-c = function()
-if cmp.visible() then
-    cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
-else
-    cmp.complete()
-end
-end,
-i = function(fallback)
-if cmp.visible() then
-cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
-elseif vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
-vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_forward)"), 'm', true)
-else
-fallback()
-end
+    ["<Tab>"] = cmp.mapping({
+        c = function()
+            if cmp.visible() then
+                cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
+            else
+                cmp.complete()
+            end
+        end,
+        i = function(fallback)
+            if cmp.visible() then
+                cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
+            elseif vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
+                vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_forward)"), 'm', true)
+            else
+                fallback()
+            end
         end,
         s = function(fallback)
-        if vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
-            vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_forward)"), 'm', true)
-        else
-            fallback()
+            if vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
+                vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_forward)"), 'm', true)
+            else
+                fallback()
+            end
         end
-    end
     }),
-["<S-Tab>"] = cmp.mapping({
-c = function()
-if cmp.visible() then
-    cmp.select_prev_item({ behavior = cmp.SelectBehavior.Insert })
-else
-    cmp.complete()
-end
-end,
-i = function(fallback)
-if cmp.visible() then
-cmp.select_prev_item({ behavior = cmp.SelectBehavior.Insert })
-elseif vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
-return vim.api.nvim_feedkeys( t("<Plug>(ultisnips_jump_backward)"), 'm', true)
-else
-fallback()
-end
+    ["<S-Tab>"] = cmp.mapping({
+        c = function()
+            if cmp.visible() then
+                cmp.select_prev_item({ behavior = cmp.SelectBehavior.Insert })
+            else
+                cmp.complete()
+            end
+        end,
+        i = function(fallback)
+            if cmp.visible() then
+                cmp.select_prev_item({ behavior = cmp.SelectBehavior.Insert })
+            elseif vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
+                return vim.api.nvim_feedkeys( t("<Plug>(ultisnips_jump_backward)"), 'm', true)
+            else
+                fallback()
+            end
         end,
         s = function(fallback)
-        if vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
-            return vim.api.nvim_feedkeys( t("<Plug>(ultisnips_jump_backward)"), 'm', true)
-        else
-            fallback()
+            if vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
+                return vim.api.nvim_feedkeys( t("<Plug>(ultisnips_jump_backward)"), 'm', true)
+            else
+                fallback()
+            end
         end
-    end
     }),
-['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
-['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
-['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
---['<C-y>'] = cmp.config.disable, -- Specify `cmp.config.disable` if you want to remove the default `<C-y>` mapping.
-['<C-e>'] = cmp.mapping({
-i = cmp.mapping.abort(),
-c = cmp.mapping.close(),
-}),
-['<cr>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+    ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
+    ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
+    ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
+    --['<C-y>'] = cmp.config.disable, -- Specify `cmp.config.disable` if you want to remove the default `<C-y>` mapping.
+    ['<C-e>'] = cmp.mapping({
+    i = cmp.mapping.abort(),
+    c = cmp.mapping.close(),
+    }),
+    ['<cr>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
 },
     sources = cmp.config.sources({
     { name = 'nvim_lsp' },
@@ -868,26 +879,24 @@ c = cmp.mapping.close(),
 
 -- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
 cmp.setup.cmdline('/', {
-sources = {
-    { name = 'buffer' }
-    }
-})
+    sources = {
+        { name = 'buffer' }
+        }
+    })
 
 -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
 cmp.setup.cmdline(':', {
-sources = cmp.config.sources({
-{ name = 'path' }
-}, {
-{ name = 'cmdline' }
-})
+    sources = cmp.config.sources({
+    { name = 'path' }
+    }, {
+    { name = 'cmdline' }
+    })
 })
 
 -- Setup lspconfig.
 local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
-require('lspconfig')['clangd'].setup {
-    capabilities = capabilities
-    }
+require('lspconfig')['clangd'].setup {}
 EOF
 
     " }}}
