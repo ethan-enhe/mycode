@@ -130,7 +130,7 @@ void prt() {
     puts("---");
 }
 int main(int argc, char *argv[]) {
-    // code
+    // 试一下奇奇怪怪现在可以在vim 中快乐的
     scanf("%lld", &n);
     for (ll i = 1; i <= n; i++)
         for (ll j = 1; j <= n; j++) {

@@ -85,6 +85,7 @@ set nowritebackup
 set noswapfile
 "}}}
 "{{{ INTERFACE
+set completeopt=menu,menuone,noselect
 set ruler
 set showcmd
 set cmdheight=2
@@ -343,6 +344,12 @@ Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': 
 
 Plug 'voldikss/vim-floaterm'
 
+
+Plug 'ZSaberLv0/ZFVimJob'
+Plug 'ZSaberLv0/ZFVimGitUtil'
+Plug 'ethan-enhe/ZFVimIM'
+Plug 'ZSaberLv0/ZFVimIM_openapi' " 百度云输入法
+Plug 'ethan-enhe/ZFVimIM_pinyin_base' " 你的词库, 确保有 push 权限
 if g:usecoc
     Plug 'ethan-enhe/vim-snippets/'
     Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -360,6 +367,11 @@ else
     Plug 'quangnguyen30192/cmp-nvim-ultisnips'
 endif
 call plug#end()
+"}}}
+"{{{
+let g:ZFVimIM_pinyin_gitUserEmail='18201521626@139.com'
+let g:ZFVimIM_pinyin_gitUserName='ethan-enhe'
+let g:ZFVimIM_pinyin_gitUserToken='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'
 "}}}
 " {{{ COLOR
 if $COLORTERM == 'gnome-terminal'
@@ -790,7 +802,6 @@ else
     "\}
     " }}}
     " {{{ cmp
-    set completeopt=menu,menuone,noselect
 lua <<EOF
 -- Setup nvim-cmp.
 local cmp = require'cmp'
