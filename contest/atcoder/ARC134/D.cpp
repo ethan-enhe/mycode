@@ -1,10 +1,5 @@
-
-
 #include <bits/stdc++.h>
 
-#include <cstdio>
-#include <cstring>
-#include <limits>
 using namespace std;
 //{{{ Def
 #define fi first
@@ -26,9 +21,9 @@ typedef long double ld;
 typedef pair<ll, ll> pi;
 mt19937_64 myrand(chrono::system_clock::now().time_since_epoch().count());
 //}}}
-constexpr ll INF = numeric_limits<ll>::max();
+constexpr ll INF = 1e18;
 constexpr ll P(1e9 + 7);
-constexpr ll MXN = 100;
+constexpr ll MXN = 1e6 + 5;
 //{{{ Func
 template <typename T>
 constexpr T qpow(T x, ll y) {
@@ -107,35 +102,80 @@ struct myvec {
 };
 //}}}
 ll n, m;
-ll cnt[10], c[MXN][MXN];
-char str[MXN];
-ll count() {
-    ll tot = 0, ans = 1;
-    for (int i = 0; i < 10; i++) {
-        tot += cnt[i];
-        ans *= c[tot][cnt[i]];
-    }
-    return ans;
-}
+ll arr[MXN];
+pi brr[MXN];
+vector<ll> rside, lside, cur;
+
 int main(int argc, char *argv[]) {
     // code
-    scanf("%s", str + 1);
-    n = strlen(str + 1);
-    c[0][0] = 1;
+    scanf("%lld", &n);
+    for (int i = 1; i <= n * 2; i++) scanf("%lld", arr + i);
+    for (int i = 1; i <= n; i++) brr[i] = {arr[i], i};
+    sort(brr + 1, brr + 1 + n);
+    ll mn = INF, mnc = 0, ind = 0, rsidediff = 0;
     for (int i = 1; i <= n; i++)
-        for (int j = 0; j <= n; j++) c[i][j] = (j ? c[i - 1][j - 1] : 0) + c[i - 1][j];
-    for (int i = 1; i <= n; i++) cnt[str[i] - '0']++;
-    for (int i = 1; i <= n; i++) {
-        for (int j = 0; j < str[i] - '0'; j++)
-            if (cnt[j]) {
-                --cnt[j];
-                m += count();
-                cerr << i << " " << j << " " << count() << endl;
-                ++cnt[j];
+        if (brr[i].second > ind) {
+            ind = brr[i].second;
+            if (arr[ind + n] < mn)
+                mn = arr[ind + n], mnc = 1;
+            else if (arr[ind + n] == mn)
+                ++mnc;
+            cur.push_back(ind);
+            ll cva = brr[i].first;
+            /* cerr<<cva<<"!!!"; */
+            if (cva != brr[i + 1].first) {
+                if (rside.size()) {
+                    if (rside[0] > cva) {
+                        for (int j : cur) {
+                            rside.push_back(arr[j + n]);
+                            if (!rsidediff && arr[j + n] != rside[0]) rsidediff = arr[j + n];
+                            lside.push_back(cva);
+                        }
+                    } else if (rside[0] < cva) {
+                        break;
+                    } else {
+                        if (rsidediff) {
+                            if (rsidediff > cva) {
+                                for (int j : cur) {
+                                    rside.push_back(arr[j + n]);
+                                    if (!rsidediff && arr[j + n] != rside[0]) rsidediff = arr[j + n];
+                                    lside.push_back(cva);
+                                }
+                            } else
+                                break;
+                        } else {
+                            if (mn <= cva) {
+                                break;
+                            } else if (mn > cva) {
+                                for (int j : cur) {
+                                    rside.push_back(arr[j + n]);
+                                    if (!rsidediff && arr[j + n] != rside[0]) rsidediff = arr[j + n];
+                                    lside.push_back(cva);
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    if (mn <= cva) {
+                        /* cerr<<"!!!"; */
+                        lside.push_back(cva);
+                        rside.push_back(mn);
+                        if (!rsidediff && mn != rside[0]) rsidediff = mn;
+                        break;
+                    } else {
+                        for (int j : cur) {
+                            rside.push_back(arr[j + n]);
+                            if (!rsidediff && arr[j + n] != rside[0]) rsidediff = arr[j + n];
+                            lside.push_back(cva);
+                        }
+                    }
+                }
+                cur.clear();
+                mn = INF, mnc = 0;
             }
-        --cnt[str[i] - '0'];
-    }
-    printf("%lld\n", m);
-
+        }
+    /* assert(!mnc); */
+    for (ll x : lside) cout << x << " ";
+    for (ll y : rside) cout << y << " ";
     return 0;
 }

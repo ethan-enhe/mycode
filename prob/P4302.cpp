@@ -1,10 +1,7 @@
 
-
 #include <bits/stdc++.h>
 
-#include <cstdio>
 #include <cstring>
-#include <limits>
 using namespace std;
 //{{{ Def
 #define fi first
@@ -26,9 +23,9 @@ typedef long double ld;
 typedef pair<ll, ll> pi;
 mt19937_64 myrand(chrono::system_clock::now().time_since_epoch().count());
 //}}}
-constexpr ll INF = numeric_limits<ll>::max();
+constexpr ll INF = 1e18;
 constexpr ll P(1e9 + 7);
-constexpr ll MXN = 100;
+constexpr ll MXN = 105;
 //{{{ Func
 template <typename T>
 constexpr T qpow(T x, ll y) {
@@ -107,35 +104,38 @@ struct myvec {
 };
 //}}}
 ll n, m;
-ll cnt[10], c[MXN][MXN];
 char str[MXN];
-ll count() {
-    ll tot = 0, ans = 1;
-    for (int i = 0; i < 10; i++) {
-        tot += cnt[i];
-        ans *= c[tot][cnt[i]];
+ll dp[MXN][MXN];
+ll getlen(ll x) { return 1 + (x >= 10); }
+ll cal(ll l, ll r) {
+    if (dp[l][r] == -1) {
+        ll len = dp[l][r] = r - l + 1;
+        for (int i = l; i < r; i++) umn(dp[l][r], cal(l, i) + cal(i + 1, r));
+        for (int i = 1; i <= len; i++)
+            if (len % i == 0) {
+                ll flen = getlen(len / i) + 2 + cal(l, l + i - 1);
+                if (flen < dp[l][r]) {
+                    bool f = 1;
+                    for (int j = l + i; j <= r; j += i) {
+                        for (int k = 0; k < i; k++)
+                            if (str[j + k] != str[l + k]) {
+                                f = 0;
+                                break;
+                            }
+                        if (!f) break;
+                    }
+                    if (f) dp[l][r] = flen;
+                }
+            }
     }
-    return ans;
+    return dp[l][r];
 }
+
 int main(int argc, char *argv[]) {
     // code
+    memset(dp, -1, sizeof(dp));
     scanf("%s", str + 1);
     n = strlen(str + 1);
-    c[0][0] = 1;
-    for (int i = 1; i <= n; i++)
-        for (int j = 0; j <= n; j++) c[i][j] = (j ? c[i - 1][j - 1] : 0) + c[i - 1][j];
-    for (int i = 1; i <= n; i++) cnt[str[i] - '0']++;
-    for (int i = 1; i <= n; i++) {
-        for (int j = 0; j < str[i] - '0'; j++)
-            if (cnt[j]) {
-                --cnt[j];
-                m += count();
-                cerr << i << " " << j << " " << count() << endl;
-                ++cnt[j];
-            }
-        --cnt[str[i] - '0'];
-    }
-    printf("%lld\n", m);
-
+    printf("%lld", cal(1, n));
     return 0;
 }

@@ -1,10 +1,5 @@
 
-
 #include <bits/stdc++.h>
-
-#include <cstdio>
-#include <cstring>
-#include <limits>
 using namespace std;
 //{{{ Def
 #define fi first
@@ -26,9 +21,9 @@ typedef long double ld;
 typedef pair<ll, ll> pi;
 mt19937_64 myrand(chrono::system_clock::now().time_since_epoch().count());
 //}}}
-constexpr ll INF = numeric_limits<ll>::max();
-constexpr ll P(1e9 + 7);
-constexpr ll MXN = 100;
+constexpr ll INF = 1e18;
+constexpr ll P(998244353);
+constexpr ll MXN = 1e6 + 5, MXM = 205;
 //{{{ Func
 template <typename T>
 constexpr T qpow(T x, ll y) {
@@ -107,35 +102,34 @@ struct myvec {
 };
 //}}}
 ll n, m;
-ll cnt[10], c[MXN][MXN];
-char str[MXN];
-ll count() {
-    ll tot = 0, ans = 1;
-    for (int i = 0; i < 10; i++) {
-        tot += cnt[i];
-        ans *= c[tot][cnt[i]];
-    }
-    return ans;
+ll arr[MXN];
+mll ifac[MXM];
+
+mll c(ll x, ll y) {
+    if (x < y || y < 0) return 0;
+    mll res = ifac[y];
+    for (ll i = 0; i < y; i++) res *= x - i;
+    return res;
 }
 int main(int argc, char *argv[]) {
     // code
-    scanf("%s", str + 1);
-    n = strlen(str + 1);
-    c[0][0] = 1;
-    for (int i = 1; i <= n; i++)
-        for (int j = 0; j <= n; j++) c[i][j] = (j ? c[i - 1][j - 1] : 0) + c[i - 1][j];
-    for (int i = 1; i <= n; i++) cnt[str[i] - '0']++;
-    for (int i = 1; i <= n; i++) {
-        for (int j = 0; j < str[i] - '0'; j++)
-            if (cnt[j]) {
-                --cnt[j];
-                m += count();
-                cerr << i << " " << j << " " << count() << endl;
-                ++cnt[j];
-            }
-        --cnt[str[i] - '0'];
+    mll fac = ifac[0] = 1;
+    /* ll x=1; */
+    for (ll i = 1; i < MXM; i++) {
+        /* x=x*i%P; */
+        fac *= i;
+        ifac[i] = (mll)1 / fac;
+        /* assert((ll)ifac[i]*x%P==1); */
     }
-    printf("%lld\n", m);
-
+    /* cout<<(ll)c(10,2); */
+    scanf("%lld%lld", &n, &m);
+    ll sum = 0;
+    for (ll i = 1; i <= n; i++) {
+        scanf("%lld", arr + i);
+        if (i > 1) sum += arr[i];
+    }
+    mll res = c(arr[1] - sum - 1, m - 1);
+    for (ll i = 2; i <= n; i++) res *= c(arr[i] + m - 1, m - 1);
+    printf("%lld", res.v);
     return 0;
 }

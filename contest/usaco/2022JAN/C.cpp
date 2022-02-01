@@ -1,10 +1,11 @@
 
-
 #include <bits/stdc++.h>
+#include <math.h>
 
-#include <cstdio>
-#include <cstring>
-#include <limits>
+#include <cmath>
+#include <ctime>
+#include <random>
+#include <vector>
 using namespace std;
 //{{{ Def
 #define fi first
@@ -26,9 +27,9 @@ typedef long double ld;
 typedef pair<ll, ll> pi;
 mt19937_64 myrand(chrono::system_clock::now().time_since_epoch().count());
 //}}}
-constexpr ll INF = numeric_limits<ll>::max();
+constexpr ll INF = 1e18;
 constexpr ll P(1e9 + 7);
-constexpr ll MXN = 100;
+constexpr ll MXN = 1e6 + 5, MXR = 1e9;
 //{{{ Func
 template <typename T>
 constexpr T qpow(T x, ll y) {
@@ -107,35 +108,67 @@ struct myvec {
 };
 //}}}
 ll n, m;
-ll cnt[10], c[MXN][MXN];
-char str[MXN];
-ll count() {
-    ll tot = 0, ans = 1;
-    for (int i = 0; i < 10; i++) {
-        tot += cnt[i];
-        ans *= c[tot][cnt[i]];
-    }
-    return ans;
-}
-int main(int argc, char *argv[]) {
-    // code
-    scanf("%s", str + 1);
-    n = strlen(str + 1);
-    c[0][0] = 1;
-    for (int i = 1; i <= n; i++)
-        for (int j = 0; j <= n; j++) c[i][j] = (j ? c[i - 1][j - 1] : 0) + c[i - 1][j];
-    for (int i = 1; i <= n; i++) cnt[str[i] - '0']++;
-    for (int i = 1; i <= n; i++) {
-        for (int j = 0; j < str[i] - '0'; j++)
-            if (cnt[j]) {
-                --cnt[j];
-                m += count();
-                cerr << i << " " << j << " " << count() << endl;
-                ++cnt[j];
-            }
-        --cnt[str[i] - '0'];
-    }
-    printf("%lld\n", m);
 
+vector<pi> grp[MXN];
+
+inline ld cal(const pi &x, const ld &tx, const ld &ty) { return tx * x.first + ty * x.second; }
+ll getE(ld tx, ld ty) {
+    pi s;
+    for (int i = 1; i <= n; i++) {
+        ld mx = -INF;
+        ll mxj, sz = grp[i].size();
+        for (int j = 0; j < sz; j++) {
+            ld res = cal(grp[i][j], tx, ty);
+            if (res > mx) mx = res, mxj = j;
+        }
+        s = s + grp[i][mxj];
+        /* cout<<mx<<endl; */
+    }
+    /* cout<<s.first<<" "<<s.second<<endl; */
+    return s.first * s.first + s.second * s.second;
+}
+ll getE(ld alpha) { return getE(sin(alpha), cos(alpha)); }
+
+int main(int argc, char *argv[]) {
+    freopen("test.in","r",stdin);
+    /* freopen("test.out","w",stdout); */
+    ll en = clock() + 1.5 * CLOCKS_PER_SEC;
+    // code
+    scanf("%lld", &n);
+    for (int i = 1; i <= n; i++) {
+        scanf("%lld", &m);
+        while (m--) {
+            ll x, y;
+            scanf("%lld%lld", &x, &y);
+            grp[i].push_back({x, y});
+        }
+    }
+    ll ans = 0, curE = 0, nxE;
+    ll cnt=0;
+    while (clock() < en) {
+        ++cnt;
+        ld alpha = randdb(0, M_PI * 2), T = 1e18, rate = 0.95;
+
+        normal_distribution<ld> dist(0, M_PI);
+
+        while (T > 0.1 && clock() < en) {
+            ld nx = alpha + dist(myrand);
+            nxE = getE(nx);
+            if (nxE > curE || randdb(0, 1) <= exp((nxE - curE) / T)) {
+                alpha = nx;
+                curE = nxE;
+            }
+            umx(ans, curE);
+            T *= rate;
+        }
+        /* assert(0) */
+        /* cout << alpha; */
+        /* cout<<M_PI_2; */
+        /* ld alpha=randint */
+
+        /* ans = max(ans, getE(randint(-MXR, MXR), randint(-MXR, MXR))); */
+    }
+    cerr<<cnt<<endl;
+    printf("%lld", ans);
     return 0;
 }

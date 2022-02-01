@@ -1,10 +1,5 @@
 
-
 #include <bits/stdc++.h>
-
-#include <cstdio>
-#include <cstring>
-#include <limits>
 using namespace std;
 //{{{ Def
 #define fi first
@@ -26,9 +21,9 @@ typedef long double ld;
 typedef pair<ll, ll> pi;
 mt19937_64 myrand(chrono::system_clock::now().time_since_epoch().count());
 //}}}
-constexpr ll INF = numeric_limits<ll>::max();
+constexpr ll INF = 1e18;
 constexpr ll P(1e9 + 7);
-constexpr ll MXN = 100;
+constexpr ll MXN = 2e5 + 5, C = 26;
 //{{{ Func
 template <typename T>
 constexpr T qpow(T x, ll y) {
@@ -107,35 +102,24 @@ struct myvec {
 };
 //}}}
 ll n, m;
-ll cnt[10], c[MXN][MXN];
 char str[MXN];
-ll count() {
-    ll tot = 0, ans = 1;
-    for (int i = 0; i < 10; i++) {
-        tot += cnt[i];
-        ans *= c[tot][cnt[i]];
-    }
-    return ans;
-}
+ll pre[MXN][C];
+
 int main(int argc, char *argv[]) {
     // code
-    scanf("%s", str + 1);
-    n = strlen(str + 1);
-    c[0][0] = 1;
-    for (int i = 1; i <= n; i++)
-        for (int j = 0; j <= n; j++) c[i][j] = (j ? c[i - 1][j - 1] : 0) + c[i - 1][j];
-    for (int i = 1; i <= n; i++) cnt[str[i] - '0']++;
+    scanf("%lld %s", &n, str + 1);
     for (int i = 1; i <= n; i++) {
-        for (int j = 0; j < str[i] - '0'; j++)
-            if (cnt[j]) {
-                --cnt[j];
-                m += count();
-                cerr << i << " " << j << " " << count() << endl;
-                ++cnt[j];
-            }
-        --cnt[str[i] - '0'];
+        for (int j = 0; j < C; j++) pre[i][j] = pre[i - 1][j];
+        pre[i][str[i] - 'a'] = i;
     }
-    printf("%lld\n", m);
-
+    ll j = n;
+    for (ll i = 1; i <= n; i++)
+        for (ll c = 0; c < str[i] - 'a'; c++)
+            if (pre[j][c] > i) {
+                swap(str[i], str[pre[j][c]]);
+                j = pre[j][c] - 1;
+                break;
+            }
+    printf("%s",str+1);
     return 0;
 }

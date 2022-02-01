@@ -345,15 +345,16 @@ Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': 
 Plug 'voldikss/vim-floaterm'
 
 
-Plug 'ZSaberLv0/ZFVimJob'
-Plug 'ZSaberLv0/ZFVimGitUtil'
-Plug 'ethan-enhe/ZFVimIM'
-Plug 'ZSaberLv0/ZFVimIM_openapi' " 百度云输入法
-Plug 'ethan-enhe/ZFVimIM_pinyin_base' " 你的词库, 确保有 push 权限
+" Plug 'ZSaberLv0/ZFVimJob'
+" Plug 'ZSaberLv0/ZFVimGitUtil'
+" Plug 'ethan-enhe/ZFVimIM'
+" Plug 'qdzhang/ZFVimIM_xiaohe'
+" Plug 'ZSaberLv0/ZFVimIM_openapi' " 百度云输入法
+" Plug 'ethan-enhe/ZFVimIM_pinyin_base' " 你的词库, 确保有 push 权限
 if g:usecoc
     Plug 'ethan-enhe/vim-snippets/'
     Plug 'neoclide/coc.nvim', {'branch': 'release'}
-    Plug 'jackguo380/vim-lsp-cxx-highlight'
+    " Plug 'jackguo380/vim-lsp-cxx-highlight'
 else
     " Plug 'w0rp/ale'
     Plug 'neovim/nvim-lspconfig'
@@ -444,8 +445,8 @@ if g:usecoc
     call coc#config("diagnostic.virtualTextPrefix", " ❯❯❯ ")
     call coc#config("suggest.labelMaxLength", 50)
     " call coc#config("suggest.enablePreview", v:true)
-    call coc#config("clangd.semanticHighlighting",v:true)
-    call coc#config("coc.preferences.semanticTokensHighlights", v:false)
+    call coc#config("semanticTokens.filetypes", ["*"])
+    " call coc#config("coc.preferences.semanticTokensHighlights", v:false)
     call coc#config("diagnostic.errorSign", "✘")
     call coc#config("diagnostic.warningSign", "")
     call coc#config("diagnostic.infoSign", "")
@@ -481,7 +482,7 @@ if g:usecoc
     "}}}
     "{{{ COC
     let g:coc_global_extensions = ['coc-clangd','coc-markdownlint','coc-vimlsp', 'coc-json','coc-snippets','coc-lists','coc-explorer','coc-floaterm']
-    autocmd FileType * let b:coc_pairs_disabled = ['<']
+    " autocmd FileType * let b:coc_pairs_disabled = ['<']
     " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
     " delays and poor user experience.
     " set updatetime=300
@@ -515,7 +516,7 @@ if g:usecoc
     endif
 
     inoremap <silent><expr> <cr> pumvisible() ? "\<C-y>" : "\<cr>"
-
+    " let g:coc_default_semantic_highlight_groups = 1
     " Use `[g` and `]g` to navigate diagnostics
     " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
     nmap <silent> [g <Plug>(coc-diagnostic-prev)
