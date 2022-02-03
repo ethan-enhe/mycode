@@ -249,6 +249,7 @@ endfunction
 "{{{ FILE SETTING
 map <F10> <cmd>MarkdownPreviewToggle<cr>
 map <leader>tt <cmd>r ~/code/template/other/cf.cpp<cr>
+map <leader>tr :r ~/code/template/
 map <C-c> :Commentary<cr>
 " autocmd FileType cpp setlocal commentstring=//%s cindent
 autocmd FileType cpp setlocal cindent
