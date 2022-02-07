@@ -24,7 +24,7 @@ typedef vec<pi> vpi;
 mt19937_64 myrand(chrono::system_clock::now().time_since_epoch().count());
 //}}}
 const ll INF = 1e18;
-const ll P(1e9 + 7);
+const ll P(998244353);
 const ll MXN = 1e6 + 5;
 //{{{ Func
 template <typename T>
@@ -59,11 +59,11 @@ void setp(int x) {
     cout.precision(x);
 }
 template <typename T>
-void read(vec<T> x) {
+void read(vm x) {
     for (T &v : x) cin >> v;
 }
 template <typename T>
-void prt(vec<T> x, string join = " ") {
+void prt(vm x, string join = " ") {
     for (T &v : x) cout << v << join;
 }
 //}}}
@@ -102,12 +102,70 @@ struct mll {
     friend ostream &operator<<(ostream &os, mll &y) { return os << y.v; }
 };
 //}}}
-ll n, m;
+void fwt(vm &x) {
+    for (ll w = 1; w < x.size(); w <<= 1)
+        for (ll i = 0; i < x.size(); i++)
+            if (i & w) x[i] += x[i ^ w];
+}
+void ifwt(vm &x) {
+    for (ll w = 1; w < x.size(); w <<= 1)
+        for (ll i = 0; i < x.size(); i++)
+            if (i & w) x[i] -= x[i ^ w];
+}
+vm subset_conv(vm a, vm b) {
+    ll n = max(a.size(), b.size()), h = log2(n);
+    vvm a_group(h + 1, vm(n)), b_group(h + 1, vm(n));
+    vm tmp(n), c(n);
+    for (ll i = 0; i < a.size(); i++) a_group[__builtin_popcount(i)][i] = a[i];
+    for (ll i = 0; i < b.size(); i++) b_group[__builtin_popcount(i)][i] = b[i];
+    for (ll i = 0; i <= h; i++) fwt(a_group[i]), fwt(b_group[i]);
+    for (ll sz = 0; sz <= h; sz++) {       // 最终集合大小
+        for (ll asz = 0; asz <= sz; asz++) // a 对应集合大小
+            for (ll k = 0; k < n; k++) tmp[k] += a_group[asz][k] * b_group[sz - asz][k];
+        ifwt(tmp);
+        for (ll i = 0; i < n; i++)
+            if (__builtin_popcount(i) == sz) c[i] = tmp[i];
+        tmp.assign(n, 0);
+    }
+    return c;
+}
+vm add(vm a, vm b) {
+    if (a.size() < b.size()) swap(a, b);
+    vm c(a);
+    for (ll i = 0; i < b.size(); i++) c[i] += b[i];
+    return c;
+}
+vm magic(vm a, vm f) {
+    ll h = f.size() - 1, n = a.size();
+    assert(n == 1 << h);
+    vec<vvm> g(h + 1);
+    vm a_group;
+    g[0].resize(h + 1);
+    for (ll i = 0; i <= h; i++) g[0][i] = {f[i], 0};
+    for (ll i = 1, w = 2; i <= h; i++, w <<= 1) {
+        g[i].resize(h + 1 - i);
+        a_group.resize(w);
+        for (int j = 0; j < w; j++) a_group[j] = j >= (w >> 1) ? a[j] : 0;
+        for (int j = 0; j <= (h - i); j++) g[i][j] = add(g[i - 1][j], subset_conv(g[i - 1][j + 1], a_group));
+        g[i - 1].clear();
+    }
+    return g[h][0];
+}
 
 int main() {
+    /* freopen("loj154.out","w",stdout); */
     ios::sync_with_stdio(0);
     cin.tie(0), cout.tie(0);
     setp(6);
-
+    ll n, m, k;
+    cin >> n >> m >> k;
+    vm a(1 << n), f(n + 1), res(1 << n);
+    for (int i = 0; i <= k; i++) f[i] = 1;
+    for (ll i = 1, x; i <= m; i++) {
+        cin >> x;
+        a[x] += 1;
+    }
+    res = magic(a, f);
+    cout << res[(1 << n) - 1];
     return cout.flush(), 0;
 }
