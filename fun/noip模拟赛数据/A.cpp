@@ -10,6 +10,7 @@ using namespace std;
 #define log2(x) (31 - __builtin_clz(x))
 #define popc(x) __builtin_popcount(x)
 
+#define va2d(x, y) x[(y.fi)][(y.se)]
 struct mll;
 
 typedef long long ll;
@@ -19,17 +20,14 @@ typedef long double ld;
 typedef pair<ll, ll> pi;
 typedef vec<ll> vi;
 typedef vec<vi> vvi;
-typedef vec<vvi> vvvi;
 typedef vec<mll> vm;
 typedef vec<vm> vvm;
 typedef vec<pi> vpi;
-typedef vec<vpi> vvpi;
 mt19937_64 myrand(chrono::system_clock::now().time_since_epoch().count());
 //}}}
 const ll INF = 1e18;
 const ll P(1e9 + 7);
 const ll MXN = 1e6 + 5;
-const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 //{{{ Func
 template <typename T>
 T qpow(T x, ll y) {
@@ -50,7 +48,6 @@ void umn(T &x, T y) {
     x = min(x, y);
 }
 ll abs(pi x) { return (x.fi < 0 ? -x.fi : x.fi) + (x.se < 0 ? -x.se : x.se); }
-bool insqr(pi x, pi lt, pi rb) { return lt.fi <= x.fi && x.fi <= rb.fi && lt.se <= x.se && x.se <= rb.se; }
 ll randint(ll l, ll r) {
     uniform_int_distribution<ll> res(l, r);
     return res(myrand);
@@ -64,36 +61,37 @@ void setp(ll x) {
     cout.precision(x);
 }
 template <typename T>
-void read(vec<T> &x) {
+void read(vec<T> x) {
     for (T &v : x) cin >> v;
 }
 template <typename T>
-void prt(vec<T> &x, char join = ' ') {
+void prt(vec<T> x, string join = " ") {
     for (T &v : x) cout << v << join;
 }
 //}}}
 //{{{ Type
+const pi go[] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 pi operator+(const pi &x, const pi &y) { return pi(x.fi + y.fi, x.se + y.se); }
 pi operator-(const pi &x, const pi &y) { return pi(x.fi - y.fi, x.se - y.se); }
 pi operator*(const pi &x, const ll &y) { return pi(x.fi * y, x.se * y); }
-istream &operator>>(istream &is, pi &y) { return is >> y.fi >> y.se; }
-ostream &operator<<(ostream &os, pi &y) { return os << '(' << y.fi << ',' << y.se << ')'; }
-inline ll redu(const ll &x) { return x >= P ? x - P : x; }
-inline ll incr(const ll &x) { return x + ((x >> 63) & P); }
+ll redu(const ll &x) { return x >= P ? x - P : x; }
 struct mll {
     ll v;
     mll() : v() {}
     template <typename T>
     mll(const T &_v) : v(_v) {
-        if (v >= P || v < 0) v = incr(v % P);
+        if (v >= P || v < 0) {
+            v %= P;
+            if (v < 0) v += P;
+        }
     }
     explicit operator ll() const { return v; }
     mll operator+(const mll &y) const { return mll{redu(v + y.v)}; }
-    mll operator-(const mll &y) const { return mll{incr(v - y.v)}; }
-    mll operator*(const mll &y) const { return mll{v * y.v % P}; }
-    mll operator/(const mll &y) const { return mll{v * (ll)qpow(y, P - 2) % P}; }
+    mll operator-(const mll &y) const { return mll{redu(P + v - y.v)}; }
+    mll operator*(const mll &y) const { return mll{(v * y.v) % P}; }
+    mll operator/(const mll &y) const { return mll{(v * (ll)qpow(y, P - 2)) % P}; }
     mll &operator+=(const mll &y) { return v = redu(v + y.v), *this; }
-    mll &operator-=(const mll &y) { return v = incr(v - y.v), *this; }
+    mll &operator-=(const mll &y) { return v = redu(P + v - y.v), *this; }
     mll &operator*=(const mll &y) { return v = v * y.v % P, *this; }
     mll &operator/=(const mll &y) { return v = v * (ll)qpow(y, P - 2) % P, *this; }
     bool operator==(const mll &y) const { return v == y.v; }
@@ -112,6 +110,19 @@ int main() {
     ios::sync_with_stdio(0);
     cin.tie(0), cout.tie(0);
     setp(6);
+    freopen("valkyyi.in","r",stdin);
+    freopen("valkyyi.out","w",stdout);
+    cin >> n >> m;
+    for (int i = 1, x; i <= n; i++) cin >> x;
+    while (m--) {
+        ll op, x, y, z;
+        cin >> op >> x >> y;
+        if (op == 3)
+            cout << y - x + 1;
+        else
+            cin >> z;
+    }
 
-    return 0;
+    return cout.flush(), 0;
 }
+

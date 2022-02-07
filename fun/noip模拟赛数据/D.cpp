@@ -19,11 +19,9 @@ typedef long double ld;
 typedef pair<ll, ll> pi;
 typedef vec<ll> vi;
 typedef vec<vi> vvi;
-typedef vec<vvi> vvvi;
 typedef vec<mll> vm;
 typedef vec<vm> vvm;
 typedef vec<pi> vpi;
-typedef vec<vpi> vvpi;
 mt19937_64 myrand(chrono::system_clock::now().time_since_epoch().count());
 //}}}
 const ll INF = 1e18;
@@ -78,22 +76,24 @@ pi operator-(const pi &x, const pi &y) { return pi(x.fi - y.fi, x.se - y.se); }
 pi operator*(const pi &x, const ll &y) { return pi(x.fi * y, x.se * y); }
 istream &operator>>(istream &is, pi &y) { return is >> y.fi >> y.se; }
 ostream &operator<<(ostream &os, pi &y) { return os << '(' << y.fi << ',' << y.se << ')'; }
-inline ll redu(const ll &x) { return x >= P ? x - P : x; }
-inline ll incr(const ll &x) { return x + ((x >> 63) & P); }
+ll redu(const ll &x) { return x >= P ? x - P : x; }
 struct mll {
     ll v;
     mll() : v() {}
     template <typename T>
     mll(const T &_v) : v(_v) {
-        if (v >= P || v < 0) v = incr(v % P);
+        if (v >= P || v < 0) {
+            v %= P;
+            if (v < 0) v += P;
+        }
     }
     explicit operator ll() const { return v; }
     mll operator+(const mll &y) const { return mll{redu(v + y.v)}; }
-    mll operator-(const mll &y) const { return mll{incr(v - y.v)}; }
-    mll operator*(const mll &y) const { return mll{v * y.v % P}; }
-    mll operator/(const mll &y) const { return mll{v * (ll)qpow(y, P - 2) % P}; }
+    mll operator-(const mll &y) const { return mll{redu(P + v - y.v)}; }
+    mll operator*(const mll &y) const { return mll{(v * y.v) % P}; }
+    mll operator/(const mll &y) const { return mll{(v * (ll)qpow(y, P - 2)) % P}; }
     mll &operator+=(const mll &y) { return v = redu(v + y.v), *this; }
-    mll &operator-=(const mll &y) { return v = incr(v - y.v), *this; }
+    mll &operator-=(const mll &y) { return v = redu(P + v - y.v), *this; }
     mll &operator*=(const mll &y) { return v = v * y.v % P, *this; }
     mll &operator/=(const mll &y) { return v = v * (ll)qpow(y, P - 2) % P, *this; }
     bool operator==(const mll &y) const { return v == y.v; }
@@ -107,11 +107,56 @@ struct mll {
 };
 //}}}
 ll n, m;
+vec<vvi> g;
+vvi dis;
 
+void ae(pi x, pi y) {
+    if (abs(x) > abs(y)) swap(x, y);
+    if (y.fi > x.fi) {
+        ++g[x.fi][x.se - 1][3];
+        ++g[x.fi][x.se][2];
+    } else {
+        ++g[x.fi - 1][x.se][1];
+        ++g[x.fi][x.se][0];
+    }
+}
+void spfa() {
+    queue<pi> q;
+    q.push({0, 0});
+    dis[0][0] = 0;
+    while (!q.empty()) {
+        pi p = q.front();
+        q.pop();
+        for (int i = 0; i < 4; i++) {
+            pi nx = p + go[i];
+            ll nd = dis[p.fi][p.se] + g[p.fi][p.se][i];
+            if (!insqr(nx, {0, 0}, {n, n})) continue;
+            if (nd < dis[nx.fi][nx.se]) {
+                dis[nx.fi][nx.se] = nd;
+                q.push(nx);
+            }
+        }
+    }
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0), cout.tie(0);
     setp(6);
+    cin >> n >> m;
+    if (n & 1) return cout << "-1", 0;
+    g.assign(n + 1, vvi(n + 1, vi(4)));
+    while (m--) {
+        pi a, b;
+        cin >> a >> b;
+        ae(a, b);
+        a = pi{n + 1, n + 1} - a;
+        b = pi{n + 1, n + 1} - b;
+        ae(a, b);
+    }
+    dis.assign(n + 1, vi(n + 1, INF));
+    spfa();
+    cout << dis[n >> 1][n >> 1];
 
     return 0;
 }
+
