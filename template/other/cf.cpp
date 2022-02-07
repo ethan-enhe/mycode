@@ -7,6 +7,8 @@ using namespace std;
 #define pb push_back
 #define vec vector
 #define endl '\n'
+#define log2(x) (31-__builtin_clz(x))
+#define popc(x) __builtin_popcount(x)
 
 #define va2d(x, y) x[(y.fi)][(y.se)]
 struct mll;

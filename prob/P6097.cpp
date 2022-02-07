@@ -1,129 +1,87 @@
+
 #include <bits/stdc++.h>
 
 using namespace std;
-//{{{ Def
-#define fi first
-#define se second
-#define pb push_back
 #define vec vector
+#define endl '\n'
+#define log2(x) (31 - __builtin_clz(x))
+#define popc(x) __builtin_popcount(x)
 
-#ifdef ONLINE_JUDGE
-#define logf(fmt...) void()
-#else
-#define logf(fmt...) fprintf(stderr, fmt)
-#endif
-
-#define va2d(x, y) x[(y.fi)][(y.se)]
-
-typedef long long ll;
-typedef unsigned long long ull;
-typedef double db;
-typedef long double ld;
-typedef pair<ll, ll> pi;
-mt19937_64 myrand(chrono::system_clock::now().time_since_epoch().count());
-//}}}
-constexpr ll INF = 1e18;
-constexpr ll P(1e9 + 9);
-constexpr ll MXN = 1e6 + 5;
-//{{{ Func
-template <typename T>
-constexpr T qpow(T x, ll y) {
-    T r(1);
-    while (y) {
-        if (y & 1) r = r * x;
-        x = x * x, y >>= 1;
+struct mll;
+typedef vec<int> vi;
+typedef vec<vi> vvi;
+const int P(1e9 + 9);
+inline int redu(const int &x) { return x >= P ? x - P : x; }
+inline int incr(const int &x) { return x + (x >> 31 & P); }
+inline void add(int &x, const int &y) { x = redu(x + y); }
+inline void del(int &x, const int &y) { x = incr(x - y); }
+inline void fwt(vi &x, int n) {
+    for (int w = 1; w < n; w <<= 1) {
+        add(x[w], x[0]);
+        for (int mask = (n - 1) ^ w, i = mask; i; i = (i - 1) & mask) add(x[i ^ w], x[i]);
     }
-    return r;
 }
-constexpr ll gcd(ll x, ll y) { return y ? gcd(y, x % y) : x; }
-template <typename T>
-constexpr void umx(T &x, T y) {
-    x = max(x, y);
+inline void ifwt(vi &x, int n) {
+    for (int w = 1; w < n; w <<= 1) {
+        del(x[w], x[0]);
+        for (int mask = (n - 1) ^ w, i = mask; i; i = (i - 1) & mask) del(x[i ^ w], x[i]);
+    }
 }
-template <typename T>
-constexpr void umn(T &x, T y) {
-    x = min(x, y);
-}
-constexpr ll abs(pi x) { return (x.fi < 0 ? -x.fi : x.fi) + (x.se < 0 ? -x.se : x.se); }
-ll randint(ll l, ll r) {
-    uniform_int_distribution<ll> res(l, r);
-    return res(myrand);
-}
-ld randdb(ld l, ld r) {
-    uniform_real_distribution<ld> res(l, r);
-    return res(myrand);
-}
-//}}}
-//{{{ Type
-constexpr pi go[] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
-constexpr pi operator+(const pi &x, const pi &y) { return pi(x.fi + y.fi, x.se + y.se); }
-constexpr pi operator-(const pi &x, const pi &y) { return pi(x.fi - y.fi, x.se - y.se); }
-constexpr pi operator*(const pi &x, const ll &y) { return pi(x.fi * y, x.se * y); }
-ll redu(const ll &x) { return x >= P ? x - P : x; }
-struct mll {
-    ll v;
-    constexpr mll() : v() {}
-    template <typename T>
-    mll(const T &_v) : v(_v) {
-        if (v >= P || v < 0) {
-            v %= P;
-            if (v < 0) v += P;
+// 多项式复合 res_i=\sum f_j \sum _{k_1到k_j并集为i，两两交为空，且 k_i<k_{i+1}}\prod_{l\in[1,j]}a_{k_l}
+vi subset_conv(const vi &a, const vi &b) {
+    int n = max(a.size(), b.size()), h = log2(n);
+    vvi a_group(h + 1, vi(n)), b_group(h + 1, vi(n));
+    vi tmp(n), c(n);
+    for (int i = 0; i <= h; i++)
+        for (int j = 0; j < n; j++) a_group[i][j] = b_group[i][j] = 0;
+    for (int i = 0; i < a.size(); i++) a_group[popc(i)][i] = a[i];
+    for (int i = 0; i < b.size(); i++) b_group[popc(i)][i] = b[i];
+    for (int i = 0; i <= h; i++) fwt(a_group[i], n), fwt(b_group[i], n);
+    for (int sz = 0; sz <= h; sz++) {       // 最终集合大小
+        for (int asz = 0; asz <= sz; asz++) // a 对应集合大小
+            for (int k = 0; k < n; k++) tmp[k] = (1ll * a_group[asz][k] * b_group[sz - asz][k] + tmp[k]) % P;
+        ifwt(tmp, n);
+        for (int i = 0; i < n; i++) {
+            if (popc(i) == sz) c[i] = tmp[i];
+            tmp[i] = 0;
         }
-    }
-    explicit operator ll() const { return v; }
-    mll operator+(const mll &y) const { return mll{redu(v + y.v)}; }
-    mll operator-(const mll &y) const { return mll{redu(P + v - y.v)}; }
-    mll operator*(const mll &y) const { return mll{(v * y.v) % P}; }
-    mll operator/(const mll &y) const { return mll{(v * (ll)qpow(y, P - 2)) % P}; }
-    mll &operator=(const mll &y) { return v = y.v, *this; }
-    mll &operator+=(const mll &y) { return v = redu(v + y.v), *this; }
-    mll &operator-=(const mll &y) { return v = redu(P + v - y.v), *this; }
-    mll &operator*=(const mll &y) { return v = v * y.v % P, *this; }
-    mll &operator/=(const mll &y) { return v = v * (ll)qpow(y, P - 2) % P, *this; }
-    bool operator==(const mll &y) const { return v == y.v; }
-    bool operator!=(const mll &y) const { return v != y.v; }
-};
-//}}}
-template <typename T>
-void fwt(vector<T> &x) {
-    for (ll w = 1; w < x.size(); w <<= 1)
-        for (ll i = 0; i < x.size(); i++)
-            if (i & w) x[i] += x[i ^ w];
-}
-template <typename T>
-void ifwt(vector<T> &x) {
-    for (ll w = 1; w < x.size(); w <<= 1)
-        for (ll i = 0; i < x.size(); i++)
-            if (i & w) x[i] -= x[i ^ w];
-}
-template <typename T>
-vector<T> subset_conv(vector<T> a, vector<T> b) {
-    ll n = a.size(), h = 31 - __builtin_clz(n);
-    assert(a.size() == b.size() && n == 1 << h);
-    vector<vector<T>> ag(h + 1, vector<T>(n)), bg(h + 1, vector<T>(n));
-    vector<T> tmp(n), c(n);
-    for (ll i = 0; i < n; i++) ag[__builtin_popcount(i)][i] = a[i];
-    for (ll i = 0; i < n; i++) bg[__builtin_popcount(i)][i] = b[i];
-    for (ll i = 0; i <= h; i++) fwt(ag[i]), fwt(bg[i]);
-    for (ll sz = 0; sz <= h; sz++) {
-        for (ll asz = 0; asz <= sz; asz++)
-            for (ll k = 0; k < n; k++) tmp[k] += ag[asz][k] * bg[sz - asz][k];
-        ifwt(tmp);
-        for (ll i = 0; i < n; i++)
-            if (__builtin_popcount(i) == sz) c[i] = tmp[i];
-        tmp.assign(n, 0);
     }
     return c;
 }
+vi add(vi a, vi b) {
+    if (a.size() < b.size()) swap(a, b);
+    vi c(a);
+    for (int i = 0; i < b.size(); i++) add(c[i], b[i]);
+    return c;
+}
+vi magic(vi a, vi f) {
+    int h = f.size() - 1, n = a.size();
+    assert(n == 1 << h);
+    vec<vvi> g(h + 1);
+    vi a_group;
+    g[0].resize(h + 1);
+    for (int i = 0; i <= h; i++) g[0][i] = {f[i], 0};
+    for (int i = 1, w = 2; i <= h; i++, w <<= 1) {
+        g[i].resize(h + 1 - i);
+        a_group.resize(w);
+        for (int j = 0; j < w; j++) a_group[j] = j >= (w >> 1) ? a[j] : 0;
+        for (int j = 0; j <= (h - i); j++) g[i][j] = add(g[i - 1][j], subset_conv(g[i - 1][j + 1], a_group));
+        g[i - 1].clear();
+    }
+    return g[h][0];
+}
 
-int main(int argc, char *argv[]) {
-    ll n;
-    scanf("%lld", &n);
+int main() {
+    ios::sync_with_stdio(0);
+    cin.tie(0), cout.tie(0);
+    int n, m, k;
+    cin >> n;
     n = 1 << n;
-    vector<mll> a(n), b(n), c(n);
-    for (mll &i : a) scanf("%lld", &i.v);
-    for (mll &i : b) scanf("%lld", &i.v);
-    c = subset_conv(a, b);
-    for (mll &i : c) printf("%lld ", i.v);
-    return 0;
+    vi a(n), b(n), res;
+    for (int &i : a) cin >> i;
+    for (int &i : b) cin >> i;
+    res = subset_conv(a, b);
+    for (int &i : res) cout << i << " ";
+
+    return cout.flush(), 0;
 }
