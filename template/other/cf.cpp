@@ -6,7 +6,6 @@ using namespace std;
 #define se second
 #define pb push_back
 #define vec vector
-#define endl '\n'
 #define log2(x) (31 - __builtin_clz(x))
 #define popc(x) __builtin_popcount(x)
 
@@ -26,6 +25,7 @@ typedef vec<pi> vpi;
 typedef vec<vpi> vvpi;
 mt19937_64 myrand(chrono::system_clock::now().time_since_epoch().count());
 //}}}
+const char nl='\n';
 const ll INF = 1e18;
 const ll P(1e9 + 9);
 const ll MXN = 1e6 + 5;
@@ -104,7 +104,7 @@ struct mll {
         is >> x;
         return y = mll(x), is;
     }
-    friend ostream &operator<<(ostream &os, mll &y) { return os << y.v; }
+    friend ostream &operator<<(ostream &os, const mll &y) { return os << y.v; }
 };
 //}}}
 ll n, m;
