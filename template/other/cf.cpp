@@ -27,7 +27,7 @@ typedef vec<vpi> vvpi;
 mt19937_64 myrand(chrono::system_clock::now().time_since_epoch().count());
 //}}}
 const ll INF = 1e18;
-const ll P(1e9 + 7);
+const ll P(1e9 + 9);
 const ll MXN = 1e6 + 5;
 const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 //{{{ Func
@@ -78,24 +78,25 @@ pi operator-(const pi &x, const pi &y) { return pi(x.fi - y.fi, x.se - y.se); }
 pi operator*(const pi &x, const ll &y) { return pi(x.fi * y, x.se * y); }
 istream &operator>>(istream &is, pi &y) { return is >> y.fi >> y.se; }
 ostream &operator<<(ostream &os, pi &y) { return os << '(' << y.fi << ',' << y.se << ')'; }
-inline ll redu(const ll &x) { return x >= P ? x - P : x; }
-inline ll incr(const ll &x) { return x + ((x >> 63) & P); }
+inline int redu(const int &x) { return x >= P ? x - P : x; }
+inline int incr(const int &x) { return x + ((x >> 31) & P); }
 struct mll {
-    ll v;
+    int v;
     mll() : v() {}
     template <typename T>
     mll(const T &_v) : v(_v) {
         if (v >= P || v < 0) v = incr(v % P);
     }
     explicit operator ll() const { return v; }
+    explicit operator int() const { return v; }
     mll operator+(const mll &y) const { return mll{redu(v + y.v)}; }
     mll operator-(const mll &y) const { return mll{incr(v - y.v)}; }
-    mll operator*(const mll &y) const { return mll{v * y.v % P}; }
-    mll operator/(const mll &y) const { return mll{v * (ll)qpow(y, P - 2) % P}; }
+    mll operator*(const mll &y) const { return mll{1ll * v * y.v % P}; }
+    mll operator/(const mll &y) const { return mll{1ll * v * (ll)qpow(y, P - 2) % P}; }
     mll &operator+=(const mll &y) { return v = redu(v + y.v), *this; }
     mll &operator-=(const mll &y) { return v = incr(v - y.v), *this; }
-    mll &operator*=(const mll &y) { return v = v * y.v % P, *this; }
-    mll &operator/=(const mll &y) { return v = v * (ll)qpow(y, P - 2) % P, *this; }
+    mll &operator*=(const mll &y) { return v = 1ll * v * y.v % P, *this; }
+    mll &operator/=(const mll &y) { return v = 1ll * v * (ll)qpow(y, P - 2) % P, *this; }
     bool operator==(const mll &y) const { return v == y.v; }
     bool operator!=(const mll &y) const { return v != y.v; }
     friend istream &operator>>(istream &is, mll &y) {
@@ -107,11 +108,9 @@ struct mll {
 };
 //}}}
 ll n, m;
-
 int main() {
     ios::sync_with_stdio(0);
-    cin.tie(0), cout.tie(0);
+    cin.tie(0);
     setp(6);
-
     return 0;
 }

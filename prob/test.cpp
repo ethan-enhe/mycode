@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include <algorithm>
 
 using namespace std;
 //{{{ Def
@@ -108,9 +109,9 @@ int main() {
     ios::sync_with_stdio(0);
     cin.tie(0), cout.tie(0);
     setp(6);
-    string s;
-    s=string(3,"1231");
-    cout<<s<<" 123";
+    vi x(3);
+    fill(x.begin(), x.end(),3);
+    prt(x);
 
     return cout.flush(), 0;
 }
