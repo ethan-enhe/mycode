@@ -257,7 +257,7 @@ map <F8> <cmd>call RunCode()<cr>
 map <F9> <cmd>call CompileCode('-O2')<cr>
 map <leader>ts <cmd>call RuninFloat('cf test')<cr>
 map <leader>sm <cmd>call RuninFloat('cf submit')<cr>
-" map <leader><F9> <cmd>call CompileCode('-O2 -Wall -fsanitize=address,undefined')<cr>
+map <leader><F9> <cmd>call CompileCode('-O2 -Wall -fsanitize=address,undefined')<cr>
 let s:res=""
 function! s:OnEvent(job_id, data, event) dict
     if a:event == 'exit'

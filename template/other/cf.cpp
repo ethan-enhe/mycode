@@ -9,28 +9,35 @@ using namespace std;
 #define log2(x) (31 - __builtin_clz(x))
 #define popc(x) __builtin_popcount(x)
 
-struct mll;
+struct mod;
 
-typedef long long ll;
-typedef unsigned long long ull;
-typedef double db;
-typedef long double ld;
-typedef pair<ll, ll> pi;
-typedef vec<ll> vi;
-typedef vec<vi> vvi;
-typedef vec<vvi> vvvi;
-typedef vec<mll> vm;
-typedef vec<vm> vvm;
-typedef vec<pi> vpi;
-typedef vec<vpi> vvpi;
+using ll = long long;
+using ull = unsigned long long;
+using db = double;
+using ld = long double;
+using pi = pair<ll, ll>;
+using vi = vec<ll>;
+using vvi = vec<vi>;
+using vvvi = vec<vvi>;
+using vm = vec<mod>;
+using vvm = vec<vm>;
+using vpi = vec<pi>;
+using vvpi = vec<vpi>;
 mt19937_64 myrand(chrono::system_clock::now().time_since_epoch().count());
 //}}}
-const char nl='\n';
+const char nl = '\n';
 const ll INF = 1e18;
-const ll P(1e9 + 9);
+const ll P = 1e9 + 7;
 const ll MXN = 1e6 + 5;
 const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 //{{{ Func
+pi operator+(const pi &x, const pi &y) { return pi(x.fi + y.fi, x.se + y.se); }
+pi operator-(const pi &x, const pi &y) { return pi(x.fi - y.fi, x.se - y.se); }
+pi operator*(const pi &x, const ll &y) { return pi(x.fi * y, x.se * y); }
+istream &operator>>(istream &is, pi &y) { return is >> y.fi >> y.se; }
+ostream &operator<<(ostream &os, pi &y) { return os << '(' << y.fi << ',' << y.se << ')'; }
+inline int redu(const int &x) { return x >= P ? x - P : x; }
+inline int incr(const int &x) { return x + ((x >> 31) & P); }
 template <typename T>
 T qpow(T x, ll y) {
     T r(1);
@@ -73,38 +80,31 @@ void prt(vec<T> &x, char join = ' ') {
 }
 //}}}
 //{{{ Type
-pi operator+(const pi &x, const pi &y) { return pi(x.fi + y.fi, x.se + y.se); }
-pi operator-(const pi &x, const pi &y) { return pi(x.fi - y.fi, x.se - y.se); }
-pi operator*(const pi &x, const ll &y) { return pi(x.fi * y, x.se * y); }
-istream &operator>>(istream &is, pi &y) { return is >> y.fi >> y.se; }
-ostream &operator<<(ostream &os, pi &y) { return os << '(' << y.fi << ',' << y.se << ')'; }
-inline int redu(const int &x) { return x >= P ? x - P : x; }
-inline int incr(const int &x) { return x + ((x >> 31) & P); }
-struct mll {
+struct mod {
     int v;
-    mll() : v() {}
+    mod() : v() {}
     template <typename T>
-    mll(const T &_v) : v(_v) {
+    mod(const T &_v) : v(_v) {
         if (v >= P || v < 0) v = incr(v % P);
     }
     explicit operator ll() const { return v; }
     explicit operator int() const { return v; }
-    mll operator+(const mll &y) const { return mll{redu(v + y.v)}; }
-    mll operator-(const mll &y) const { return mll{incr(v - y.v)}; }
-    mll operator*(const mll &y) const { return mll{1ll * v * y.v % P}; }
-    mll operator/(const mll &y) const { return mll{1ll * v * (ll)qpow(y, P - 2) % P}; }
-    mll &operator+=(const mll &y) { return v = redu(v + y.v), *this; }
-    mll &operator-=(const mll &y) { return v = incr(v - y.v), *this; }
-    mll &operator*=(const mll &y) { return v = 1ll * v * y.v % P, *this; }
-    mll &operator/=(const mll &y) { return v = 1ll * v * (ll)qpow(y, P - 2) % P, *this; }
-    bool operator==(const mll &y) const { return v == y.v; }
-    bool operator!=(const mll &y) const { return v != y.v; }
-    friend istream &operator>>(istream &is, mll &y) {
+    mod operator+(const mod &y) const { return mod{redu(v + y.v)}; }
+    mod operator-(const mod &y) const { return mod{incr(v - y.v)}; }
+    mod operator*(const mod &y) const { return mod{1ll * v * y.v % P}; }
+    mod operator/(const mod &y) const { return mod{1ll * v * (ll)qpow(y, P - 2) % P}; }
+    mod &operator+=(const mod &y) { return v = redu(v + y.v), *this; }
+    mod &operator-=(const mod &y) { return v = incr(v - y.v), *this; }
+    mod &operator*=(const mod &y) { return v = 1ll * v * y.v % P, *this; }
+    mod &operator/=(const mod &y) { return v = 1ll * v * (ll)qpow(y, P - 2) % P, *this; }
+    bool operator==(const mod &y) const { return v == y.v; }
+    bool operator!=(const mod &y) const { return v != y.v; }
+    friend istream &operator>>(istream &is, mod &y) {
         ll x;
         is >> x;
-        return y = mll(x), is;
+        return y = mod(x), is;
     }
-    friend ostream &operator<<(ostream &os, const mll &y) { return os << y.v; }
+    friend ostream &operator<<(ostream &os, const mod &y) { return os << y.v; }
 };
 //}}}
 ll n, m;
