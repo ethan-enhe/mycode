@@ -4,12 +4,9 @@ using namespace std;
 //{{{ Def
 #define fi first
 #define se second
-#define pb push_back
 #define vec vector
 #define log2(x) (31 - __builtin_clz(x))
 #define popc(x) __builtin_popcount(x)
-
-struct mod;
 
 using ll = long long;
 using ull = unsigned long long;
