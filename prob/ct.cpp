@@ -98,17 +98,15 @@ struct myvec {
 
 void solve() {
     // code
-	for(int i=1;i<=1000;i++){
-		system("./gen>test.in");
-		system("./std<test.in>std.out");
-		system("./zr2175<test.in>wr.out");
-		if(system("diff -Z wr.out std.out")){
-			break;
-
-		}
-		cerr<<"!!!"<<endl;
-
-	}
+    for (int i = 1; i <= 1000; i++) {
+        system("./gen>test.in");
+        system("./std<test.in>std.out");
+        system("./wrong<test.in>wrong.out");
+        if (system("diff -Z wrong.out std.out")) {
+            break;
+        }
+        cerr << "!!!" << endl;
+    }
 }
 
 int main() {
@@ -121,4 +119,3 @@ int main() {
 
     return 0;
 }
-

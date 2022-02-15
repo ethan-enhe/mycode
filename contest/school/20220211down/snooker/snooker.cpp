@@ -1,8 +1,5 @@
 #include <bits/stdc++.h>
-
-#include <algorithm>
 #include <stack>
-#include <vector>
 
 using namespace std;
 //{{{ Def
@@ -20,14 +17,28 @@ using ull = unsigned long long;
 using db = double;
 using ld = long double;
 using pi = pair<ll, ll>;
+using vi = vec<ll>;
+using vvi = vec<vi>;
+using vvvi = vec<vvi>;
+using vm = vec<mod>;
+using vvm = vec<vm>;
+using vpi = vec<pi>;
+using vvpi = vec<vpi>;
 mt19937_64 myrand(chrono::system_clock::now().time_since_epoch().count());
 //}}}
+const char nl = '\n';
+const ll INF = 1e18;
+const ll P = 1e9 + 7;
+const ll MXN = 1e6 + 5;
+const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 //{{{ Func
 pi operator+(const pi &x, const pi &y) { return pi(x.fi + y.fi, x.se + y.se); }
 pi operator-(const pi &x, const pi &y) { return pi(x.fi - y.fi, x.se - y.se); }
 pi operator*(const pi &x, const ll &y) { return pi(x.fi * y, x.se * y); }
 istream &operator>>(istream &is, pi &y) { return is >> y.fi >> y.se; }
 ostream &operator<<(ostream &os, pi &y) { return os << '(' << y.fi << ',' << y.se << ')'; }
+inline int redu(const int &x) { return x >= P ? x - P : x; }
+inline int incr(const int &x) { return x + ((x >> 31) & P); }
 template <typename T>
 T qpow(T x, ll y) {
     T r(1);
@@ -61,18 +72,15 @@ void setp(ll x) {
     cout.precision(x);
 }
 template <typename T>
-void read(T &x, int l, int r) {
-    for (int i = l; i <= r; i++) cin >> x[i];
+void read(vec<T> &x) {
+    for (T &v : x) cin >> v;
 }
 template <typename T>
-void prt(T &x, int l, int r, char join = ' ') {
-    for (int i = l; i <= r; i++) cout << x[i] << join;
+void prt(vec<T> &x, char join = ' ') {
+    for (T &v : x) cout << v << join;
 }
 //}}}
-const ll P = 1e9 + 7;
 //{{{ Type
-inline int redu(const int &x) { return x >= P ? x - P : x; }
-inline int incr(const int &x) { return x + ((x >> 31) & P); }
 struct mod {
     int v;
     mod() : v() {}
@@ -100,79 +108,31 @@ struct mod {
     friend ostream &operator<<(ostream &os, const mod &y) { return os << y.v; }
 };
 //}}}
-const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
-const char nl = '\n';
-const ll MXN = 1e6 + 5;
-const ll INF = 1e18;
-
-ll n, m, arr[MXN];
-char str[MXN];
-vec<ll> bad[MXN];
-
-ll v[MXN], cnt[MXN], pre[MXN];
-set<pi> last;
-bool ban[MXN];
+ll n;
 int main() {
-    /* freopen("test.in", "r", stdin); */
-    /* freopen("test.out", "w", stdout); */
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
-    ll t;
-    cin >> t;
-    while (t--) {
-        cin >> n >> m;
-        for (ll i = 1; i <= n; i++) {
-            cin >> arr[i];
-            bad[i].clear();
-        }
-        sort(arr + 1, arr + 1 + n);
-        ll ind = 0;
-        for (ll i = 1; i <= n; i++) {
-            if (arr[i] != arr[i - 1]) {
-                ++ind;
-                v[ind] = arr[i];
-                cnt[ind] = 0;
-            }
-            ++cnt[ind];
-        }
-        cnt[0]=INF;
-        stack<ll> stk;
-        stk.push(0);
-        for (ll i = 1; i <= ind; i++) {
-            while(cnt[i]>=cnt[stk.top()])stk.pop();
-            pre[i] = stk.top();
-            stk.push(i);
-            /* cout << pre[i]; */
-        }
-        while (m--) {
-            ll x, y;
-            cin >> x >> y;
-            x = lower_bound(v + 1, v + 1 + ind, x) - v;
-            y = lower_bound(v + 1, v + 1 + ind, y) - v;
-            if (x > y) swap(x, y);
-            bad[y].push_back(x);
-        }
-        ll ir = ind, il, ans = 0;
-        while (ir) {
-            if (ban[ir])
-                --ir;
-            else {
-                for (ll nx : bad[ir]) ban[nx] = 1;
-                ll il = ir - 1;
-                while (il) {
-                    if (ban[il])
-                        --il;
-                    else {
-                        ans = max(ans, (cnt[il] + cnt[ir]) * (v[il] + v[ir]));
-                        il = pre[il];
-                    }
-                }
-                for (ll nx : bad[ir]) ban[nx] = 0;
-                --ir;
+
+    cin>>n;
+
+    string str;
+    vi x(n),ans(n,-1);
+    read(x);
+    cin>>str;
+
+    stack<ll> last;
+    for(int i=0;i<n;i++){
+        if(str[i]=='R')last.push(i);
+        else{
+            if(!last.empty()){
+                ll l=last.top();last.pop();
+                ans[l]=ans[i]=(x[i]-x[l]);
             }
         }
-        cout << ans << nl;
     }
+    prt(ans);
+
     return 0;
 }
+

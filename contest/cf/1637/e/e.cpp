@@ -1,7 +1,6 @@
 #include <bits/stdc++.h>
 
 #include <algorithm>
-#include <stack>
 #include <vector>
 
 using namespace std;
@@ -113,8 +112,6 @@ ll v[MXN], cnt[MXN], pre[MXN];
 set<pi> last;
 bool ban[MXN];
 int main() {
-    /* freopen("test.in", "r", stdin); */
-    /* freopen("test.out", "w", stdout); */
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
@@ -136,13 +133,12 @@ int main() {
             }
             ++cnt[ind];
         }
-        cnt[0]=INF;
-        stack<ll> stk;
-        stk.push(0);
+        last.clear();
+        last.insert({INF, 0});
         for (ll i = 1; i <= ind; i++) {
-            while(cnt[i]>=cnt[stk.top()])stk.pop();
-            pre[i] = stk.top();
-            stk.push(i);
+            auto it = last.upper_bound({cnt[i], -INF});
+            pre[i] = -it->second;
+            last.insert({cnt[i], -i});
             /* cout << pre[i]; */
         }
         while (m--) {
@@ -155,22 +151,18 @@ int main() {
         }
         ll ir = ind, il, ans = 0;
         while (ir) {
-            if (ban[ir])
-                --ir;
-            else {
-                for (ll nx : bad[ir]) ban[nx] = 1;
-                ll il = ir - 1;
-                while (il) {
-                    if (ban[il])
-                        --il;
-                    else {
-                        ans = max(ans, (cnt[il] + cnt[ir]) * (v[il] + v[ir]));
-                        il = pre[il];
-                    }
+            for (ll nx : bad[ir]) ban[nx] = 1;
+            ll il = ir - 1;
+            while (il) {
+                if (ban[il])
+                    --il;
+                else {
+                    ans = max(ans, (cnt[il] + cnt[ir]) * (v[il] + v[ir]));
+                    il = pre[il];
                 }
-                for (ll nx : bad[ir]) ban[nx] = 0;
-                --ir;
             }
+            for (ll nx : bad[ir]) ban[nx] = 0;
+            --ir;
         }
         cout << ans << nl;
     }

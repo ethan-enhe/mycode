@@ -1,8 +1,7 @@
 #include <bits/stdc++.h>
 
-#include <algorithm>
-#include <stack>
-#include <vector>
+#include <array>
+#include <numeric>
 
 using namespace std;
 //{{{ Def
@@ -100,79 +99,84 @@ struct mod {
     friend ostream &operator<<(ostream &os, const mod &y) { return os << y.v; }
 };
 //}}}
+const ll INF = 1e18;
 const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 const char nl = '\n';
-const ll MXN = 1e6 + 5;
-const ll INF = 1e18;
+const ll MXN = 1e7 + 5;
+ll n, m;
+ll cur[MXN], nx[MXN];
 
-ll n, m, arr[MXN];
-char str[MXN];
-vec<ll> bad[MXN];
+namespace io {
+const int SIZE = (1 << 21) + 1;
+char ibuf[SIZE], *iS, *iT, obuf[SIZE], *oS = obuf, *oT = oS + SIZE - 1, c, qu[55];
+int f, qr;
+// getchar
+#define gc() (iS == iT ? (iT = (iS = ibuf) + fread(ibuf, 1, SIZE, stdin), (iS == iT ? EOF : *iS++)) : *iS++)
+// print the remaining part
+inline void flush() {
+    fwrite(obuf, 1, oS - obuf, stdout);
+    oS = obuf;
+}
+// putchar
+inline void putc(char x) {
+    *oS++ = x;
+    if (oS == oT) flush();
+}
+// input a signed integer
+template <class I>
+inline void gi(I &x) {
+    for (f = 1, c = gc(); c < '0' || c > '9'; c = gc())
+        if (c == '-') f = -1;
+    for (x = 0; c <= '9' && c >= '0'; c = gc()) x = x * 10 + (c & 15);
+    x *= f;
+}
+// print a signed integer
+template <class I>
+inline void print(I x) {
+    if (!x) putc('0');
+    if (x < 0) putc('-'), x = -x;
+    while (x) qu[++qr] = x % 10 + '0', x /= 10;
+    while (qr) putc(qu[qr--]);
+}
+// no need to call flush at the end manually!
+struct Flusher_ {
+    ~Flusher_() { flush(); }
+} io_flusher_;
+} // namespace io
+using io ::gi;
+using io ::print;
+using io ::putc;
 
-ll v[MXN], cnt[MXN], pre[MXN];
-set<pi> last;
-bool ban[MXN];
 int main() {
-    /* freopen("test.in", "r", stdin); */
-    /* freopen("test.out", "w", stdout); */
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
-    ll t;
-    cin >> t;
-    while (t--) {
-        cin >> n >> m;
-        for (ll i = 1; i <= n; i++) {
-            cin >> arr[i];
-            bad[i].clear();
-        }
-        sort(arr + 1, arr + 1 + n);
-        ll ind = 0;
-        for (ll i = 1; i <= n; i++) {
-            if (arr[i] != arr[i - 1]) {
-                ++ind;
-                v[ind] = arr[i];
-                cnt[ind] = 0;
-            }
-            ++cnt[ind];
-        }
-        cnt[0]=INF;
-        stack<ll> stk;
-        stk.push(0);
-        for (ll i = 1; i <= ind; i++) {
-            while(cnt[i]>=cnt[stk.top()])stk.pop();
-            pre[i] = stk.top();
-            stk.push(i);
-            /* cout << pre[i]; */
-        }
-        while (m--) {
-            ll x, y;
-            cin >> x >> y;
-            x = lower_bound(v + 1, v + 1 + ind, x) - v;
-            y = lower_bound(v + 1, v + 1 + ind, y) - v;
-            if (x > y) swap(x, y);
-            bad[y].push_back(x);
-        }
-        ll ir = ind, il, ans = 0;
-        while (ir) {
-            if (ban[ir])
-                --ir;
-            else {
-                for (ll nx : bad[ir]) ban[nx] = 1;
-                ll il = ir - 1;
-                while (il) {
-                    if (ban[il])
-                        --il;
-                    else {
-                        ans = max(ans, (cnt[il] + cnt[ir]) * (v[il] + v[ir]));
-                        il = pre[il];
-                    }
+    freopen("dimoo.in", "r", stdin);
+    freopen("dimoo.out", "w", stdout);
+    gi(n), gi(m);
+    for (int i = 1; i <= n; i++) gi(cur[i]);
+    ll mx = 0;
+    for (int i = 1; i <= n; i++) umx(mx, cur[i]);
+    if (mx <= 1) {
+        for (int i = 1; i <= n; i++) nx[(i + m - 1) % n + 1] = cur[i];
+        swap(cur, nx);
+    } else {
+        for (int i = 1; i <= m; i++) {
+            for (int i = 1; i <= n; i++)
+                if (cur[i]) {
+                    nx[i] += cur[i] - 1;
+                    nx[i % n + 1]++;
                 }
-                for (ll nx : bad[ir]) ban[nx] = 0;
-                --ir;
-            }
+            for (int i = 1; i <= n; i++) cur[i] = nx[i], nx[i] = 0;
         }
-        cout << ans << nl;
     }
+    ull ans = 0, M = 12345678901, v = 1;
+    /* cout<<qpow(M,5)<<endl; */
+    for (int i = 1; i <= n; i++) {
+        v *= M;
+        ans += v * (ull)(cur[i] + 1);
+    }
+    cout << ans << endl;
+
     return 0;
 }

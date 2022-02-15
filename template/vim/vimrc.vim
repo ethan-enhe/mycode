@@ -314,7 +314,7 @@ fun! CleanExtraSpaces()
 endfun
 
 if has("autocmd")
-    autocmd BufWritePre *.cpp,*.txt,*.js,*.py,*.wiki,*.sh,*.coffee :call CleanExtraSpaces()
+    autocmd BufWritePre *.md,*.cpp,*.txt,*.js,*.py,*.wiki,*.sh,*.coffee :call CleanExtraSpaces()
 endif
 "}}}
 " {{{ PLUG
@@ -322,7 +322,8 @@ if empty(glob(stdpath('config')."/autoload/"))
     exec "!curl -fLo ".stdpath('config')."/autoload/plug.vim --create-dirs https://ethan_enhe.coding.net/p/code/d/code/git/raw/master/template/vim/plug.vim"
 endif
 
-let g:plug_url_format='https://github.com.cnpmjs.org/%s'
+" let g:plug_url_format='https://github.com.cnpmjs.org/%s'
+" let g:plug_url_format='https://hub.fastgit.org/%s'
 call plug#begin()
 Plug 'luochen1990/rainbow'
 Plug 'morhetz/gruvbox'

@@ -1,7 +1,9 @@
 #include <bits/stdc++.h>
 
-#include <algorithm>
-#include <stack>
+#include <atomic>
+#include <cstdio>
+#include <cstring>
+#include <iomanip>
 #include <vector>
 
 using namespace std;
@@ -100,79 +102,74 @@ struct mod {
     friend ostream &operator<<(ostream &os, const mod &y) { return os << y.v; }
 };
 //}}}
+const ll INF = 1e18;
 const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 const char nl = '\n';
-const ll MXN = 1e6 + 5;
-const ll INF = 1e18;
+const ll MXN = 5005, SZ = MXN / 50 + 10, MX = 1e18;
 
-ll n, m, arr[MXN];
-char str[MXN];
-vec<ll> bad[MXN];
+struct lll {
+    ll v[SZ];
+    lll(ll x = 0) {
+        memset(v, 0, sizeof(v));
+        v[0] = x;
+    }
+    lll operator+(const lll &b) const {
+        lll ans;
+        for (ll i = 0, in = 0; i < SZ; i++) {
+            ans.v[i] = v[i] + b.v[i] + in;
+            if (ans.v[i] >= MX) ans.v[i] -= MX, ans.v[i + 1]++;
+        }
+        return ans;
+    }
+    void prt() {
+        bool f = 0;
+        for (int i = SZ - 1; ~i; i--) {
+            if (f)
+                cout << setw(18) << setfill('0') << v[i];
+            else if (v[i]) {
+                f = 1;
+                cout << v[i];
+            }
+        }
+        if (!f) cout << 0;
+    }
+};
 
-ll v[MXN], cnt[MXN], pre[MXN];
-set<pi> last;
-bool ban[MXN];
+ll n, m, arr[MXN], brr[MXN];
+ll other(ll x, ll y) {
+    if (x > y) swap(x, y);
+    if (y == 2) return 3;
+    if (x == 1) return 2;
+    return 1;
+}
+lll h[MXN];
+lll calf(ll x, ll y) {
+    if (!x) return 0;
+    if (arr[x] == y) return calf(x - 1, y);
+    return calf(x - 1, other(arr[x], y)) + 1 + h[x - 1];
+}
+lll calg(ll x, ll y) {
+    if (!x) return 0;
+    if (brr[x] == y) return calg(x - 1, y);
+    return h[x - 1] + 1 + calg(x - 1, other(brr[x], y));
+}
+
 int main() {
-    /* freopen("test.in", "r", stdin); */
-    /* freopen("test.out", "w", stdout); */
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
-    ll t;
-    cin >> t;
-    while (t--) {
-        cin >> n >> m;
-        for (ll i = 1; i <= n; i++) {
-            cin >> arr[i];
-            bad[i].clear();
+    cin >> n;
+    read(arr, 1, n);
+    read(brr, 1, n);
+    h[0] = 0;
+    for (int i = 1; i <= n; i++) h[i] = h[i - 1] + h[i - 1] + 1;
+    lll ans = 0;
+    for (int i = n; i; i--)
+        if (arr[i] != brr[i]) {
+            ans = calf(i - 1, other(arr[i], brr[i])) + 1 + calg(i - 1, other(arr[i], brr[i]));
+            break;
         }
-        sort(arr + 1, arr + 1 + n);
-        ll ind = 0;
-        for (ll i = 1; i <= n; i++) {
-            if (arr[i] != arr[i - 1]) {
-                ++ind;
-                v[ind] = arr[i];
-                cnt[ind] = 0;
-            }
-            ++cnt[ind];
-        }
-        cnt[0]=INF;
-        stack<ll> stk;
-        stk.push(0);
-        for (ll i = 1; i <= ind; i++) {
-            while(cnt[i]>=cnt[stk.top()])stk.pop();
-            pre[i] = stk.top();
-            stk.push(i);
-            /* cout << pre[i]; */
-        }
-        while (m--) {
-            ll x, y;
-            cin >> x >> y;
-            x = lower_bound(v + 1, v + 1 + ind, x) - v;
-            y = lower_bound(v + 1, v + 1 + ind, y) - v;
-            if (x > y) swap(x, y);
-            bad[y].push_back(x);
-        }
-        ll ir = ind, il, ans = 0;
-        while (ir) {
-            if (ban[ir])
-                --ir;
-            else {
-                for (ll nx : bad[ir]) ban[nx] = 1;
-                ll il = ir - 1;
-                while (il) {
-                    if (ban[il])
-                        --il;
-                    else {
-                        ans = max(ans, (cnt[il] + cnt[ir]) * (v[il] + v[ir]));
-                        il = pre[il];
-                    }
-                }
-                for (ll nx : bad[ir]) ban[nx] = 0;
-                --ir;
-            }
-        }
-        cout << ans << nl;
-    }
+    ans.prt();
+
     return 0;
 }

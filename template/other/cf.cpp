@@ -16,28 +16,14 @@ using ull = unsigned long long;
 using db = double;
 using ld = long double;
 using pi = pair<ll, ll>;
-using vi = vec<ll>;
-using vvi = vec<vi>;
-using vvvi = vec<vvi>;
-using vm = vec<mod>;
-using vvm = vec<vm>;
-using vpi = vec<pi>;
-using vvpi = vec<vpi>;
 mt19937_64 myrand(chrono::system_clock::now().time_since_epoch().count());
 //}}}
-const char nl = '\n';
-const ll INF = 1e18;
-const ll P = 1e9 + 7;
-const ll MXN = 1e6 + 5;
-const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 //{{{ Func
 pi operator+(const pi &x, const pi &y) { return pi(x.fi + y.fi, x.se + y.se); }
 pi operator-(const pi &x, const pi &y) { return pi(x.fi - y.fi, x.se - y.se); }
 pi operator*(const pi &x, const ll &y) { return pi(x.fi * y, x.se * y); }
 istream &operator>>(istream &is, pi &y) { return is >> y.fi >> y.se; }
 ostream &operator<<(ostream &os, pi &y) { return os << '(' << y.fi << ',' << y.se << ')'; }
-inline int redu(const int &x) { return x >= P ? x - P : x; }
-inline int incr(const int &x) { return x + ((x >> 31) & P); }
 template <typename T>
 T qpow(T x, ll y) {
     T r(1);
@@ -71,15 +57,18 @@ void setp(ll x) {
     cout.precision(x);
 }
 template <typename T>
-void read(vec<T> &x) {
-    for (T &v : x) cin >> v;
+void read(T &x, int l, int r) {
+    for (int i = l; i <= r; i++) cin >> x[i];
 }
 template <typename T>
-void prt(vec<T> &x, char join = ' ') {
-    for (T &v : x) cout << v << join;
+void prt(T &x, int l, int r, char join = ' ') {
+    for (int i = l; i <= r; i++) cout << x[i] << join;
 }
 //}}}
+const ll P = 1e9 + 7;
 //{{{ Type
+inline int redu(const int &x) { return x >= P ? x - P : x; }
+inline int incr(const int &x) { return x + ((x >> 31) & P); }
 struct mod {
     int v;
     mod() : v() {}
@@ -107,7 +96,13 @@ struct mod {
     friend ostream &operator<<(ostream &os, const mod &y) { return os << y.v; }
 };
 //}}}
-ll n, m;
+const ll INF = 1e18;
+const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
+const char nl = '\n';
+const ll MXN = 1e6 + 5;
+
+ll n, m, arr[MXN];
+char str[MXN];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);

@@ -1,9 +1,5 @@
 #include <bits/stdc++.h>
 
-#include <algorithm>
-#include <stack>
-#include <vector>
-
 using namespace std;
 //{{{ Def
 #define fi first
@@ -102,77 +98,83 @@ struct mod {
 //}}}
 const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 const char nl = '\n';
-const ll MXN = 1e6 + 5;
-const ll INF = 1e18;
 
-ll n, m, arr[MXN];
-char str[MXN];
-vec<ll> bad[MXN];
+ll n, m, k;
+vec<mod> arr;
+vec<ll> opt;
 
-ll v[MXN], cnt[MXN], pre[MXN];
-set<pi> last;
-bool ban[MXN];
+namespace fuck2in1 {
+bool chk() { return k <= 3000; }
+void fuck() {
+    for (int i = 1; i <= k; i++)
+        for (ll i = 1; i <= m; i++) {
+            ll &cur = opt[i];
+            arr[cur] = arr[cur - 1] + arr[cur + 1] - arr[cur];
+        }
+    mod ways = qpow(qpow((mod)2, m), k);
+    for (int i = 1; i <= n; i++) arr[i] *= ways;
+    prt(arr, 1, n);
+}
+} // namespace fuck2in1
+
+namespace _fuck2in1 {
+const ll MXN = 105;
+struct mat {
+    mod v[MXN][MXN];
+    mat(bool f = 0) {
+        if (f)
+            for (int i = 0; i < MXN; i++) v[i][i] = 1;
+    }
+    mat operator*(const mat &b) const {
+        mat res;
+        for (int i = 1; i <= n; i++)
+            for (int j = 1; j <= n; j++)
+                for (int k = 1; k <= n; k++) res.v[i][j] += v[i][k] * b.v[k][j];
+        return res;
+    }
+    void flip() {
+        for (int i = 1; i <= n; i++)
+            for (int j = i + 1; j <= n; j++) swap(v[i][j], v[j][i]);
+    }
+} init, trans;
+void jmp(mod *x, mod *l, mod *r) {
+    for (int i = 1; i <= n; i++) x[i] = l[i] + r[i] - x[i];
+}
+
+void fuck() {
+    for (int i = 1; i <= n; i++) {
+        init.v[1][i] = arr[i];
+        trans.v[i][i] = 1;
+    }
+    for (ll i = 1; i <= m; i++) {
+        ll &cur = opt[i];
+        jmp(trans.v[cur], trans.v[cur - 1], trans.v[cur + 1]);
+    }
+    trans.flip();
+    /* for (int i = 1; i <= n; i++) { */
+    /*     prt(trans.v[i], 1, n); */
+    /*     cout << nl; */
+    /* } */
+    init = init * qpow(trans, k);
+    mod ways = qpow(qpow((mod)2, m), k);
+    for (int i = 1; i <= n; i++) init.v[1][i] *= ways;
+    prt(init.v[1], 1, n);
+}
+
+} // namespace _fuck2in1
+
 int main() {
-    /* freopen("test.in", "r", stdin); */
-    /* freopen("test.out", "w", stdout); */
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
-    ll t;
-    cin >> t;
-    while (t--) {
-        cin >> n >> m;
-        for (ll i = 1; i <= n; i++) {
-            cin >> arr[i];
-            bad[i].clear();
-        }
-        sort(arr + 1, arr + 1 + n);
-        ll ind = 0;
-        for (ll i = 1; i <= n; i++) {
-            if (arr[i] != arr[i - 1]) {
-                ++ind;
-                v[ind] = arr[i];
-                cnt[ind] = 0;
-            }
-            ++cnt[ind];
-        }
-        cnt[0]=INF;
-        stack<ll> stk;
-        stk.push(0);
-        for (ll i = 1; i <= ind; i++) {
-            while(cnt[i]>=cnt[stk.top()])stk.pop();
-            pre[i] = stk.top();
-            stk.push(i);
-            /* cout << pre[i]; */
-        }
-        while (m--) {
-            ll x, y;
-            cin >> x >> y;
-            x = lower_bound(v + 1, v + 1 + ind, x) - v;
-            y = lower_bound(v + 1, v + 1 + ind, y) - v;
-            if (x > y) swap(x, y);
-            bad[y].push_back(x);
-        }
-        ll ir = ind, il, ans = 0;
-        while (ir) {
-            if (ban[ir])
-                --ir;
-            else {
-                for (ll nx : bad[ir]) ban[nx] = 1;
-                ll il = ir - 1;
-                while (il) {
-                    if (ban[il])
-                        --il;
-                    else {
-                        ans = max(ans, (cnt[il] + cnt[ir]) * (v[il] + v[ir]));
-                        il = pre[il];
-                    }
-                }
-                for (ll nx : bad[ir]) ban[nx] = 0;
-                --ir;
-            }
-        }
-        cout << ans << nl;
-    }
+    cin >> n;
+    arr.resize(n + 1);
+    read(arr, 1, n);
+    cin >> m >> k;
+    opt.resize(m + 1);
+    read(opt, 1, m);
+
+    if (fuck2in1::chk()) fuck2in1::fuck();
+    else _fuck2in1::fuck();
     return 0;
 }

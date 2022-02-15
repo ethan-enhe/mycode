@@ -1,7 +1,6 @@
 #include <bits/stdc++.h>
 
 #include <algorithm>
-#include <stack>
 #include <vector>
 
 using namespace std;
@@ -103,76 +102,93 @@ struct mod {
 const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 const char nl = '\n';
 const ll MXN = 1e6 + 5;
-const ll INF = 1e18;
+const ll INF = 1e9 + 5;
 
-ll n, m, arr[MXN];
+ll n, m, k, r;
 char str[MXN];
-vec<ll> bad[MXN];
+namespace k0 {
+mod solve() {
+    if (r) {
+        ll last = -1;
+        while (r--) {
+            ll a, b, c;
+            cin >> a >> b >> c;
+            if (last == -1)
+                last = c;
+            else if (c != last)
+                return 0;
+        }
+        return 1;
 
-ll v[MXN], cnt[MXN], pre[MXN];
-set<pi> last;
-bool ban[MXN];
+    } else
+        return 2;
+}
+} // namespace k0
+
+namespace k1 {
+map<ll, ll> ind;
+vec<pi> g[MXN];
+ll vecc;
+
+void ae(ll x, ll y, ll v) {
+    if (!ind[x]) ind[x] = ++vecc;
+    if (!ind[y]) ind[y] = ++vecc;
+    g[ind[x]].push_back({y, v});
+    g[ind[y]].push_back({x, v});
+}
+bool fixed, invalid, cur0;
+ll sz;
+map<ll, bool> mark;
+void dfs(ll p, bool cm) {
+    ++sz;
+    mark[p] = cm;
+    ll id = ind[p];
+    if (!id) return;
+    for (pi &nx : g[id]) {
+        if (nx.fi == 1) {
+            fixed = 1;
+            continue;
+        }
+        auto it = mark.find(nx.fi);
+        bool nxm = cm ^ nx.se ^ cur0;
+        if (it == mark.end())
+            dfs(nx.fi, nxm);
+        else if (it->se != nxm)
+            invalid = 1;
+    }
+}
+
+mod solve() {
+    vec<ll> app;
+    for (int i = 1; i <= r; i++) {
+        ll x, y, v;
+        cin >> x >> y >> v;
+        --x, --y;
+        if (x & 1 && y & 1) v ^= 1;
+        if (y) y += INF;
+        app.push_back(x), app.push_back(y);
+        ae(x, y, v);
+    }
+    mod ans = 0;
+    for(ll x:app)
+        if(x)
+
+    cur0 = 1;
+    mark.clear();
+    return ans;
+}
+} // namespace k1
+
 int main() {
-    /* freopen("test.in", "r", stdin); */
-    /* freopen("test.out", "w", stdout); */
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
-    ll t;
-    cin >> t;
-    while (t--) {
-        cin >> n >> m;
-        for (ll i = 1; i <= n; i++) {
-            cin >> arr[i];
-            bad[i].clear();
-        }
-        sort(arr + 1, arr + 1 + n);
-        ll ind = 0;
-        for (ll i = 1; i <= n; i++) {
-            if (arr[i] != arr[i - 1]) {
-                ++ind;
-                v[ind] = arr[i];
-                cnt[ind] = 0;
-            }
-            ++cnt[ind];
-        }
-        cnt[0]=INF;
-        stack<ll> stk;
-        stk.push(0);
-        for (ll i = 1; i <= ind; i++) {
-            while(cnt[i]>=cnt[stk.top()])stk.pop();
-            pre[i] = stk.top();
-            stk.push(i);
-            /* cout << pre[i]; */
-        }
-        while (m--) {
-            ll x, y;
-            cin >> x >> y;
-            x = lower_bound(v + 1, v + 1 + ind, x) - v;
-            y = lower_bound(v + 1, v + 1 + ind, y) - v;
-            if (x > y) swap(x, y);
-            bad[y].push_back(x);
-        }
-        ll ir = ind, il, ans = 0;
-        while (ir) {
-            if (ban[ir])
-                --ir;
-            else {
-                for (ll nx : bad[ir]) ban[nx] = 1;
-                ll il = ir - 1;
-                while (il) {
-                    if (ban[il])
-                        --il;
-                    else {
-                        ans = max(ans, (cnt[il] + cnt[ir]) * (v[il] + v[ir]));
-                        il = pre[il];
-                    }
-                }
-                for (ll nx : bad[ir]) ban[nx] = 0;
-                --ir;
-            }
-        }
-        cout << ans << nl;
+    cin >> n >> m >> k >> r;
+    mod ans;
+    if (!k)
+        ans = k0::solve();
+    else {
     }
+    cout << ans << endl;
     return 0;
 }

@@ -1,8 +1,6 @@
 #include <bits/stdc++.h>
 
-#include <algorithm>
-#include <stack>
-#include <vector>
+#include <numeric>
 
 using namespace std;
 //{{{ Def
@@ -20,14 +18,28 @@ using ull = unsigned long long;
 using db = double;
 using ld = long double;
 using pi = pair<ll, ll>;
+using vi = vec<ll>;
+using vvi = vec<vi>;
+using vvvi = vec<vvi>;
+using vm = vec<mod>;
+using vvm = vec<vm>;
+using vpi = vec<pi>;
+using vvpi = vec<vpi>;
 mt19937_64 myrand(chrono::system_clock::now().time_since_epoch().count());
 //}}}
+const char nl = '\n';
+const ll INF = 1e18;
+const ll P = 1e9 + 7;
+const ll MXN = 1e6 + 5;
+const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 //{{{ Func
 pi operator+(const pi &x, const pi &y) { return pi(x.fi + y.fi, x.se + y.se); }
 pi operator-(const pi &x, const pi &y) { return pi(x.fi - y.fi, x.se - y.se); }
 pi operator*(const pi &x, const ll &y) { return pi(x.fi * y, x.se * y); }
 istream &operator>>(istream &is, pi &y) { return is >> y.fi >> y.se; }
 ostream &operator<<(ostream &os, pi &y) { return os << '(' << y.fi << ',' << y.se << ')'; }
+inline int redu(const int &x) { return x >= P ? x - P : x; }
+inline int incr(const int &x) { return x + ((x >> 31) & P); }
 template <typename T>
 T qpow(T x, ll y) {
     T r(1);
@@ -60,19 +72,8 @@ void setp(ll x) {
     cout.flags(ios::fixed);
     cout.precision(x);
 }
-template <typename T>
-void read(T &x, int l, int r) {
-    for (int i = l; i <= r; i++) cin >> x[i];
-}
-template <typename T>
-void prt(T &x, int l, int r, char join = ' ') {
-    for (int i = l; i <= r; i++) cout << x[i] << join;
-}
 //}}}
-const ll P = 1e9 + 7;
 //{{{ Type
-inline int redu(const int &x) { return x >= P ? x - P : x; }
-inline int incr(const int &x) { return x + ((x >> 31) & P); }
 struct mod {
     int v;
     mod() : v() {}
@@ -100,79 +101,101 @@ struct mod {
     friend ostream &operator<<(ostream &os, const mod &y) { return os << y.v; }
 };
 //}}}
-const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
-const char nl = '\n';
-const ll MXN = 1e6 + 5;
-const ll INF = 1e18;
 
-ll n, m, arr[MXN];
-char str[MXN];
-vec<ll> bad[MXN];
+//{{{ Fast IO
+namespace fio {
+const int BS = 1 << 20;
+char ibuf[BS], *ip1 = ibuf, *ip2 = ibuf;
+char obuf[BS], *op = obuf;
+#define gc() (ip1 == ip2 && (ip2 = (ip1 = ibuf) + fread(ibuf, 1, BS, stdin), ip1 == ip2) ? EOF : *ip1++)
+#define flsh() (fwrite(obuf, 1, op - obuf, stdout), op = obuf)
+#define pc(x) (*op++ = (x), op == obuf + BS && flsh())
+struct flusher {
+    inline ~flusher() { flsh(); }
+} tmp;
 
-ll v[MXN], cnt[MXN], pre[MXN];
-set<pi> last;
-bool ban[MXN];
-int main() {
-    /* freopen("test.in", "r", stdin); */
-    /* freopen("test.out", "w", stdout); */
-    ios::sync_with_stdio(0);
-    cin.tie(0);
-    setp(6);
-    ll t;
-    cin >> t;
-    while (t--) {
-        cin >> n >> m;
-        for (ll i = 1; i <= n; i++) {
-            cin >> arr[i];
-            bad[i].clear();
-        }
-        sort(arr + 1, arr + 1 + n);
-        ll ind = 0;
-        for (ll i = 1; i <= n; i++) {
-            if (arr[i] != arr[i - 1]) {
-                ++ind;
-                v[ind] = arr[i];
-                cnt[ind] = 0;
-            }
-            ++cnt[ind];
-        }
-        cnt[0]=INF;
-        stack<ll> stk;
-        stk.push(0);
-        for (ll i = 1; i <= ind; i++) {
-            while(cnt[i]>=cnt[stk.top()])stk.pop();
-            pre[i] = stk.top();
-            stk.push(i);
-            /* cout << pre[i]; */
-        }
-        while (m--) {
-            ll x, y;
-            cin >> x >> y;
-            x = lower_bound(v + 1, v + 1 + ind, x) - v;
-            y = lower_bound(v + 1, v + 1 + ind, y) - v;
-            if (x > y) swap(x, y);
-            bad[y].push_back(x);
-        }
-        ll ir = ind, il, ans = 0;
-        while (ir) {
-            if (ban[ir])
-                --ir;
-            else {
-                for (ll nx : bad[ir]) ban[nx] = 1;
-                ll il = ir - 1;
-                while (il) {
-                    if (ban[il])
-                        --il;
-                    else {
-                        ans = max(ans, (cnt[il] + cnt[ir]) * (v[il] + v[ir]));
-                        il = pre[il];
-                    }
-                }
-                for (ll nx : bad[ir]) ban[nx] = 0;
-                --ir;
-            }
-        }
-        cout << ans << nl;
+template <class T>
+inline void read(T &x) {
+    bool f = 0;
+    x = 0;
+    char c;
+    while (c = gc(), !isdigit(c))
+        if (c == '-') f = 1;
+    while (isdigit(c)) x = (x << 3) + (x << 1) + (c ^ 48), c = gc();
+    if (f) x = -x;
+}
+inline void read(char &x) {
+    while (x = gc(), isspace(x))
+        ;
+}
+inline void read(char *x) {
+    while (*x = gc(), isspace(*x))
+        if (*x == EOF) return;
+    while (*++x = gc(), !isspace(*x) && *x != EOF)
+        ;
+    *x = 0;
+}
+template <class T>
+inline void prt(T x) {
+    if (x < 0) pc('-'), x = -x;
+    if (x > 9) prt(x / 10);
+    pc(x % 10 ^ 48);
+}
+inline void prt(const char x) { pc(x); }
+inline void prt(char *x) {
+    while (*x) pc(*x++);
+}
+inline void prt(const char x[]) {
+    for (int i = 0; x[i]; i++) pc(x[i]);
+}
+#undef gc
+#undef pc
+#undef flsh
+} // namespace fio
+
+void prt() {}
+template <typename T1, typename... T2>
+void prt(const T1 x, const T2... y) {
+    fio::prt(x);
+    prt(y...);
+}
+void read() {}
+template <typename T1, typename... T2>
+void read(T1 &x, T2 &... y) {
+    fio::read(x);
+    read(y...);
+}
+//}}}
+ll n, m;
+vi a, b;
+vvpi g;
+int cal(vi &tmp,ll x,ll y){
+    for(ll i=x;i && y;i--){
+        ll delt=min(y,tmp[i]);
+
     }
+
+}
+void chk(int lim) {
+    for (int i = n; i; i--) {
+    }
+}
+bool cmp(const pi &x, const pi &y) { return x > y; }
+int main() {
+    freopen("ex_challenge1.in", "r", stdin);
+    /* freopen(".out","w",stdout); */
+    setp(6);
+    read(n, m);
+    a.resize(n + 1), b.resize(n + 1);
+    g.resize(n + 1);
+    for (ll i = 1; i <= n; i++) read(a[i]);
+    for (ll i = 1; i <= n; i++) read(b[i]);
+    for (ll i = 1, u = 0, tu, v, w; i <= m; i++) {
+        read(tu, v, w);
+        u += tu;
+        g[u].push_back({v, w});
+    }
+    for (int i = 1; i <= n; i++) sort(g[i].begin(), g[i].end(), cmp);
     return 0;
 }
+

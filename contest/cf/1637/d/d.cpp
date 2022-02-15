@@ -1,9 +1,5 @@
 #include <bits/stdc++.h>
 
-#include <algorithm>
-#include <stack>
-#include <vector>
-
 using namespace std;
 //{{{ Def
 #define fi first
@@ -100,79 +96,39 @@ struct mod {
     friend ostream &operator<<(ostream &os, const mod &y) { return os << y.v; }
 };
 //}}}
+const ll INF = 1e18;
 const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 const char nl = '\n';
-const ll MXN = 1e6 + 5;
-const ll INF = 1e18;
+const ll MXN = 105, ZERO = 2e4 + 5;
 
-ll n, m, arr[MXN];
-char str[MXN];
-vec<ll> bad[MXN];
-
-ll v[MXN], cnt[MXN], pre[MXN];
-set<pi> last;
-bool ban[MXN];
+ll n, m, arr[MXN], brr[MXN];
+bool f[MXN][ZERO << 1];
 int main() {
-    /* freopen("test.in", "r", stdin); */
-    /* freopen("test.out", "w", stdout); */
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
     ll t;
     cin >> t;
     while (t--) {
-        cin >> n >> m;
-        for (ll i = 1; i <= n; i++) {
-            cin >> arr[i];
-            bad[i].clear();
+        cin >> n;
+        read(arr, 1, n);
+        read(brr, 1, n);
+        ll sum = 0, sum2 = 0, ans = INF;
+        memset(f, 0, sizeof(f));
+        f[0][ZERO] = 1;
+        for (int i = 1; i <= n; i++) {
+            ll delt = abs(arr[i] - brr[i]);
+            for (int j = delt; j + delt < ZERO << 1; j++) f[i][j] = f[i - 1][j - delt] | f[i - 1][j + delt];
+            sum += arr[i] + brr[i];
+            sum2 += arr[i] * arr[i] + brr[i] * brr[i];
         }
-        sort(arr + 1, arr + 1 + n);
-        ll ind = 0;
-        for (ll i = 1; i <= n; i++) {
-            if (arr[i] != arr[i - 1]) {
-                ++ind;
-                v[ind] = arr[i];
-                cnt[ind] = 0;
+        for (ll i = -sum; i <= sum; i++)
+            if (f[n][ZERO + i]) {
+                ll x = (sum + i) / 2, y = (sum - i) / 2;
+                ans = min(ans, x * x + y * y - sum2);
             }
-            ++cnt[ind];
-        }
-        cnt[0]=INF;
-        stack<ll> stk;
-        stk.push(0);
-        for (ll i = 1; i <= ind; i++) {
-            while(cnt[i]>=cnt[stk.top()])stk.pop();
-            pre[i] = stk.top();
-            stk.push(i);
-            /* cout << pre[i]; */
-        }
-        while (m--) {
-            ll x, y;
-            cin >> x >> y;
-            x = lower_bound(v + 1, v + 1 + ind, x) - v;
-            y = lower_bound(v + 1, v + 1 + ind, y) - v;
-            if (x > y) swap(x, y);
-            bad[y].push_back(x);
-        }
-        ll ir = ind, il, ans = 0;
-        while (ir) {
-            if (ban[ir])
-                --ir;
-            else {
-                for (ll nx : bad[ir]) ban[nx] = 1;
-                ll il = ir - 1;
-                while (il) {
-                    if (ban[il])
-                        --il;
-                    else {
-                        ans = max(ans, (cnt[il] + cnt[ir]) * (v[il] + v[ir]));
-                        il = pre[il];
-                    }
-                }
-                for (ll nx : bad[ir]) ban[nx] = 0;
-                --ir;
-            }
-        }
-        cout << ans << nl;
+
+        cout << ans + (n - 1) * sum2 << nl;
     }
     return 0;
 }

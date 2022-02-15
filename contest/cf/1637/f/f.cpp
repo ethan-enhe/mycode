@@ -1,8 +1,6 @@
 #include <bits/stdc++.h>
 
-#include <algorithm>
-#include <stack>
-#include <vector>
+#include <numeric>
 
 using namespace std;
 //{{{ Def
@@ -106,73 +104,83 @@ const ll MXN = 1e6 + 5;
 const ll INF = 1e18;
 
 ll n, m, arr[MXN];
-char str[MXN];
-vec<ll> bad[MXN];
+vec<ll> g[MXN];
 
-ll v[MXN], cnt[MXN], pre[MXN];
-set<pi> last;
-bool ban[MXN];
+struct mymx {
+    ll x, xid, y, yid;
+    mymx() { x = y = 0; }
+    void upd(ll v, ll id = -2) {
+        if (v > x) {
+            y = x, yid = xid;
+            x = v, xid = id;
+        } else if (v > y)
+            y = v, yid = id;
+    }
+    ll get(ll excl = -1) { return excl == xid ? y : x; }
+};
+
+ll dfn[MXN], dfnc, sz[MXN];
+ll mx_in[MXN], mx_out[MXN];
+void dfs1(ll p, ll fa) {
+    dfn[p] = ++dfnc;
+    sz[p] = 1;
+    mx_in[p] = arr[p];
+    for (ll nx : g[p])
+        if (nx != fa) {
+            dfs1(nx, p);
+            sz[p] += sz[nx];
+            umx(mx_in[p], mx_in[nx]);
+        }
+}
+ll diff[MXN];
+void add(ll l, ll r, ll v) {
+    diff[l] += v;
+    diff[r + 1] -= v;
+}
+void dfs2(ll p, ll fa) {
+    mymx mx;
+    mx.upd(mx_out[p], fa);
+    for (ll nx : g[p])
+        if (nx != fa) mx.upd(mx_in[nx], nx);
+    for (ll nx : g[p])
+        if (nx != fa) {
+            mx_out[nx] = max(arr[p], mx.get(nx));
+            dfs2(nx, p);
+        }
+    // solve
+    add(dfn[p], dfn[p], max(0ll, arr[p] - mx.get()));
+    ll tmp = max(0ll, arr[p] - mx.get(fa));
+    add(1, n, tmp);
+    add(dfn[p], dfn[p] + sz[p] - 1, -tmp);
+    for (ll nx : g[p])
+        if (nx != fa) {
+            ll tmp = max(0ll, arr[p] - mx.get(nx));
+            add(dfn[nx], dfn[nx] + sz[nx] - 1, tmp);
+        }
+}
+
 int main() {
-    /* freopen("test.in", "r", stdin); */
-    /* freopen("test.out", "w", stdout); */
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
-    ll t;
-    cin >> t;
-    while (t--) {
-        cin >> n >> m;
-        for (ll i = 1; i <= n; i++) {
-            cin >> arr[i];
-            bad[i].clear();
-        }
-        sort(arr + 1, arr + 1 + n);
-        ll ind = 0;
-        for (ll i = 1; i <= n; i++) {
-            if (arr[i] != arr[i - 1]) {
-                ++ind;
-                v[ind] = arr[i];
-                cnt[ind] = 0;
-            }
-            ++cnt[ind];
-        }
-        cnt[0]=INF;
-        stack<ll> stk;
-        stk.push(0);
-        for (ll i = 1; i <= ind; i++) {
-            while(cnt[i]>=cnt[stk.top()])stk.pop();
-            pre[i] = stk.top();
-            stk.push(i);
-            /* cout << pre[i]; */
-        }
-        while (m--) {
-            ll x, y;
-            cin >> x >> y;
-            x = lower_bound(v + 1, v + 1 + ind, x) - v;
-            y = lower_bound(v + 1, v + 1 + ind, y) - v;
-            if (x > y) swap(x, y);
-            bad[y].push_back(x);
-        }
-        ll ir = ind, il, ans = 0;
-        while (ir) {
-            if (ban[ir])
-                --ir;
-            else {
-                for (ll nx : bad[ir]) ban[nx] = 1;
-                ll il = ir - 1;
-                while (il) {
-                    if (ban[il])
-                        --il;
-                    else {
-                        ans = max(ans, (cnt[il] + cnt[ir]) * (v[il] + v[ir]));
-                        il = pre[il];
-                    }
-                }
-                for (ll nx : bad[ir]) ban[nx] = 0;
-                --ir;
-            }
-        }
-        cout << ans << nl;
+    cin >> n;
+    read(arr, 1, n);
+    for (int i = 1; i < n; i++) {
+        ll u, v;
+        cin >> u >> v;
+        g[u].push_back(v);
+        g[v].push_back(u);
     }
+    dfs1(1, 0);
+    mx_out[1] = 0;
+    dfs2(1, 0);
+    /* prt(mx_in, 1, n); */
+    /* cout << nl; */
+    /* prt(mx_out, 1, n); */
+    /* cout << nl; */
+    partial_sum(diff + 1, diff + 1 + n, diff + 1);
+    ll ans = INF;
+    for (int i = 1; i <= n; i++) umn(ans, diff[i] + mx_in[1]);
+    cout << ans << endl;
     return 0;
 }

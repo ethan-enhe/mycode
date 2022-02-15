@@ -1,8 +1,7 @@
 #include <bits/stdc++.h>
 
 #include <algorithm>
-#include <stack>
-#include <vector>
+#include <numeric>
 
 using namespace std;
 //{{{ Def
@@ -102,77 +101,33 @@ struct mod {
 //}}}
 const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 const char nl = '\n';
-const ll MXN = 1e6 + 5;
-const ll INF = 1e18;
 
-ll n, m, arr[MXN];
-char str[MXN];
-vec<ll> bad[MXN];
-
-ll v[MXN], cnt[MXN], pre[MXN];
-set<pi> last;
-bool ban[MXN];
+ll n, m;
+mod ans;
+vec<ll> arr, sum;
+vec<mod> dp, tmp;
 int main() {
-    /* freopen("test.in", "r", stdin); */
-    /* freopen("test.out", "w", stdout); */
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
-    ll t;
-    cin >> t;
-    while (t--) {
-        cin >> n >> m;
-        for (ll i = 1; i <= n; i++) {
-            cin >> arr[i];
-            bad[i].clear();
+
+    cin >> m >> n;
+    arr.resize(n + 1);
+    sum.resize(n + 1);
+    read(arr, 1, n);
+    partial_sum(arr.begin(), arr.end(), sum.begin());
+    dp.resize(sum[n] + 1);
+    tmp.resize(sum[n] + 1);
+    dp[0] = 1;
+    for (int i = n; i; i--) {
+        for (int j = 0; j < arr[i]; j++) ans += dp[sum[n] - sum[i - 1] - j];
+        for (int i = 0; i < tmp.size(); i++) {
+            tmp[i] = (i ? tmp[i - 1] : 0) + dp[i];
+            if (i >= m) tmp[i] -= dp[i - m];
         }
-        sort(arr + 1, arr + 1 + n);
-        ll ind = 0;
-        for (ll i = 1; i <= n; i++) {
-            if (arr[i] != arr[i - 1]) {
-                ++ind;
-                v[ind] = arr[i];
-                cnt[ind] = 0;
-            }
-            ++cnt[ind];
-        }
-        cnt[0]=INF;
-        stack<ll> stk;
-        stk.push(0);
-        for (ll i = 1; i <= ind; i++) {
-            while(cnt[i]>=cnt[stk.top()])stk.pop();
-            pre[i] = stk.top();
-            stk.push(i);
-            /* cout << pre[i]; */
-        }
-        while (m--) {
-            ll x, y;
-            cin >> x >> y;
-            x = lower_bound(v + 1, v + 1 + ind, x) - v;
-            y = lower_bound(v + 1, v + 1 + ind, y) - v;
-            if (x > y) swap(x, y);
-            bad[y].push_back(x);
-        }
-        ll ir = ind, il, ans = 0;
-        while (ir) {
-            if (ban[ir])
-                --ir;
-            else {
-                for (ll nx : bad[ir]) ban[nx] = 1;
-                ll il = ir - 1;
-                while (il) {
-                    if (ban[il])
-                        --il;
-                    else {
-                        ans = max(ans, (cnt[il] + cnt[ir]) * (v[il] + v[ir]));
-                        il = pre[il];
-                    }
-                }
-                for (ll nx : bad[ir]) ban[nx] = 0;
-                --ir;
-            }
-        }
-        cout << ans << nl;
+        swap(dp,tmp);
     }
+    cout << ans;
+
     return 0;
 }

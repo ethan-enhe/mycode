@@ -124,31 +124,17 @@ ll n, m;
 ll arr[MXN];
 
 int main(int argc, char *argv[]) {
-    // code
-    int n=10,m=10,c=2;
-    for(int i=1;i<=n;i++)
-        cout<<char('a'+rand()%c);
-    cout<<endl<<m<<endl;
-    for(int i=1;i<=m;i++){
-        int len=rand()%n*2/3+1;
-        while(1)
-        {
-            string ans;
-            for(int j=1;j<=len;j++){
-                int tmp=rand();
-                if(tmp%5<=1 && *ans.rbegin()!='*')ans+="*";
-                else if(tmp%3==2)ans+="?";
-                else ans+=char('a'+rand()%c);
-            }
-            bool f=1;
-            for(char x:ans)
-                f&=x=='*';
-            if(!f){
-                cout<<ans;
-                break;
-            }
+    ll t = 10;
+    cout << t << endl;
+    while (t--) {
+        ll n = randint(2, 10), m = randint(0, 10);
+        cout << n << " " << m << endl;
+        for (int i = 1; i <= n; i++) cout << (arr[i] = randint(1, 5)) << " ";
+        cout << endl;
+        while (m--) {
+            ll x = randint(1, n), y = randint(1, n);
+            cout << arr[x] << ' ' << arr[y] << endl;
         }
-        cout<<endl;
     }
 
     return 0;

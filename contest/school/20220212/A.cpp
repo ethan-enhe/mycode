@@ -1,9 +1,5 @@
 #include <bits/stdc++.h>
 
-#include <algorithm>
-#include <stack>
-#include <vector>
-
 using namespace std;
 //{{{ Def
 #define fi first
@@ -69,7 +65,7 @@ void prt(T &x, int l, int r, char join = ' ') {
     for (int i = l; i <= r; i++) cout << x[i] << join;
 }
 //}}}
-const ll P = 1e9 + 7;
+const ll P = 998244353;
 //{{{ Type
 inline int redu(const int &x) { return x >= P ? x - P : x; }
 inline int incr(const int &x) { return x + ((x >> 31) & P); }
@@ -103,76 +99,67 @@ struct mod {
 const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 const char nl = '\n';
 const ll MXN = 1e6 + 5;
-const ll INF = 1e18;
-
-ll n, m, arr[MXN];
+ll n, m;
 char str[MXN];
-vec<ll> bad[MXN];
 
-ll v[MXN], cnt[MXN], pre[MXN];
-set<pi> last;
-bool ban[MXN];
+char opt[MXN];
+ll son[MXN][2];
+ll nodec, ind = 1;
+ll build(ll &ind) {
+    ll p = ++nodec;
+    if (str[ind] == 'x')
+        opt[p] = 'x';
+    else {
+        son[p][0] = build(++ind);
+        opt[p] = str[ind];
+        son[p][1] = build(++ind);
+    }
+    ++ind;
+    return p;
+}
+const mod inv2 = (mod)1 / 2, inv4 = (mod)1 / 4;
+mod dp[MXN][2];
+bool cal(char type, bool x, bool y) {
+    switch (type) {
+        case '|': return x | y;
+        case '&': return x & y;
+        case '^': return x ^ y;
+    }
+    assert(0);
+}
+void dfs(ll p) {
+    if (opt[p] == 'x') {
+        dp[p][0] = dp[p][1] = inv2;
+        return;
+    }
+    dfs(son[p][0]);
+    dfs(son[p][1]);
+    for (int i = 0; i < 2; i++)
+        for (int j = 0; j < 2; j++) dp[p][cal(opt[p], i, j)] += dp[son[p][0]][i] * dp[son[p][1]][j];
+}
+void redfs(ll p, mod chance) {
+    if (opt[p] == 'x') {
+        cout << chance << nl;
+        return;
+    } else if (opt[p] == '^') {
+        redfs(son[p][0], chance);
+        redfs(son[p][1], chance);
+    } else if (opt[p] == '|') {
+        redfs(son[p][0], chance * dp[son[p][1]][0]);
+        redfs(son[p][1], chance * dp[son[p][0]][0]);
+    } else if (opt[p] == '&') {
+        redfs(son[p][0], chance * dp[son[p][1]][1]);
+        redfs(son[p][1], chance * dp[son[p][0]][1]);
+    }
+}
 int main() {
-    /* freopen("test.in", "r", stdin); */
-    /* freopen("test.out", "w", stdout); */
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
-    ll t;
-    cin >> t;
-    while (t--) {
-        cin >> n >> m;
-        for (ll i = 1; i <= n; i++) {
-            cin >> arr[i];
-            bad[i].clear();
-        }
-        sort(arr + 1, arr + 1 + n);
-        ll ind = 0;
-        for (ll i = 1; i <= n; i++) {
-            if (arr[i] != arr[i - 1]) {
-                ++ind;
-                v[ind] = arr[i];
-                cnt[ind] = 0;
-            }
-            ++cnt[ind];
-        }
-        cnt[0]=INF;
-        stack<ll> stk;
-        stk.push(0);
-        for (ll i = 1; i <= ind; i++) {
-            while(cnt[i]>=cnt[stk.top()])stk.pop();
-            pre[i] = stk.top();
-            stk.push(i);
-            /* cout << pre[i]; */
-        }
-        while (m--) {
-            ll x, y;
-            cin >> x >> y;
-            x = lower_bound(v + 1, v + 1 + ind, x) - v;
-            y = lower_bound(v + 1, v + 1 + ind, y) - v;
-            if (x > y) swap(x, y);
-            bad[y].push_back(x);
-        }
-        ll ir = ind, il, ans = 0;
-        while (ir) {
-            if (ban[ir])
-                --ir;
-            else {
-                for (ll nx : bad[ir]) ban[nx] = 1;
-                ll il = ir - 1;
-                while (il) {
-                    if (ban[il])
-                        --il;
-                    else {
-                        ans = max(ans, (cnt[il] + cnt[ir]) * (v[il] + v[ir]));
-                        il = pre[il];
-                    }
-                }
-                for (ll nx : bad[ir]) ban[nx] = 0;
-                --ir;
-            }
-        }
-        cout << ans << nl;
-    }
+    cin >> n >> (str + 1);
+    build(ind);
+    dfs(1);
+    redfs(1, 1);
+
     return 0;
 }
