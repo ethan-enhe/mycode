@@ -324,6 +324,7 @@ endif
 
 " let g:plug_url_format='https://github.com.cnpmjs.org/%s'
 " let g:plug_url_format='https://hub.fastgit.org/%s'
+let g:plug_url_format='https://gitclone.com/github.com/%s'
 call plug#begin()
 Plug 'luochen1990/rainbow'
 Plug 'morhetz/gruvbox'
@@ -409,12 +410,13 @@ syntax enable
 map <silent> <leader><cr> :noh<cr>
 
 " let g:airline_theme='onedark'
-let g:airline_powerline_fonts = g:usefont
-
-let g:airline_left_sep = "\ue0bc"
-let g:airline_left_alt_sep = "\ue0bd"
-let g:airline_right_sep = "\ue0be"
-let g:airline_right_alt_sep = "\ue0bf"
+if g:usefont
+    let g:airline_powerline_fonts = 1
+    let g:airline_left_sep = "\ue0bc"
+    let g:airline_left_alt_sep = "\ue0bd"
+    let g:airline_right_sep = "\ue0be"
+    let g:airline_right_alt_sep = "\ue0bf"
+endif
 let g:airline#extensions#tabline#enabled = 1 "tabline中当前buffer两端的分隔字符
 let g:airline#extensions#whitespace#enabled = 0
 " let g:airline#extensions#tabline#buffer_nr_show=1
@@ -484,7 +486,7 @@ if g:usecoc
     "}}}
     "{{{ COC
     let g:coc_global_extensions = ['coc-clangd','coc-markdownlint','coc-vimlsp', 'coc-json','coc-snippets','coc-lists','coc-explorer','coc-floaterm']
-    " autocmd FileType * let b:coc_pairs_disabled = ['<']
+    autocmd FileType * let b:coc_pairs_disabled = ['<']
     " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
     " delays and poor user experience.
     " set updatetime=300
