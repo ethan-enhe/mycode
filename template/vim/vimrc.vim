@@ -323,8 +323,8 @@ if empty(glob(stdpath('config')."/autoload/"))
 endif
 
 " let g:plug_url_format='https://github.com.cnpmjs.org/%s'
-" let g:plug_url_format='https://hub.fastgit.org/%s'
-let g:plug_url_format='https://gitclone.com/github.com/%s'
+let g:plug_url_format='https://hub.fastgit.xyz/%s'
+"let g:plug_url_format='https://gitclone.com/github.com/%s'
 call plug#begin()
 Plug 'luochen1990/rainbow'
 Plug 'morhetz/gruvbox'
