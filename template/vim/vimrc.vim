@@ -324,7 +324,7 @@ endif
 
 " let g:plug_url_format='https://github.com.cnpmjs.org/%s'
 let g:plug_url_format='https://hub.fastgit.xyz/%s'
-"let g:plug_url_format='https://gitclone.com/github.com/%s'
+" let g:plug_url_format='https://gitclone.com/github.com/%s'
 call plug#begin()
 Plug 'luochen1990/rainbow'
 Plug 'morhetz/gruvbox'
@@ -343,7 +343,6 @@ Plug 'tpope/vim-commentary'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
-" Plug 'nathanaelkane/vim-indent-guides'
 
 Plug 'voldikss/vim-floaterm'
 
@@ -486,7 +485,7 @@ if g:usecoc
     "}}}
     "{{{ COC
     let g:coc_global_extensions = ['coc-clangd','coc-markdownlint','coc-vimlsp', 'coc-json','coc-snippets','coc-lists','coc-explorer','coc-floaterm']
-    autocmd FileType * let b:coc_pairs_disabled = ['<']
+    "autocmd FileType * let b:coc_pairs_disabled = ['<']
     " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
     " delays and poor user experience.
     " set updatetime=300
