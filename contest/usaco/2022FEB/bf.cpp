@@ -1,5 +1,7 @@
 #include <bits/stdc++.h>
 
+#include <numeric>
+
 using namespace std;
 //{{{ Def
 #define fi first
@@ -16,26 +18,11 @@ using pi = pair<ll, ll>;
 mt19937_64 myrand(chrono::system_clock::now().time_since_epoch().count());
 //}}}
 //{{{ Func
-template <typename T1, typename T2>
-pair<T1, T2> operator+(const pair<T1, T2> &x, const pair<T1, T2> &y) {
-    return {x.fi + y.fi, x.se + y.se};
-}
-template <typename T1, typename T2>
-pair<T1, T2> operator-(const pair<T1, T2> &x, const pair<T1, T2> &y) {
-    return {x.fi - y.fi, x.se - y.se};
-}
-template <typename T1, typename T2>
-pair<T1, T2> operator*(const pair<T1, T2> &x, const ll &y) {
-    return {x.fi * y, x.se * y};
-}
-template <typename T1, typename T2>
-istream &operator>>(istream &is, pair<T1, T2> &y) {
-    return is >> y.fi >> y.se;
-}
-template <typename T1, typename T2>
-ostream &operator<<(ostream &os, const pair<T1, T2> &y) {
-    return os << '(' << y.fi << ',' << y.se << ')';
-}
+pi operator+(const pi &x, const pi &y) { return pi(x.fi + y.fi, x.se + y.se); }
+pi operator-(const pi &x, const pi &y) { return pi(x.fi - y.fi, x.se - y.se); }
+pi operator*(const pi &x, const ll &y) { return pi(x.fi * y, x.se * y); }
+istream &operator>>(istream &is, pi &y) { return is >> y.fi >> y.se; }
+ostream &operator<<(ostream &os, pi &y) { return os << '(' << y.fi << ',' << y.se << ')'; }
 template <typename T>
 T qpow(T x, ll y) {
     T r(1);
@@ -47,36 +34,34 @@ T qpow(T x, ll y) {
 }
 ll gcd(ll x, ll y) { return y ? gcd(y, x % y) : x; }
 template <typename T>
-void umx(T &x, const T &y) {
+void umx(T &x, T y) {
     x = max(x, y);
 }
 template <typename T>
-void umn(T &x, const T &y) {
+void umn(T &x, T y) {
     x = min(x, y);
 }
-ll abs(const pi &x) { return (x.fi < 0 ? -x.fi : x.fi) + (x.se < 0 ? -x.se : x.se); }
-bool insqr(const pi &x, const pi &lt, const pi &rb) {
-    return lt.fi <= x.fi && x.fi <= rb.fi && lt.se <= x.se && x.se <= rb.se;
-}
-ll randint(const ll &l, const ll &r) {
+ll abs(pi x) { return (x.fi < 0 ? -x.fi : x.fi) + (x.se < 0 ? -x.se : x.se); }
+bool insqr(pi x, pi lt, pi rb) { return lt.fi <= x.fi && x.fi <= rb.fi && lt.se <= x.se && x.se <= rb.se; }
+ll randint(ll l, ll r) {
     uniform_int_distribution<ll> res(l, r);
     return res(myrand);
 }
-ld randdb(const ld &l, const ld &r) {
+ld randdb(ld l, ld r) {
     uniform_real_distribution<ld> res(l, r);
     return res(myrand);
 }
-void setp(const ll &x) {
+void setp(ll x) {
     cout.flags(ios::fixed);
     cout.precision(x);
 }
 template <typename T>
-void read(T &x, const ll &l, const ll &r) {
-    for (ll i = l; i <= r; i++) cin >> x[i];
+void read(T &x, int l, int r) {
+    for (int i = l; i <= r; i++) cin >> x[i];
 }
 template <typename T>
-void prt(T &x, const ll &l, const ll &r, const char &join = ' ') {
-    for (ll i = l; i <= r; i++) cout << x[i] << join;
+void prt(T &x, int l, int r, char join = ' ') {
+    for (int i = l; i <= r; i++) cout << x[i] << join;
 }
 //}}}
 const ll P = 1e9 + 7;
@@ -121,5 +106,22 @@ int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
+    freopen("b.in","r",stdin);
+    /* freopen("b.out","w",stdout); */
+    cin >> n;
+    read(arr, 1, n);
+    partial_sum(arr + 1, arr + 1 + n, arr + 1);
+    cin >> m;
+    while (m--) {
+        ll q;
+        cin >> q;
+        if (arr[n] % q)
+            cout << "-1\n";
+        else {
+            ll ans = 0;
+            for (int i = 1; i <= n; i++) ans += arr[i] % q == 0;
+            cout << n + arr[n] / q - ans * 2 << '\n';
+        }
+    }
     return 0;
 }

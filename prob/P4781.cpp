@@ -16,26 +16,11 @@ using pi = pair<ll, ll>;
 mt19937_64 myrand(chrono::system_clock::now().time_since_epoch().count());
 //}}}
 //{{{ Func
-template <typename T1, typename T2>
-pair<T1, T2> operator+(const pair<T1, T2> &x, const pair<T1, T2> &y) {
-    return {x.fi + y.fi, x.se + y.se};
-}
-template <typename T1, typename T2>
-pair<T1, T2> operator-(const pair<T1, T2> &x, const pair<T1, T2> &y) {
-    return {x.fi - y.fi, x.se - y.se};
-}
-template <typename T1, typename T2>
-pair<T1, T2> operator*(const pair<T1, T2> &x, const ll &y) {
-    return {x.fi * y, x.se * y};
-}
-template <typename T1, typename T2>
-istream &operator>>(istream &is, pair<T1, T2> &y) {
-    return is >> y.fi >> y.se;
-}
-template <typename T1, typename T2>
-ostream &operator<<(ostream &os, const pair<T1, T2> &y) {
-    return os << '(' << y.fi << ',' << y.se << ')';
-}
+pi operator+(const pi &x, const pi &y) { return pi(x.fi + y.fi, x.se + y.se); }
+pi operator-(const pi &x, const pi &y) { return pi(x.fi - y.fi, x.se - y.se); }
+pi operator*(const pi &x, const ll &y) { return pi(x.fi * y, x.se * y); }
+istream &operator>>(istream &is, pi &y) { return is >> y.fi >> y.se; }
+ostream &operator<<(ostream &os, const pi &y) { return os << '(' << y.fi << ',' << y.se << ')'; }
 template <typename T>
 T qpow(T x, ll y) {
     T r(1);
@@ -79,7 +64,7 @@ void prt(T &x, const ll &l, const ll &r, const char &join = ' ') {
     for (ll i = l; i <= r; i++) cout << x[i] << join;
 }
 //}}}
-const ll P = 1e9 + 7;
+const ll P = 998244353;
 //{{{ Type
 inline int redu(const int &x) { return x >= P ? x - P : x; }
 inline int incr(const int &x) { return x + ((x >> 31) & P); }
@@ -115,11 +100,38 @@ const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1
 const char nl = '\n';
 const ll MXN = 1e6 + 5;
 
-ll n, m, arr[MXN];
-char str[MXN];
+using pm = pair<mod, mod>;
+mod n, m;
+mod a[MXN];
+pm v[MXN];
+mod dp[MXN];
+void vtoa(pm *v, mod *a, ll n) {
+    dp[0] = 1;
+    for (ll i = 1; i <= n; i++)
+        for (ll j = n; j; j--) dp[j] -= dp[j - 1] * v[i].fi;
+    for (ll i = 1; i <= n; i++) {
+        mod c = 1;
+        for (ll j = 1; j <= n; j++)
+            if (i != j) c *= (v[i].fi - v[j].fi);
+        c = v[i].se / c;
+
+        for (ll j = 1; j <= n; j++) dp[j] += dp[j - 1] * v[i].fi;
+        for (ll j = 0; j <= n; j++) a[j] += c * dp[n - j - 1];
+        for (ll j = n; j; j--) dp[j] -= dp[j - 1] * v[i].fi;
+    }
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
+    cin >> n >> m;
+    for (ll i = 1; i <= n.v; i++) cin >> v[i].fi >> v[i].se;
+    vtoa(v, a, n.v);
+    mod pw = 1, ans = 0;
+    for (ll i = 0; i <= n.v; i++) {
+        ans += a[i] * pw;
+        pw *= m;
+    }
+    cout << ans << endl;
     return 0;
 }
