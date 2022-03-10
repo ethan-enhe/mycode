@@ -79,7 +79,7 @@ void prt(T &x, const ll &l, const ll &r, const char &join = ' ') {
     for (ll i = l; i <= r; i++) cout << x[i] << join;
 }
 //}}}
-const ll P = 1e9 + 7;
+const ll P = 998244353;
 //{{{ Type
 inline int redu(const int &x) { return x >= P ? x - P : x; }
 inline int incr(const int &x) { return x + ((x >> 31) & P); }
@@ -113,17 +113,58 @@ struct mod {
 const ll INF = 1e18;
 const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 const char nl = '\n';
-const ll MXN = 1e6 + 5;
+const ll MXN = 2e5 + 5;
 
-ll n, m, arr[MXN];
-char str[MXN];
+ll n, m, arr[MXN], cnt[MXN];
+mod fac[MXN], ifac[MXN];
+mod c(ll x, ll y) {
+    if (y > x || y < 0) return 0;
+    return fac[x] * ifac[y] * ifac[x - y];
+}
+
+mod pre[MXN];
+void delt(ll x, mod y) {
+    for (; x < MXN; x += x & (-x)) pre[x] += y;
+}
+mod que(ll x) {
+    mod r = 0;
+    for (; x; x -= x & (-x)) r += pre[x];
+    return r;
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
-    int a[2] = {1, 2};
+    cin >> n >> m;
 
-    auto [x, y] = a;    // creates e[2], copies a into e, then x refers to e[0], y refers to e[1]
-    cout<<x<<" "<<y<<nl;
+    fac[0] = 1;
+    for (ll i = 1; i <= n; i++) fac[i] = fac[i - 1] * i;
+    ifac[n] = (mod)1 / fac[n];
+    for (ll i = n; i; i--) ifac[i - 1] = ifac[i] * i;
+
+    for (ll i = 1; i <= n; i++) {
+        ll x;
+        cin >> x;
+        ++cnt[x];
+    }
+    read(arr, 1, m);
+
+    mod cur = 1;
+    for (ll i = 1, sum = 0; i < MXN; i++) {
+        delt(i, cnt[i]);
+        sum += cnt[i];
+        cur *= c(sum, cnt[i]);
+    }
+    mod ans = 0;
+    for (ll i = 1; i <= min(n, m); i++) {
+        ans += que(arr[i] - 1) * cur / (n - i + 1);
+        /* cout << cur << " " << cnt[arr[i]] << (n - i + 1) << endl; */
+        cur *= (mod)cnt[arr[i]] / (n - i + 1);
+        --cnt[arr[i]];
+        delt(arr[i], -1);
+    }
+    /* cout << cur << endl; */
+    if (n < m) ans += cur;
+    cout << ans << nl;
     return 0;
 }

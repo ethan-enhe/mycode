@@ -1,5 +1,8 @@
 #include <bits/stdc++.h>
 
+#include <array>
+#include <cmath>
+
 using namespace std;
 //{{{ Def
 #define fi first
@@ -115,15 +118,37 @@ const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1
 const char nl = '\n';
 const ll MXN = 1e6 + 5;
 
-ll n, m, arr[MXN];
-char str[MXN];
+ll n, m;
+pi arr[MXN];
+bool cmp(const pi &x, const pi &y) {
+    if (x.fi == y.fi)
+        return x.se > y.se;
+    else
+        return x.fi < y.fi;
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
-    int a[2] = {1, 2};
-
-    auto [x, y] = a;    // creates e[2], copies a into e, then x refers to e[0], y refers to e[1]
-    cout<<x<<" "<<y<<nl;
+    cin >> n >> m;
+    for (int i = 1; i <= m; i++) {
+        ll l = randint(1, n), r = randint(1, n);
+        if (l > r) swap(l, r);
+        arr[i] = {l, r};
+    }
+    sort(arr + 1, arr + 1 + m, cmp);
+    ll cnt = 0, ans = 0;
+    while (1) {
+        ++ans;
+        ll lastr = INF;
+        for (int i = 1; i <= m; i++)
+            if (arr[i].se <= lastr) {
+                lastr = arr[i].se;
+                arr[i].se = INF + 1;
+                ++cnt;
+            }
+        if (cnt == m) break;
+    }
+    cout << ans << endl;
     return 0;
 }

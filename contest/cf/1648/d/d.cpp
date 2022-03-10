@@ -1,5 +1,9 @@
 #include <bits/stdc++.h>
 
+#include <algorithm>
+#include <queue>
+#include <vector>
+
 using namespace std;
 //{{{ Def
 #define fi first
@@ -115,15 +119,111 @@ const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1
 const char nl = '\n';
 const ll MXN = 1e6 + 5;
 
-ll n, m, arr[MXN];
+ll n, m, pre[MXN], suf[MXN], tmp[MXN];
+ll ans = -INF;
 char str[MXN];
+
+struct seg {
+    ll l, r, k;
+};
+
+vec<pi> g[MXN];
+ll dis[MXN];
+bool vis[MXN];
+priority_queue<pi> q;
+void dj(ll l, ll r) {
+    assert(l != r);
+    ll mid = (l + r) >> 1;
+
+    for (ll i = l; i <= mid; i++) q.push({dis[i] = pre[i], i}), vis[i] = 0;
+    for (ll i = mid + 1; i <= r + 1; i++) dis[i] = -INF, vis[i] = 0;
+
+    dis[l - 1] = dis[r + 2] = INF;
+    while (!q.empty()) {
+        ll p = q.top().se;
+        q.pop();
+        /* cerr << p << " " << dis[p] << nl; */
+
+        if (vis[p]) continue;
+        vis[p] = 1;
+
+        for (pi &nx : g[p]) {
+            ll nd = dis[p] + nx.se;
+            if (dis[nx.fi] < nd) q.push({dis[nx.fi] = nd, nx.fi});
+        }
+    }
+    for (ll i = mid + 1; i <= r; i++) {
+        ans = max(ans, dis[i + 1] + suf[i]);
+        /* cerr << i << "->" << dis[i] << nl; */
+    }
+    for (ll i = l; i <= r; i++) g[i].clear();
+    /* exit(0); */
+}
+
+void solve(ll l, ll r, ll cover, vec<seg> &cseg) {
+    if (l == r) {
+        ans = max(ans, pre[l] + suf[l] - cover);
+        /* cout << l << " " << r << " " << ans << nl; */
+        return;
+    }
+    for (seg &i : cseg) {
+        g[max(l, i.l)].push_back({min(r + 1, i.r), -i.k});
+    }
+    for (ll i = l + 1; i <= r + 1; i++) g[i].push_back({i - 1, 0});
+    g[l].push_back({r + 1, -cover});
+    dj(l, r);
+    /* cout << l << " " << r << " " << ans << nl; */
+
+    ll mid = (l + r) >> 1, nxcover = cover;
+    vec<seg> nxseg;
+    for (seg &i : cseg)
+        if (i.l <= mid) {
+            if (i.l <= l && i.r >= mid + 1)
+                nxcover = min(nxcover, i.k);
+            else
+                nxseg.push_back(i);
+        }
+    solve(l, mid, nxcover, nxseg);
+
+    nxcover = cover;
+    nxseg.clear();
+    for (seg &i : cseg)
+        if (i.r > mid) {
+            if (i.l <= mid + 1 && i.r >= r + 1)
+                nxcover = min(nxcover, i.k);
+            else
+                nxseg.push_back(i);
+        }
+    solve(mid + 1, r, nxcover, nxseg);
+}
+
 int main() {
+    /* freopen("d.in", "r", stdin); */
+    /* freopen(".out","w",stdout); */
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
-    int a[2] = {1, 2};
+    cin >> n >> m;
+    read(pre, 1, n);
+    read(tmp, 1, n);
+    read(suf, 1, n);
+    vec<seg> all(m);
+    for (int i = 0; i < m; i++) {
+        cin >> all[i].l >> all[i].r >> all[i].k;
+        ++all[i].r;
+    }
+    for (ll i = 1; i <= n; i++) {
+        tmp[i] += tmp[i - 1];
+        pre[i] += pre[i - 1];
+        suf[n - i + 1] += suf[n - i + 2];
+    }
 
-    auto [x, y] = a;    // creates e[2], copies a into e, then x refers to e[0], y refers to e[1]
-    cout<<x<<" "<<y<<nl;
+    for (ll i = 1; i <= n; i++) {
+        pre[i] -= tmp[i - 1];
+        suf[i] += tmp[i];
+        /* cout << "ps" << pre[i] << " " << suf[i] << nl; */
+    }
+    solve(1, n, INF, all);
+    cout << ans << nl;
     return 0;
 }

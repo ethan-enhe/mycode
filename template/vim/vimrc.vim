@@ -273,7 +273,7 @@ let s:callbacks = {
             \ 'on_exit': function('s:OnEvent')
             \ }
 
-let g:pauser='bash -c "read -p Press\ enter\ to\ continue..."'
+let g:pauser=g:iswindows?'pause':'bash -c "read -p Press\ enter\ to\ continue..."'
 func! CompileCode(copt)
     exec "w"
     echo "compiling... ".a:copt

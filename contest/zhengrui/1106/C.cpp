@@ -79,7 +79,7 @@ void prt(T &x, const ll &l, const ll &r, const char &join = ' ') {
     for (ll i = l; i <= r; i++) cout << x[i] << join;
 }
 //}}}
-const ll P = 1e9 + 7;
+const ll P = 998244353;
 //{{{ Type
 inline int redu(const int &x) { return x >= P ? x - P : x; }
 inline int incr(const int &x) { return x + ((x >> 31) & P); }
@@ -113,17 +113,32 @@ struct mod {
 const ll INF = 1e18;
 const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 const char nl = '\n';
-const ll MXN = 1e6 + 5;
+const ll MXN = 2100, NR = 1e6;
 
-ll n, m, arr[MXN];
-char str[MXN];
+ll n, m, k;
+mod dp[MXN][MXN];
+ll cnt[NR];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
-    int a[2] = {1, 2};
-
-    auto [x, y] = a;    // creates e[2], copies a into e, then x refers to e[0], y refers to e[1]
-    cout<<x<<" "<<y<<nl;
+    cin >> n >> m >> k;
+    if (m == 1) {
+        for (int i = 1; i <= n; i++) {
+            ll x;
+            cin >> x;
+            cnt[x]++;
+        }
+        for (int i = 0; i < k; i++) cout << cnt[i] << " ";
+    } else {
+        dp[0][0] = 1;
+        for (ll i = 1; i <= n; i++) {
+            ll cur;
+            cin >> cur;
+            for (ll j = i; j; j--)
+                for (ll l = k - 1; ~l; l--) dp[j][l] += dp[j - 1][l ^ cur];
+        }
+        for (int i = 0; i < k; i++) cout << dp[m][i] << " ";
+    }
     return 0;
 }

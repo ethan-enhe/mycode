@@ -113,17 +113,32 @@ struct mod {
 const ll INF = 1e18;
 const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 const char nl = '\n';
-const ll MXN = 1e6 + 5;
+const ll MXN = 1000, MXQ = 1e4, MXV = 1e9;
 
-ll n, m, arr[MXN];
+ll n, m, q, arr[MXN];
 char str[MXN];
+#define r1n MXN
+
+pi rg(ll n) {
+    ll l = randint(1, n), r = randint(1, n);
+    if (l > r) swap(l, r);
+    return {l, r};
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
-    int a[2] = {1, 2};
-
-    auto [x, y] = a;    // creates e[2], copies a into e, then x refers to e[0], y refers to e[1]
-    cout<<x<<" "<<y<<nl;
+    n = r1n, m = r1n, q = MXQ;
+    cout << n << " " << m << " " << q << nl;
+    for (int i = 1; i <= n; i++) cout << randint(1, MXV) << " ";
+    cout << nl;
+    for (ll i = 1; i <= m; i++) {
+        pi x = rg(n);
+        cout << x.fi << " " << x.se << " " << randint(1, MXV) << nl;
+    }
+    for (ll i = 1; i <= q; i++) {
+        pi x = rg(m), y = rg(n);
+        cout << x.fi << " " << x.se << " " << y.fi << " " << y.se << nl;
+    }
     return 0;
 }

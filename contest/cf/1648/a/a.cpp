@@ -1,5 +1,7 @@
 #include <bits/stdc++.h>
 
+#include <algorithm>
+
 using namespace std;
 //{{{ Def
 #define fi first
@@ -115,15 +117,62 @@ const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1
 const char nl = '\n';
 const ll MXN = 1e6 + 5;
 
-ll n, m, arr[MXN];
-char str[MXN];
+ll n, m, pool[MXN], pc;
+
+struct fw {
+    map<ll, ll> cnt[MXN];
+
+    void mod(ll col, ll x, ll y) {
+        for (; x <= m; x += x & (-x)) cnt[col][x] += y;
+    }
+    ll que(ll col, ll x) {
+        ll r = 0;
+        for (; x; x -= x & (-x)) r += cnt[col][x];
+        return r;
+    }
+    void clr() {
+        for (ll i = 1; i <= pc; i++) cnt[i].clear();
+    }
+} c, s;
+
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
-    int a[2] = {1, 2};
+    cin >> n >> m;
+    vec<vec<ll>> arr(n + 1, vec<ll>(m + 1));
+    for (ll i = 1; i <= n; i++) {
+        for (ll j = 1; j <= m; j++) {
+            cin >> arr[i][j];
+            pool[++pc] = arr[i][j];
+        }
+    }
+    sort(pool + 1, pool + 1 + pc);
+    for (ll i = 1; i <= n; i++)
+        for (ll j = 1; j <= m; j++) arr[i][j] = lower_bound(pool + 1, pool + 1 + pc, arr[i][j]) - pool;
 
-    auto [x, y] = a;    // creates e[2], copies a into e, then x refers to e[0], y refers to e[1]
-    cout<<x<<" "<<y<<nl;
+    ll ans = 0;
+    c.clr(), s.clr();
+    for (ll i = 1; i <= n; i++) {
+        for (ll j = 1; j <= m; j++) {
+            ans += (i + j) * c.que(arr[i][j], j - 1) - s.que(arr[i][j], j - 1);
+            c.mod(arr[i][j], j, 1);
+            s.mod(arr[i][j], j, i + j);
+        }
+    }
+    for (ll i = 1; i <= n; i++) reverse(arr[i].begin() + 1, arr[i].end());
+    c.clr(), s.clr();
+    for (ll i = 1; i <= n; i++) {
+        for (ll j = 1; j <= m; j++) {
+            ans += (i + j) * c.que(arr[i][j], j) - s.que(arr[i][j], j);
+        }
+        for (ll j = 1; j <= m; j++) {
+            c.mod(arr[i][j], j, 1);
+            s.mod(arr[i][j], j, i + j);
+        }
+    }
+
+    cout << ans << nl;
+
     return 0;
 }

@@ -115,15 +115,24 @@ const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1
 const char nl = '\n';
 const ll MXN = 1e6 + 5;
 
-ll n, m, arr[MXN];
-char str[MXN];
+ll n, m, x, arr[MXN], tmp[MXN];
+ll q[MXN][3];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
-    int a[2] = {1, 2};
-
-    auto [x, y] = a;    // creates e[2], copies a into e, then x refers to e[0], y refers to e[1]
-    cout<<x<<" "<<y<<nl;
+    cin >> n >> m >> x;
+    read(arr, 1, n);
+    for (int i = 1; i <= m; i++) cin >> q[i][0] >> q[i][1] >> q[i][2];
+    while (x--) {
+        ll a, b, c, d;
+        cin >> a >> b >> c >> d;
+        for (int i = 1; i <= n; i++) tmp[i] = arr[i];
+        for (int i = a; i <= b; i++)
+            for (int j = q[i][0]; j <= q[i][1]; j++) tmp[j] = min(tmp[j], q[i][2]);
+        ll ans = 0;
+        for (int i = c; i <= d; i++) ans += tmp[i];
+        cout << ans << nl;
+    }
     return 0;
 }

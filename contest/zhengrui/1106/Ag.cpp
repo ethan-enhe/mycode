@@ -1,5 +1,7 @@
 #include <bits/stdc++.h>
 
+#include <array>
+
 using namespace std;
 //{{{ Def
 #define fi first
@@ -113,7 +115,7 @@ struct mod {
 const ll INF = 1e18;
 const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 const char nl = '\n';
-const ll MXN = 1e6 + 5;
+const ll MXN = 50 + 5;
 
 ll n, m, arr[MXN];
 char str[MXN];
@@ -121,9 +123,14 @@ int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
-    int a[2] = {1, 2};
-
-    auto [x, y] = a;    // creates e[2], copies a into e, then x refers to e[0], y refers to e[1]
-    cout<<x<<" "<<y<<nl;
+    n = randint(1, MXN), m = randint(1, MXN);
+    cout << n << " " << m << nl;
+    for (int i = 1; i <= n; i++) cout << randint(0, 20) << " ";
+    cout << nl;
+    while (m--) {
+        ll l = randint(1, n), r = randint(1, n);
+        if (l > r) swap(l, r);
+        cout << l << " " << r << nl;
+    }
     return 0;
 }

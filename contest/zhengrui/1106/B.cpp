@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 
+
 using namespace std;
 //{{{ Def
 #define fi first
@@ -113,17 +114,130 @@ struct mod {
 const ll INF = 1e18;
 const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 const char nl = '\n';
-const ll MXN = 1e6 + 5;
+const ll MXN = 2e4 + 5, MXQ = 1e5 + 5;
 
-ll n, m, arr[MXN];
-char str[MXN];
+ll n, m, q, arr[MXN], ans[MXQ];
+
+//{{{ segt beats
+struct beats {
+    //最大，最大数量，次大
+    ll f, fc, s;
+};
+inline beats unite(beats x, beats y) {
+    if (y.f > x.f) swap(x, y);
+    if (x.f != y.f) return {x.f, x.fc, max(x.s, y.f)};
+    return {x.f, x.fc + y.fc, max(x.s, y.s)};
+}
+
+struct node {
+    beats mx;
+    ll tag, sum;
+} t[MXN << 2];
+inline void apply(ll p, ll delt) {
+    t[p].tag += delt;
+    t[p].mx.f += delt;
+    t[p].sum += t[p].mx.fc * delt;
+}
+#define ls p << 1
+#define rs p << 1 | 1
+inline void push(ll p) {
+    if (t[p].tag) {
+        ll tmp = t[p].mx.f - t[p].tag;
+        apply(ls, tmp == t[ls].mx.f ? t[p].tag : 0);
+        apply(rs, tmp == t[rs].mx.f ? t[p].tag : 0);
+        t[p].tag = 0;
+    }
+}
+inline void pull(ll p) {
+    t[p].sum = t[ls].sum + t[rs].sum;
+    t[p].mx = unite(t[ls].mx, t[rs].mx);
+}
+void build(ll p, ll l, ll r) {
+    t[p].tag = 0;
+    if (l == r) {
+        t[p].sum = arr[l];
+        t[p].mx = {arr[l], 1, -INF};
+        return;
+    }
+    ll mid = (l + r) >> 1;
+    build(ls, l, mid);
+    build(rs, mid + 1, r);
+    pull(p);
+}
+void smod(ll p, ll l, ll r, ll ql, ll qr, ll qmn) {
+    if (t[p].mx.f <= qmn || r < ql || qr < l) return;
+    if (ql <= l && r <= qr && qmn > t[p].mx.s) {
+        apply(p, qmn - t[p].mx.f);
+        return;
+    }
+    push(p);
+    ll mid = (l + r) >> 1;
+    smod(ls, l, mid, ql, qr, qmn);
+    smod(rs, mid + 1, r, ql, qr, qmn);
+    pull(p);
+}
+ll sque(ll p, ll l, ll r, ll ql, ll qr) {
+    if (r < ql || qr < l) return 0;
+    if (ql <= l && r <= qr) return t[p].sum;
+    push(p);
+    ll mid = (l + r) >> 1;
+    return sque(ls, l, mid, ql, qr) + sque(rs, mid + 1, r, ql, qr);
+}
+//}}}
+
+struct que1 {
+    ll l, r, v;
+} q1[MXN];
+struct que2 {
+    ll l1, r1, l2, r2, id;
+} q2[MXQ];
+
+bool cmp(const que2 &x, const que2 &y) {
+    if (x.r1 == y.r1) return x.l1 > y.l1;
+    return x.r1 < y.r1;
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
-    int a[2] = {1, 2};
-
-    auto [x, y] = a;    // creates e[2], copies a into e, then x refers to e[0], y refers to e[1]
-    cout<<x<<" "<<y<<nl;
+    ll st = clock();
+    /* cerr<<((sizeof(t)+sizeof(q1)+sizeof(q2))>>20); */
+    /* freopen("test.in", "r", stdin); */
+    /* freopen("B.out","w",stdout); */
+    cin >> n >> m >> q;
+    read(arr, 1, n);
+    for (ll i = 1; i <= m; i++) cin >> q1[i].l >> q1[i].r >> q1[i].v;
+    for (ll i = 1; i <= q; i++) {
+        q2[i].id = i;
+        cin >> q2[i].l1 >> q2[i].r1 >> q2[i].l2 >> q2[i].r2;
+    }
+    sort(q2 + 1, q2 + 1 + q, cmp);
+    ll cnt = 0;
+    while (cnt != q) {
+        build(1, 1, n);
+        ll l = 0, r;
+        for (ll i = 1; i <= q; i++)
+            if (q2[i].id) {
+                if (!l) {
+                    l = q2[i].l1;
+                    r = q2[i].l1 - 1;
+                }
+                if (q2[i].l1 <= l && r <= q2[i].r1) {
+                    while (r < q2[i].r1) {
+                        ++r;
+                        smod(1, 1, n, q1[r].l, q1[r].r, q1[r].v);
+                    }
+                    while (l > q2[i].l1) {
+                        --l;
+                        smod(1, 1, n, q1[l].l, q1[l].r, q1[l].v);
+                    }
+                    ans[q2[i].id] = sque(1, 1, n, q2[i].l2, q2[i].r2);
+                    q2[i].id = 0;
+                    ++cnt;
+                }
+            }
+    }
+    prt(ans, 1, q, nl);
+    /* cerr << double(clock() - st) / CLOCKS_PER_SEC << endl; */
     return 0;
 }

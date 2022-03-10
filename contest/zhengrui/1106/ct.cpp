@@ -1,5 +1,7 @@
 #include <bits/stdc++.h>
 
+#include <cstdlib>
+
 using namespace std;
 //{{{ Def
 #define fi first
@@ -121,9 +123,14 @@ int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
-    int a[2] = {1, 2};
-
-    auto [x, y] = a;    // creates e[2], copies a into e, then x refers to e[0], y refers to e[1]
-    cout<<x<<" "<<y<<nl;
+    for (ll i = 1; i <= 1000; i++) {
+        system("./Ag>test.in");
+        system("./Af<test.in>f.out");
+        system("./A<test.in>std.out");
+        if (system("diff -Z f.out std.out")) {
+            break;
+        }
+        cout << "AC#" << i << endl;
+    }
     return 0;
 }

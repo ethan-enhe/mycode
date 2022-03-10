@@ -115,15 +115,84 @@ const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1
 const char nl = '\n';
 const ll MXN = 1e6 + 5;
 
-ll n, m, arr[MXN];
-char str[MXN];
+ll n, m, arr[MXN], pre[MXN];
+bool tp[MXN];
+
+struct segq {
+#define ls p << 1
+#define rs p << 1 | 1
+    struct node {
+        ll cnt, sum, tag;
+    } t[MXN << 2];
+    void build(ll p, ll l, ll r, bool f) {
+        if (l == r) {
+            t[p].cnt = tp[l - 1] == f;
+            return;
+        }
+        ll mid = (l + r) >> 1;
+        build(ls, l, mid, f);
+        build(rs, mid + 1, r, f);
+        t[p].cnt = t[ls].cnt + t[rs].cnt;
+    }
+    void apply(ll p, ll d) {
+        t[p].sum += t[p].cnt * d;
+        t[p].tag += d;
+    }
+    void push(ll p) {
+        if (t[p].tag) {
+            apply(ls, t[p].tag);
+            apply(rs, t[p].tag);
+            t[p].tag = 0;
+        }
+    }
+    void pull(ll p) { t[p].sum = t[ls].sum + t[rs].sum; }
+    void mod(ll p, ll l, ll r, ll ql, ll qr, ll qv) {
+        if (r < ql || qr < l) return;
+        if (ql <= l && r <= qr) {
+            apply(p, qv);
+            return;
+        }
+        push(p);
+        ll mid = (l + r) >> 1;
+        mod(ls, l, mid, ql, qr, qv);
+        mod(rs, mid + 1, r, ql, qr, qv);
+        pull(p);
+    }
+    ll que(ll p, ll l, ll r, ll ql, ll qr) {
+        if (r < ql || qr < l) return 0;
+        if (ql <= l && r <= qr) return t[p].sum;
+        push(p);
+        ll mid = (l + r) >> 1;
+        return que(ls, l, mid, ql, qr) + que(rs, mid + 1, r, ql, qr);
+    }
+} seg[2];
+vec<pi> que[MXN];
+ll ans[MXN];
+
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
-    int a[2] = {1, 2};
+    cin >> n >> m;
+    read(arr, 1, n);
+    for (int i = 1; i <= m; i++) {
+        ll l, r;
+        cin >> l >> r;
+        que[r].push_back({l, i});
+    }
+    ll last[2] = {0, 0};
+    for (int i = 1; i <= n; i++) {
+        tp[i] = tp[i - 1] ^ (arr[i] & 1);
+        if (arr[i] == 0) last[!tp[i]] = i;
+        pre[i] = last[tp[i]];
+    }
+    seg[0].build(1, 1, n, 0);
+    seg[1].build(1, 1, n, 1);
+    for (int i = 1; i <= n; i++) {
+        seg[tp[i]].mod(1, 1, n, pre[i] + 1, i, 1);
+        for (pi &ask : que[i]) ans[ask.se] = seg[0].que(1, 1, n, ask.fi, i) + seg[1].que(1, 1, n, ask.fi, i);
+    }
+    prt(ans, 1, m, nl);
 
-    auto [x, y] = a;    // creates e[2], copies a into e, then x refers to e[0], y refers to e[1]
-    cout<<x<<" "<<y<<nl;
     return 0;
 }

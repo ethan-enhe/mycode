@@ -1,5 +1,7 @@
 #include <bits/stdc++.h>
 
+#include <numeric>
+
 using namespace std;
 //{{{ Def
 #define fi first
@@ -113,17 +115,45 @@ struct mod {
 const ll INF = 1e18;
 const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 const char nl = '\n';
-const ll MXN = 1e6 + 5;
+const ll MXN = 3e6 + 5;
 
-ll n, m, arr[MXN];
-char str[MXN];
+ll n, m;
+ll diff[MXN];
+bool has[MXN];
+
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
-    int a[2] = {1, 2};
-
-    auto [x, y] = a;    // creates e[2], copies a into e, then x refers to e[0], y refers to e[1]
-    cout<<x<<" "<<y<<nl;
+    int t;
+    cin >> t;
+    while (t--) {
+        cin >> n >> m;
+        for (ll i = 1; i <= m; i++) diff[i] = has[i] = 0;
+        for (ll i = 1; i <= n; i++) {
+            ll x;
+            cin >> x;
+            has[x] = 1;
+        }
+        for (ll i = 1; i <= m; i++)
+            if (has[i]) {
+                for (ll j = 1; j * i <= m; j++)
+                    if (has[j]) {
+                        ++diff[j * i];
+                        --diff[(j + 1) * i];
+                    }
+            }
+        partial_sum(diff + 1, diff + 1 + m, diff + 1);
+        bool f = 1;
+        for (ll i = 1, cnt = 0; i <= m; i++)
+            if (has[i]) {
+                ++cnt;
+                if (diff[i] != cnt) {
+                    f = 0;
+                    break;
+                }
+            }
+        cout<<(f?"Yes":"No")<<nl;
+    }
     return 0;
 }
