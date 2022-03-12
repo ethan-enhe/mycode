@@ -100,11 +100,11 @@ void solve() {
     // code
     for (int i = 1; i <= 1000; i++) {
         system("./gen>test.in");
-        system("./std<test.in>std.out");
-        system("./wrong<test.in>wrong.out");
-        if (system("diff -Z wrong.out std.out")) {
-            break;
-        }
+        /* system("./std<test.in>std.out"); */
+        system("time ./gym103446c<test.in>wrong.out");
+        /* if (system("diff -Z wrong.out std.out")) { */
+        /*     break; */
+        /* } */
         cerr << "!!!" << endl;
     }
 }

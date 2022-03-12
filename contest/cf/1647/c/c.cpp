@@ -1,5 +1,8 @@
 #include <bits/stdc++.h>
 
+#include <cstring>
+#include <vector>
+
 using namespace std;
 //{{{ Def
 #define fi first
@@ -113,19 +116,56 @@ struct mod {
 const ll INF = 1e18;
 const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 const char nl = '\n';
-const ll MXN = 1e6 + 5;
+const ll MXN = 105;
 
 ll n, m, arr[MXN];
-char str[MXN];
+char str[MXN][MXN];
+queue<pi> q;
+vector<pair<pi, pi>> ans;
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
-    int x=1;
-    for(int i=0;i<=20;i++){
-        cout<<x<<endl;
-        x*=3;
-
+    int t;
+    cin >> t;
+    while (t--) {
+        cin >> n >> m;
+        ll cnt = 0;
+        memset(str, 0, sizeof(str));
+        for (int i = 1; i <= n; i++) {
+            cin >> (str[i] + 1);
+            for (int j = 1; j <= m; j++) {
+                if (str[i][j] == '1')
+                    ++cnt;
+                else
+                    q.push({i, j});
+            }
+        }
+        ans.clear();
+        /* assert(ans.size()==0) */
+        while (!q.empty()) {
+            pi p = q.front();
+            q.pop();
+            if (str[p.fi][p.se + 1] == '1') {
+                str[p.fi][p.se + 1] = '0';
+                ans.push_back({p, {p.fi, p.se + 1}});
+                q.push({p.fi, p.se + 1});
+            }
+            if (str[p.fi + 1][p.se] == '1') {
+                str[p.fi + 1][p.se] = '0';
+                ans.push_back({p, {p.fi + 1, p.se}});
+                q.push({p.fi + 1, p.se});
+            }
+        }
+        if (ans.size() != cnt) {
+            /* cout << ans.size() << " " << cnt << nl; */
+            cout << "-1\n";
+            continue;
+        } else {
+            cout << ans.size() << nl;
+            for (ll i = (ll)ans.size() - 1; i>=0; i--)
+                cout << ans[i].fi.fi << " " << ans[i].fi.se << " " << ans[i].se.fi << " " << ans[i].se.se << nl;
+        }
     }
     return 0;
 }

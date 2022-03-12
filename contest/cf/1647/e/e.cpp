@@ -1,5 +1,7 @@
 #include <bits/stdc++.h>
 
+#include <numeric>
+
 using namespace std;
 //{{{ Def
 #define fi first
@@ -115,17 +117,57 @@ const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1
 const char nl = '\n';
 const ll MXN = 1e6 + 5;
 
-ll n, m, arr[MXN];
-char str[MXN];
+ll n, m, p[MXN], b[MXN], res[MXN], cnt[MXN];
+ll tmp[MXN];
+void qpw(ll *x, ll *y, ll pw) {
+    iota(y + 1, y + 1 + n, 1);
+    while (pw) {
+        if (pw & 1)
+            for (ll i = 1; i <= n; i++) y[i] = x[y[i]];
+        /* cout<<nl; */
+        for (ll i = 1; i <= n; i++) tmp[i] = x[i];
+        for (ll i = 1; i <= n; i++) x[i] = tmp[tmp[i]];
+        /* prt(x, 1, n); */
+        /* cout<<nl; */
+        /* cout<<nl; */
+        pw >>= 1;
+    }
+}
+bool vis[MXN];
+ll fst[MXN], ans[MXN];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
-    int x=1;
-    for(int i=0;i<=20;i++){
-        cout<<x<<endl;
-        x*=3;
-
+    cin >> n;
+    read(p, 1, n);
+    read(b, 1, n);
+    ll mx = 0, red = 0;
+    for (ll i = 1; i <= n; i++) {
+        umx(mx, b[i]);
+        ++cnt[p[i]];
     }
+    for (ll i = 1; i <= n; i++) red += !cnt[i];
+    /* assert(red); */
+    /* cout<<red<<nl; */
+    /* cout << (mx - n) / red << endl; */
+    qpw(p, res, (mx - n) / red);
+    for (ll i = n; i; i--) {
+        fst[res[i]] = i;
+    }
+    for (ll i = 1; i <= n; i++)
+        if (fst[i] && b[i] <= n) {
+            vis[b[i]] = 1;
+            ans[fst[i]] = b[i];
+        }
+    ll ind = 1;
+    for (ll i = 1; i <= n; i++) {
+        if (!ans[i]) {
+            while (vis[ind]) ++ind;
+            ans[i] = ind++;
+        }
+        cout << ans[i] << " ";
+    }
+    /* prt(res, 1, n); */
     return 0;
 }

@@ -1,5 +1,11 @@
 #include <bits/stdc++.h>
 
+#include <algorithm>
+#include <cassert>
+#include <numeric>
+#include <sstream>
+#include <vector>
+
 using namespace std;
 //{{{ Def
 #define fi first
@@ -116,16 +122,76 @@ const char nl = '\n';
 const ll MXN = 1e6 + 5;
 
 ll n, m, arr[MXN];
-char str[MXN];
+vector<pi> ans;
+bool vis[MXN];
+ll chk[MXN];
+map<pi, bool> has;
+void add(ll x, ll y) {
+    if (x > y) swap(x, y);
+    if (has[{x, y}]) assert(0);
+    has[{x, y}] = 1;
+    swap(chk[x], chk[y]);
+    ans.push_back({x, y});
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
-    int x=1;
-    for(int i=0;i<=20;i++){
-        cout<<x<<endl;
-        x*=3;
-
+    /* ll n = 5; */
+    /* iota(arr + 1, arr + 1 + n, 1); */
+    /* shuffle(arr + 1, arr + 1 + n, myrand); */
+    /* for (int i = 1; i <= n; i++) cout << arr[i] << " "; */
+    /* cout<<endl; */
+    /* freopen("D.in", "r", stdin); */
+    cin >> n;
+    read(arr, 1, n);
+    for (ll i = 1; i <= n + 4; i++) {
+        if (i <= n)
+            chk[i] = arr[i];
+        else
+            chk[i] = i;
     }
+    for (ll i = 1; i <= n; i++)
+        if (!vis[i]) {
+            ll x = i;
+            vec<ll> p;
+            while (!vis[i]) {
+                p.push_back(i);
+                vis[i] = 1;
+                i = arr[i];
+            }
+            if (p.size() == 1)
+                continue;
+            else if (p.size() % 3 == 2) {
+                m = 2;
+                add(p[p.size() - 1], n + 1 + (p.size() & 1));
+                for (ll i = p.size() - 1; i; i--) {
+                    add(p[i - 1], n + 1 + (i & 1));
+                    add(p[i], n + 1 + (i & 1));
+                }
+                if (chk[p[0]] != p[0]) {
+                    if (chk[n + 2] == p[0])
+                        add(p[0], n + 2);
+                    else
+                        add(p[0], n + 1);
+                }
+            } else {
+                m = 2;
+                for (ll i = p.size() - 1; i; i--) {
+                    add(p[i - 1], n + 1 + (i & 1));
+                    add(p[i], n + 1 + (i & 1));
+                }
+                if (chk[p[0]] != p[0]) {
+                    if (chk[n + 2] == p[0])
+                        add(p[0], n + 2);
+                    else
+                        add(p[0], n + 1);
+                }
+            }
+        }
+    if (chk[n + 1] != n + 1) add(n + 1, n + 2);
+    cout << m << " " << ans.size() << nl;
+    for (pi &i : ans) cout << i.fi << " " << i.se << nl;
+    for (ll i = 1; i <= n + 4; i++) assert(chk[i] == i);
     return 0;
 }

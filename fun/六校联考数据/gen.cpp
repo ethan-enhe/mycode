@@ -1,5 +1,10 @@
 
 #include <bits/stdc++.h>
+
+#include <cassert>
+#include <cstdio>
+#include <cstdlib>
+#include <random>
 using namespace std;
 //{{{ Def
 #define fi first
@@ -124,8 +129,24 @@ ll n, m;
 ll arr[MXN];
 
 int main(int argc, char *argv[]) {
-    n = 12;//randint(1, 14);
-    m = 12;//randint(1, 14);
+    n = m = 13;
+    /* ll mnnm = atoll(argv[1]); */
+    /* ll mxnm = atoll(argv[2]); */
+
+    /* normal_distribution<> x(sqrt(mxnm), sqrt(mxnm) / 2); */
+    /* n = x(myrand); */
+    /* m = x(myrand); */
+    /* while (n <= 0 || m <= 0 || n * m > mxnm || n * m < mnnm) { */
+    /*     n = x(myrand); */
+    /*     m = x(myrand); */
+    /*     /1* cerr << x(myrand) << endl; *1/ */
+    /*     /1* getchar(); *1/ */
+    /*     /1* assert(x(myrand) >= 0); *1/ */
+    /* } */
+
+    /* n = randint(1, mxnm / 2); */
+    /* m = randint(1, mxnm / n); */
+
     cout << n << " " << m << endl;
     for (int i = 1; i <= n; i++) {
         for (int j = 1; j <= m; j++) cout << randint(0, 2);

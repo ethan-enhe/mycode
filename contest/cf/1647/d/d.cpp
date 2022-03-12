@@ -1,5 +1,8 @@
 #include <bits/stdc++.h>
 
+#include <algorithm>
+#include <vector>
+
 using namespace std;
 //{{{ Def
 #define fi first
@@ -117,15 +120,58 @@ const ll MXN = 1e6 + 5;
 
 ll n, m, arr[MXN];
 char str[MXN];
+vector<pi> fact(ll x) {
+    vector<pi> res;
+    for (ll i = 2; i * i <= x; i++)
+        if (x % i == 0) {
+            ll cnt = 0;
+            do
+                x /= i, ++cnt;
+            while (x % i == 0);
+            res.push_back({i, cnt});
+        }
+    if (x != 1) res.push_back({x, 1});
+    return res;
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
-    int x=1;
-    for(int i=0;i<=20;i++){
-        cout<<x<<endl;
-        x*=3;
-
+    int t;
+    cin >> t;
+    while (t--) {
+        cin >> n >> m;
+        ll cnt = 0;
+        while (n % m == 0) {
+            n /= m;
+            ++cnt;
+        }
+        if (cnt <= 1) {
+            cout << "NO" << nl;
+            continue;
+        }
+        vector<pi> tmp = fact(n);
+        /* cerr << "!!!" << endl; */
+        if (tmp.size() && tmp[0].fi != n) {
+            cout << "YES" << nl;
+            continue;
+        }
+        --cnt;
+        n *= m;
+        vector<pi> f;
+        for (ll i = 1; i * i <= n; i++)
+            if (n % i == 0) {
+                f.push_back({i, INF});
+                if (i * i != n) f.push_back({n / i, INF});
+            }
+        sort(f.begin(), f.end());
+        f[0].se = 0;
+        for (ll i = 1; i < f.size(); i++)
+            for (int j = 0; j < i; j++)
+                if (f[j].se != INF && f[i].fi % f[j].fi == 0 && (f[i].fi / f[j].fi) % m != 0) {
+                    umn(f[i].se, f[j].se + 1);
+                }
+        cout << (f[f.size() - 1].se <= cnt ? "YES" : "NO") << nl;
     }
     return 0;
 }

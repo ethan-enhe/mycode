@@ -1,6 +1,3 @@
-#include <bits/stdc++.h>
-
-using namespace std;
 // dp[i][j][s][f][g]
 // 表示:
 // 搞到第i行第j列
@@ -11,15 +8,18 @@ using namespace std;
 // 0：都没有
 // 1：钦定了
 // 2：钦定并且放了
+#include <bits/stdc++.h>
+
+using namespace std;
 const int pw3[] = {1,     3,      9,      27,      81,      243,      729,      2187,      6561,      19683,
                    59049, 177147, 531441, 1594323, 4782969, 14348907, 43046721, 129140163, 387420489, 1162261467};
-const int N = 8, MXN = N + 2, MXS = pw3[N], INF = 1e9;
+const int N = 12, MXN = N + 2, MXS = pw3[N], INF = 1e9;
 
 int n, m;
 char str[MXN][MXN], tmp[MXN * MXN];
 int nx[MXS][3], cur[MXS][3], U, D;
-void upd(int &x, int y) { x = min(x, y); }
-void scroll() {
+inline void upd(int &x, const int &y) { x = min(x, y); }
+inline void scroll() {
     for (int i = 0; i < U; i++) {
         cur[i][0] = nx[i][0];
         cur[i][1] = nx[i][1];
@@ -55,15 +55,13 @@ int main(int argc, char *argv[]) {
                     if (str[i][j] == '0' || str[i][j] == '2') {
                         int nxs = (s * 3 + hi) % U;
                         //不放（这行或这列钦定放了）
-                        if (cf || nxs % 3) upd(nx[nxs][cf], cur[s][cf]);
+                        if (cf || hi) upd(nx[nxs][cf], cur[s][cf]);
                         //放（这行和这列都钦定放了）
-                        if (cf && nxs % 3) upd(nx[nxs + (hi == 1)][cf + (cf == 1)], cur[s][cf] + 1);
+                        if (cf && hi) upd(nx[nxs + (hi == 1)][cf + (cf == 1)], cur[s][cf] + 1);
                     }
                     if (str[i][j] == '1' || str[i][j] == '2') {
-                        //如果纵向钦定有，但是实际没有，则寄了
-                        if (hi == 1) continue;
-                        //如果横向钦定有，但是实际没有，则寄了
-                        if (cf == 1) continue;
+                        //如果钦定有，但是实际没有，则寄了
+                        if (hi == 1 || cf == 1) continue;
                         int nxs = s * 3 % U;
                         upd(nx[nxs][0], cur[s][cf]);
                         upd(nx[nxs][1], cur[s][cf]);

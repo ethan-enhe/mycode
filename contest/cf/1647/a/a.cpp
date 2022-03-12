@@ -121,11 +121,17 @@ int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
-    int x=1;
-    for(int i=0;i<=20;i++){
-        cout<<x<<endl;
-        x*=3;
-
+    int t;
+    cin >> t;
+    while (t--) {
+        cin >> m;
+        bool f = m % 3!=1;
+        while (m) {
+            cout << 1 + f;
+            m -= (1 + f);
+            f = !f;
+        }
+        cout << nl;
     }
     return 0;
 }

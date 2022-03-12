@@ -1,5 +1,8 @@
 #include <bits/stdc++.h>
 
+#include <array>
+#include <queue>
+
 using namespace std;
 //{{{ Def
 #define fi first
@@ -121,11 +124,29 @@ int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
-    int x=1;
-    for(int i=0;i<=20;i++){
-        cout<<x<<endl;
-        x*=3;
-
+    for (int n = 2; n <= 20; n++) {
+        iota(arr + 1, arr + 3 + n, 1);
+        if (n % 3 == 1) {
+            for (int i = n; i >= 2; i--) {
+                swap(arr[i - 1], arr[n + 1 + (i & 1)]);
+                swap(arr[i], arr[n + 1 + (i & 1)]);
+            }
+            continue;
+        } else if (n % 3 == 0) {
+            for (int i = n; i >= 2; i--) {
+                swap(arr[i - 1], arr[n + 1 + (i & 1)]);
+                swap(arr[i], arr[n + 1 + (i & 1)]);
+            }
+            swap(arr[1], arr[n + 2]);
+            continue;
+        } else {
+            swap(arr[n], arr[n + 1 + !(n & 1)]);
+            for (int i = n; i >= 2; i--) {
+                swap(arr[i - 1], arr[n + 1 + (i & 1)]);
+                swap(arr[i], arr[n + 1 + (i & 1)]);
+            }
+            swap(arr[1], arr[n + 2]);
+        }
     }
     return 0;
 }

@@ -113,19 +113,40 @@ struct mod {
 const ll INF = 1e18;
 const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 const char nl = '\n';
-const ll MXN = 1e6 + 5;
+const ll MXN = 5000;
 
-ll n, m, arr[MXN];
-char str[MXN];
+ll n, m, h[MXN][MXN];
+char str[MXN][MXN];
 int main() {
+    /* freopen("K.in", "r", stdin); */
+    /* freopen("K.out","w",stdout); */
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
-    int x=1;
-    for(int i=0;i<=20;i++){
-        cout<<x<<endl;
-        x*=3;
-
+    cin >> n >> m;
+    cin.getline(str[0] + 1, MXN);
+    for (int i = 1; i <= n; i++) {
+        cin.getline(str[i] + 1, MXN);
     }
+    /* for (int i = 1; i <= n; i++) cout << (str[i] + 1) << nl; */
+    for (ll i = n; i; i--)
+        for (ll j = 1; j <= m; j++)
+            if (str[i][j] == '+') {
+                if (str[i + 1][j] == '|') h[i][j] = h[i + 3][j] + 1;
+                if (str[i + 1][j - 1] == '/') h[i][j] = h[i + 2][j - 2];
+                if (str[i][j - 1] == '-') h[i][j] = h[i][j - 4];
+                /* cout << i << " " << j << " " << h[i][j] << endl; */
+            }
+    ll ans = 0;
+    for (ll i = n; i; i--)
+        for (ll j = 1; j <= m; j++) {
+            if (str[i][j] != '+') continue;
+            if (i <= 2 || str[i - 2][j + 2] != '+') continue;
+            /* cout << i << " " << j << endl; */
+            if (str[i][j + 4] != '+') continue;
+            if (h[i][j] == h[i - 2][j + 2] && h[i][j] == h[i][j + 4]) ans += h[i][j];
+        }
+    cout << ans << nl;
+
     return 0;
 }

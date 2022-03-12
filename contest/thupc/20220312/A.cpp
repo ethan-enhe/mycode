@@ -1,5 +1,10 @@
 #include <bits/stdc++.h>
 
+#include <cstring>
+#include <functional>
+#include <queue>
+#include <vector>
+
 using namespace std;
 //{{{ Def
 #define fi first
@@ -115,17 +120,60 @@ const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1
 const char nl = '\n';
 const ll MXN = 1e6 + 5;
 
-ll n, m, arr[MXN];
-char str[MXN];
+ll l, r;
+bool vis[MXN];
+ll mnu[MXN];
+struct e {
+    ll g, mnu, mnv, va;
+    e(ll x, ll y, ll z) {
+        g = x, mnu = y, mnv = z;
+        va = mnu * mnv / g;
+    }
+    bool operator<(const e &b) const { return va > b.va; }
+};
+priority_queue<ll, vector<ll>, greater<ll>> mnv[MXN];
+priority_queue<e> q;
+vector<ll> fact[MXN];
+void ins(ll x) {
+    vis[x] = 1;
+    for (ll i : fact[x])
+        if (mnv[i].size() && x < mnu[i]) {
+            mnu[i] = x;
+            q.push({i, mnu[i], mnv[i].top()});
+        }
+}
+
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
-    int x=1;
-    for(int i=0;i<=20;i++){
-        cout<<x<<endl;
-        x*=3;
-
+    cin >> l >> r;
+    memset(mnu, 0x3f, sizeof(mnu));
+    for (ll i = 1; i <= r; i++) {
+        for (ll j = i; j <= r; j += i) {
+            if (j >= l && j <= r) {
+                mnv[i].push(j);
+                fact[j].push_back(i);
+            }
+        }
     }
+    ins(l);
+    ll ans = 0;
+    while (!q.empty()) {
+        auto p = q.top();
+        q.pop();
+        if (p.mnu != mnu[p.g]) continue;
+        if (vis[p.mnv]) {
+            while (mnv[p.g].size() && vis[mnv[p.g].top()]) mnv[p.g].pop();
+            if (mnv[p.g].size()) q.push({p.g, mnu[p.g], mnv[p.g].top()});
+            continue;
+        }
+        ans += p.va;
+        ins(p.mnv);
+        while (mnv[p.g].size() && vis[mnv[p.g].top()]) mnv[p.g].pop();
+        if (mnv[p.g].size()) q.push({p.g, mnu[p.g], mnv[p.g].top()});
+    }
+    cout << ans << nl;
     return 0;
 }
+

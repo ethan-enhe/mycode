@@ -113,19 +113,29 @@ struct mod {
 const ll INF = 1e18;
 const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 const char nl = '\n';
-const ll MXN = 1e6 + 5;
+const ll MXN = 100;
 
 ll n, m, arr[MXN];
-char str[MXN];
+char str[MXN][MXN];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
-    int x=1;
-    for(int i=0;i<=20;i++){
-        cout<<x<<endl;
-        x*=3;
-
+    int t;
+    cin >> t;
+    while (t--) {
+        cin >> n >> m;
+        for (ll i = 1; i <= n; i++) {
+            cin >> (str[i] + 1);
+        }
+        bool f = 1;
+        for (ll i = 2; i <= n; i++)
+            for (ll j = 2; j <= m; j++)
+                if (str[i - 1][j - 1] - '0' + str[i - 1][j] - '0' + str[i][j - 1] - '0' + str[i][j] - '0' == 3) {
+                    f = 0;
+                    break;
+                }
+        cout << (f ? "YES" : "NO") << nl;
     }
     return 0;
 }
