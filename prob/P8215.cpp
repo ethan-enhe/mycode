@@ -163,6 +163,7 @@ void add(ll x, ll y, ll z, ll v, bool f, bool g) {
     }
 }
 #define both(x) (n * 2 + (x + 1) / 2)
+#define lim(x) (n * 3 + (x + 1) / 2)
 #define opp(x) (x + ((x & 1) ? 1 : -1))
 
 void prt() {
@@ -187,15 +188,16 @@ int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     cin >> n >> m;
-    nodec = n * 3;
+    nodec = n * 4;
     for (ll i = 1, c, d, e; i <= n * 2; i++) {
         cin >> c >> d >> e;
         ae(both(i), i);
-        add(i, opp(i), both(i), -c, 1, 0);
-        add(i, opp(i), both(i), -c, 1, 1);
-        add(i, opp(i), both(i), -d, 0, 0);
-        add(i, opp(i), both(i), -d, 0, 1);
-        add(i, opp(i), both(i), -e, 1, 0);
+        ae(lim(i), i);
+        add(i, opp(i), lim(i), -c, 1, 0);
+        add(i, opp(i), lim(i), -c, 1, 1);
+        add(i, opp(i), lim(i), -d, 0, 0);
+        add(i, opp(i), lim(i), -d, 0, 1);
+        add(i, opp(i), lim(i), -e, 1, 0);
     }
     /* prt(); */
     while (m--) {
@@ -211,8 +213,6 @@ int main() {
         ae(nodec, both(v));
         add(u, both(v), nodec, -b, 0, 1);
     }
-    /* prt(); */
     cout << cal() << endl;
     return 0;
 }
-

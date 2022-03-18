@@ -1,22 +1,23 @@
 #include <bits/stdc++.h>
+#include <math.h>
+
+#include <algorithm>
+#include <vector>
 
 using namespace std;
 //{{{ Def
 #define fi first
 #define se second
 #define vec vector
-#define log2(x) (63 - __builtin_clzll(x))
-#define popc(x) __builtin_popcountll(x)
-#define all(x) (x).begin(), (x).end()
-#define unq(x) x.erase(unique(all(x)), x.end())
-#define gen generate
+#define log2(x) (31 - __builtin_clz(x))
+#define popc(x) __builtin_popcount(x)
 
 using ll = long long;
 using ull = unsigned long long;
 using db = double;
 using ld = long double;
 using pi = pair<ll, ll>;
-mt19937_64 mr(chrono::system_clock::now().time_since_epoch().count());
+mt19937_64 myrand(chrono::system_clock::now().time_since_epoch().count());
 //}}}
 //{{{ Func
 template <typename T1, typename T2>
@@ -61,27 +62,25 @@ ll abs(const pi &x) { return (x.fi < 0 ? -x.fi : x.fi) + (x.se < 0 ? -x.se : x.s
 bool insqr(const pi &x, const pi &lt, const pi &rb) {
     return lt.fi <= x.fi && x.fi <= rb.fi && lt.se <= x.se && x.se <= rb.se;
 }
-ll ri(const ll &l, const ll &r) {
+ll randint(const ll &l, const ll &r) {
     uniform_int_distribution<ll> res(l, r);
-    return res(mr);
+    return res(myrand);
 }
-ld rd(const ld &l, const ld &r) {
+ld randdb(const ld &l, const ld &r) {
     uniform_real_distribution<ld> res(l, r);
-    return res(mr);
+    return res(myrand);
 }
 void setp(const ll &x) {
     cout.flags(ios::fixed);
     cout.precision(x);
 }
 template <typename T>
+void read(T &x, const ll &l, const ll &r) {
+    for (ll i = l; i <= r; i++) cin >> x[i];
+}
+template <typename T>
 void prt(T &x, const ll &l, const ll &r, const char &join = ' ') {
     for (ll i = l; i <= r; i++) cout << x[i] << join;
-}
-template <typename T = ll>
-T nxt() {
-    T x;
-    cin >> x;
-    return x;
 }
 //}}}
 const ll P = 1e9 + 7;
@@ -118,13 +117,56 @@ struct mod {
 const ll INF = 1e18;
 const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 const char nl = '\n';
-const ll MXN = 1e6 + 5;
+const ll MXN = 2e5 + 5, ZERO = 1e5;
 
-ll n, m, arr[MXN];
-char str[MXN];
+ll n, m;
+pi arr[MXN], tmp[MXN];
+ll tmpc;
+ll cnt[MXN], ans[MXN];
+vector<ll> p[MXN];
+
+void mod(ll x, ll y) {
+    for (; x; x -= x & (-x)) cnt[x] += y;
+}
+ll sum(ll x) {
+    ll r = 0;
+    for (; x < MXN; x += x & (-x)) r += cnt[x];
+    return r;
+}
 int main() {
+    freopen("C.in", "r", stdin);
+    /* freopen("C.out","w",stdout); */
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
+    cin >> n >> m;
+    read(arr, 1, n);
+    sort(arr + 1, arr + 1 + n);
+    for (int i = 1; i <= n; i++) p[arr[i].se + ZERO].push_back(arr[i].fi + ZERO);
+    for (ll i = MXN - 10; i; i--) {
+        ans[i] = ans[i + 1];
+        for (ll j : p[i]) ans[i] += sum(j + 1);
+        for (ll j : p[i]) mod(j, 1);
+    }
+    bool f = n <= 1000 && m <= 1000;
+    while (m--) {
+        ll A, B, C;
+        cin >> A >> B >> C;
+        if (!A && !f) {
+            if (B == 0)
+                cout << (C <= 0 ? 0 : ans[1]) << nl;
+            else
+                cout << ans[min(max(1ll, (ll)ceil(-(db)C / B) + ZERO), MXN - 1)] << nl;
+        } else {
+            tmpc = 0;
+            for (ll i = 1; i <= n; i++)
+                if (A * arr[i].fi + B * arr[i].se + C > 0) tmp[++tmpc] = arr[i];
+            ll ans = 0;
+            for (ll i = 1; i <= tmpc; i++)
+                for (ll j = 1; tmp[j].fi < tmp[i].fi; j++)
+                    if (tmp[j].se < tmp[i].se) ++ans;
+            cout << ans << nl;
+        }
+    }
     return 0;
 }

@@ -123,13 +123,23 @@ struct myvec {
 ll n, m;
 ll arr[MXN];
 
+ll MXV = 5;
 int main(int argc, char *argv[]) {
-    n = 12;//randint(1, 14);
-    m = 12;//randint(1, 14);
+    n = randint(2,2), m = randint(1, 1);
     cout << n << " " << m << endl;
-    for (int i = 1; i <= n; i++) {
-        for (int j = 1; j <= m; j++) cout << randint(0, 2);
-        cout << endl;
+    for (int i = 1; i <= n * 2; i++) {
+        /* cout<<"0 0 0\n"; */
+        cout << randint(1, MXV) << " ";
+        cout << randint(1, MXV) << " ";
+        cout << randint(1, MXV) << endl;
+    }
+    while (m--) {
+        ll u, v;
+        u = randint(1, n * 2), v = randint(1, n * 2);
+        while ((u + 1) / 2 == (v + 1) / 2) u = randint(1, n * 2), v = randint(1, n * 2);
+        cout << u << " " << v << " ";
+        cout << randint(1, MXV) << " ";
+        cout << randint(1, MXV) << endl;
     }
 
     return 0;

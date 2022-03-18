@@ -1,83 +1,116 @@
-#include <bits/stdc++.h>
-
+# include <bits/stdc++.h>
 using namespace std;
-// dp[i][j][s][f][g]
-// 表示:
-// 搞到第i行第j列
-// 每列是否被钦定纵向覆盖，是否已经纵向覆盖
-// 当前横向的块是否被钦定横向覆盖，是否已经横向覆盖
-// 所需要花费的最少车数量
-// %3=
-// 0：都没有
-// 1：钦定了
-// 2：钦定并且放了
-const int pw3[] = {1,     3,      9,      27,      81,      243,      729,      2187,      6561,      19683,
-                   59049, 177147, 531441, 1594323, 4782969, 14348907, 43046721, 129140163, 387420489, 1162261467};
-const int N = 8, MXN = N + 2, MXS = pw3[N], INF = 1e9;
-
-int n, m;
-char str[MXN][MXN], tmp[MXN * MXN];
-int nx[MXS][3], cur[MXS][3], U, D;
-void upd(int &x, int y) { x = min(x, y); }
-void scroll() {
-    for (int i = 0; i < U; i++) {
-        cur[i][0] = nx[i][0];
-        cur[i][1] = nx[i][1];
-        cur[i][2] = nx[i][2];
-        nx[i][0] = INF;
-        nx[i][1] = INF;
-        nx[i][2] = INF;
-    }
+typedef long long ll;
+const int MAXN = 10005;
+const int MAXM = 10005;
+const int MAXV = 4 * MAXM + 5 * MAXN;
+const int MAXE = MAXV + 5 * MAXN + 6 * MAXM;
+const ll INF = 0x3f3f3f3f3f3f3f3f;
+struct Edge{
+	int t;
+	ll c;
+	int nxt;
+	Edge(int t = 0, ll c = 0, int nxt = 0): t(t), c(c), nxt(nxt){}
+} g[MAXE * 2];
+int gsz = 1;
+int fte[MAXV], curE[MAXV];
+void addedge(int u, int v, ll c){
+	// cout << "addedge " << u << ' ' << v <<' ' << c << '\n';
+	g[++gsz] = Edge(v, c, fte[u]);
+	fte[u] = gsz;
+	g[++gsz] = Edge(u, 0, fte[v]);
+	fte[v] = gsz;
 }
-int main(int argc, char *argv[]) {
-    ios::sync_with_stdio(0);
-    cin.tie(0);
-    cin >> n >> m;
-    memset(str, '1', sizeof(str));
-    if (m > n) {
-        for (int i = 1; i <= n; i++) {
-            cin >> (tmp + 1);
-            for (int j = 1; j <= m; j++) str[j][i] = tmp[j];
-        }
-        swap(m, n);
-    } else
-        for (int i = 1; i <= n; i++) cin >> (str[i] + 1);
-    U = pw3[m], D = pw3[m - 1];
-    memset(nx, 0x3f, sizeof(nx));
-    nx[0][0] = 0;
-    for (int i = 0; i <= n + 1; i++) {
-        for (int j = 1; j <= m; j++) {
-            scroll();
-            for (int s = 0; s < U; s++) {
-                int hi = s / D;
-                for (int cf = 0; cf < 3; cf++) {
-                    if (cur[s][cf] >= INF) continue;
-                    if (str[i][j] == '0' || str[i][j] == '2') {
-                        int nxs = (s * 3 + hi) % U;
-                        //不放（这行或这列钦定放了）
-                        if (cf || nxs % 3) upd(nx[nxs][cf], cur[s][cf]);
-                        //放（这行和这列都钦定放了）
-                        if (cf && nxs % 3) upd(nx[nxs + (hi == 1)][cf + (cf == 1)], cur[s][cf] + 1);
-                    }
-                    if (str[i][j] == '1' || str[i][j] == '2') {
-                        //如果纵向钦定有，但是实际没有，则寄了
-                        if (hi == 1) continue;
-                        //如果横向钦定有，但是实际没有，则寄了
-                        if (cf == 1) continue;
-                        int nxs = s * 3 % U;
-                        upd(nx[nxs][0], cur[s][cf]);
-                        upd(nx[nxs][1], cur[s][cf]);
-                        upd(nx[nxs + 1][0], cur[s][cf]);
-                        upd(nx[nxs + 1][1], cur[s][cf]);
-                    }
-                }
-            }
-        }
-        //处理到下一行
-        scroll();
-        for (int s = 0; s < U; s++) nx[s][1] = nx[s][0] = min(cur[s][0], cur[s][2]);
-    }
-    cout << nx[0][0];
+int dep[MAXV];
+int q[MAXV], ql, qr;
+bool bfs(int S, int T){
+	memset(dep, -1, sizeof(dep));
+	dep[S] = 0;
+	q[ql = qr = 1] = S;
+	while (ql <= qr){
+		int nw = q[ql++];
+		for (int i = fte[nw]; i; i = g[i].nxt){
+			int nxtn = g[i].t;
+			if (!g[i].c || dep[nxtn] != -1) continue;
+			dep[nxtn] = dep[nw] + 1;
+			q[++qr] = nxtn;
+			if (nxtn == T) return true;
+		}
+	}
+	return dep[T] != -1;
+}
+ll dfs(int nw, ll mxf, int T){
+	if (nw == T) return mxf;
+	if (!mxf) return 0;
+	ll df = 0;
+	for (int &i = curE[nw]; i; i = g[i].nxt){
+		int nxtn = g[i].t;
+		if (!g[i].c || dep[nxtn] != dep[nw] + 1) continue;
+		ll nwf = dfs(nxtn, min(mxf - df, g[i].c), T);
+		if (!nwf) dep[nxtn] = -1;
+		g[i].c -= nwf;
+		g[i ^ 1].c += nwf;
+		if ((df += nwf) == mxf) break;
+	}
+	return df;
+}
+ll dinic(int S, int T){
+	ll ans = 0;
+	while (bfs(S, T)){
+		// cout << "dinic " << S << ' ' << T << ' ' << ans << '\n';
+		memcpy(curE, fte, sizeof(fte));
+		ans += dfs(S, INF, T);
+	}
+	return ans;
+}
+ll ans = 0;
+int n, m, nsz;
+ll c[MAXN], d[MAXN], e[MAXN];
+int addnd(ll val, int S, int T){
+	int nw = ++nsz;
+	if (val < 0) addedge(nw, T, -val);
+	else {
+		ans += val;
+		addedge(S, nw, val);
+	}
+	return nw;
+}
+int p[MAXN];
+int cp[MAXN];
+int main(){
+	cin >> n >> m;
+	int S = ++nsz;
+	int T = ++nsz;
+	for (int i = 1; i <= 2 * n; i++){
+		cin >> c[i] >> d[i] >> e[i];
+		ans += -d[i];
+		p[i] = addnd(d[i] - c[i], S, T);
+		addedge(p[i], addnd(-e[i], S, T), INF);
+	}
+	for (int i = 1; i <= n; i++){
+		int nw = addnd(e[2 * i - 1] + e[2 * i], S, T);
+		addedge(nw, p[i * 2 - 1], INF);
+		addedge(nw, p[i * 2], INF);
+        nw = addnd(0, S, T);
+        addedge(nw, p[i * 2 - 1], INF);
+        addedge(nw, p[i * 2], INF);
+		cp[i * 2 - 1] = cp[i * 2] = nw;
+	}
+	for (int i = 1; i <= m; i++){
+		int u, v;
+		ll a, b;
+		cin >> u >> v >> a >> b;
+		addedge(p[v], addnd(-a, S, T), INF);
+		int nw = addnd(a, S, T);
+		addedge(nw, cp[u], INF);
+		addedge(nw, p[v], INF);
 
-    return 0;
+		addedge(cp[v], addnd(-b, S, T), INF);
+		nw = addnd(b, S, T);
+		addedge(nw, p[u], INF);
+		addedge(nw, cp[v], INF);
+	}
+	ans -= dinic(S, T);
+	cout << -ans << '\n';
+	return 0;
 }

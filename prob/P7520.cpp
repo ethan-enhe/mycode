@@ -1,22 +1,23 @@
 #include <bits/stdc++.h>
 
+#include <cstddef>
+#include <cstring>
+#include <vector>
+
 using namespace std;
 //{{{ Def
 #define fi first
 #define se second
 #define vec vector
-#define log2(x) (63 - __builtin_clzll(x))
-#define popc(x) __builtin_popcountll(x)
-#define all(x) (x).begin(), (x).end()
-#define unq(x) x.erase(unique(all(x)), x.end())
-#define gen generate
+#define log2(x) (31 - __builtin_clz(x))
+#define popc(x) __builtin_popcount(x)
 
 using ll = long long;
 using ull = unsigned long long;
 using db = double;
 using ld = long double;
 using pi = pair<ll, ll>;
-mt19937_64 mr(chrono::system_clock::now().time_since_epoch().count());
+mt19937_64 myrand(chrono::system_clock::now().time_since_epoch().count());
 //}}}
 //{{{ Func
 template <typename T1, typename T2>
@@ -61,27 +62,25 @@ ll abs(const pi &x) { return (x.fi < 0 ? -x.fi : x.fi) + (x.se < 0 ? -x.se : x.s
 bool insqr(const pi &x, const pi &lt, const pi &rb) {
     return lt.fi <= x.fi && x.fi <= rb.fi && lt.se <= x.se && x.se <= rb.se;
 }
-ll ri(const ll &l, const ll &r) {
+ll randint(const ll &l, const ll &r) {
     uniform_int_distribution<ll> res(l, r);
-    return res(mr);
+    return res(myrand);
 }
-ld rd(const ld &l, const ld &r) {
+ld randdb(const ld &l, const ld &r) {
     uniform_real_distribution<ld> res(l, r);
-    return res(mr);
+    return res(myrand);
 }
 void setp(const ll &x) {
     cout.flags(ios::fixed);
     cout.precision(x);
 }
 template <typename T>
+void read(T &x, const ll &l, const ll &r) {
+    for (ll i = l; i <= r; i++) cin >> x[i];
+}
+template <typename T>
 void prt(T &x, const ll &l, const ll &r, const char &join = ' ') {
     for (ll i = l; i <= r; i++) cout << x[i] << join;
-}
-template <typename T = ll>
-T nxt() {
-    T x;
-    cin >> x;
-    return x;
 }
 //}}}
 const ll P = 1e9 + 7;
@@ -118,13 +117,75 @@ struct mod {
 const ll INF = 1e18;
 const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 const char nl = '\n';
-const ll MXN = 1e6 + 5;
+const ll MXN = 6e3 + 5;
 
-ll n, m, arr[MXN];
-char str[MXN];
+ll n, m, ask;
+ll deg[MXN];
+vector<ll> g[MXN], domi[MXN];
+bool vis[MXN];
+ll q[MXN], ql, qr;
+void cal(ll x) {
+    memset(vis, 0, sizeof(vis));
+    vis[x] = 1;
+    q[ql = qr = 1] = 1;
+    while (ql <= qr) {
+        ll p = q[ql++];
+        if (vis[p]) continue;
+        vis[p] = 1;
+        for (ll nx : g[p]) q[++qr] = nx;
+    }
+    for (ll i = 1; i <= n; i++)
+        if (!vis[i]) {
+            domi[x].push_back(i);
+            ++deg[i];
+        }
+}
+ll sum[MXN], fa[MXN];
+bool f[MXN];
+void bld() {
+    q[ql = qr = 1] = 1;
+    while (ql <= qr) {
+        ll p = q[ql++];
+        for (ll nx : domi[p])
+            if (!(--deg[nx])) {
+                cout << p << " " << nx << endl;
+                fa[nx] = p;
+                q[++qr] = nx;
+            }
+    }
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
+    cin >> n >> m >> ask;
+    while (m--) {
+        ll u, v;
+        cin >> u >> v;
+        g[u].push_back(v);
+    }
+    for (ll i = 1; i <= n; i++) cal(i);
+    bld();
+    while (ask--) {
+        ll u, v;
+        cin >> u >> v;
+        memset(sum, 0, sizeof(sum));
+        ++sum[u], ++sum[v];
+        for (ll i = n; i; i--) {
+            ll p = q[i];
+            sum[fa[p]] += sum[p];
+        }
+        ll cnt = 0;
+        for (ll i = n; i; i--) {
+            ll p = q[i];
+            f[p] = (sum[p] == 1) && (u != fa[p] && v != fa[p]);
+        }
+        for (ll i = 1; i <= n; i++) {
+            ll p = q[i];
+            f[p] |= f[fa[p]];
+            cnt += f[p];
+        }
+        cout << cnt << nl;
+    }
     return 0;
 }
