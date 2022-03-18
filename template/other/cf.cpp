@@ -8,8 +8,7 @@ using namespace std;
 #define log2(x) (63 - __builtin_clzll(x))
 #define popc(x) __builtin_popcountll(x)
 #define all(x) (x).begin(), (x).end()
-#define unq(x) x.erase(unique(all(x)), x.end())
-#define gen generate
+#define unq(x) (x).erase(unique(all(x)), (x).end())
 
 using ll = long long;
 using ull = unsigned long long;
@@ -74,7 +73,7 @@ void setp(const ll &x) {
     cout.precision(x);
 }
 template <typename T>
-void prt(T &x, const ll &l, const ll &r, const char &join = ' ') {
+void prt(T &x, const ll &l, const ll &r, const char *join = " ") {
     for (ll i = l; i <= r; i++) cout << x[i] << join;
 }
 template <typename T = ll>
@@ -115,10 +114,10 @@ struct mod {
     friend ostream &operator<<(ostream &os, const mod &y) { return os << y.v; }
 };
 //}}}
-const ll INF = 1e18;
-const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 const char nl = '\n';
 const ll MXN = 1e6 + 5;
+const ll INF = 1e18;
+const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 
 ll n, m, arr[MXN];
 char str[MXN];

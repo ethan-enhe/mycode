@@ -5,15 +5,18 @@ using namespace std;
 #define fi first
 #define se second
 #define vec vector
-#define log2(x) (31 - __builtin_clz(x))
-#define popc(x) __builtin_popcount(x)
+#define log2(x) (63 - __builtin_clzll(x))
+#define popc(x) __builtin_popcountll(x)
+#define all(x) (x).begin(), (x).end()
+#define unq(x) (x).erase(unique(all(x)), (x).end())
+#define gen generate
 
 using ll = long long;
 using ull = unsigned long long;
 using db = double;
 using ld = long double;
 using pi = pair<ll, ll>;
-mt19937_64 myrand(chrono::system_clock::now().time_since_epoch().count());
+mt19937_64 mr(chrono::system_clock::now().time_since_epoch().count());
 //}}}
 //{{{ Func
 template <typename T1, typename T2>
@@ -58,25 +61,27 @@ ll abs(const pi &x) { return (x.fi < 0 ? -x.fi : x.fi) + (x.se < 0 ? -x.se : x.s
 bool insqr(const pi &x, const pi &lt, const pi &rb) {
     return lt.fi <= x.fi && x.fi <= rb.fi && lt.se <= x.se && x.se <= rb.se;
 }
-ll randint(const ll &l, const ll &r) {
+ll ri(const ll &l, const ll &r) {
     uniform_int_distribution<ll> res(l, r);
-    return res(myrand);
+    return res(mr);
 }
-ld randdb(const ld &l, const ld &r) {
+ld rd(const ld &l, const ld &r) {
     uniform_real_distribution<ld> res(l, r);
-    return res(myrand);
+    return res(mr);
 }
 void setp(const ll &x) {
     cout.flags(ios::fixed);
     cout.precision(x);
 }
 template <typename T>
-void read(T &x, const ll &l, const ll &r) {
-    for (ll i = l; i <= r; i++) cin >> x[i];
-}
-template <typename T>
 void prt(T &x, const ll &l, const ll &r, const char &join = ' ') {
     for (ll i = l; i <= r; i++) cout << x[i] << join;
+}
+template <typename T = ll>
+T nxt() {
+    T x;
+    cin >> x;
+    return x;
 }
 //}}}
 const ll P = 1e9 + 7;
@@ -121,11 +126,6 @@ int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
-    int x=1;
-    for(int i=0;i<=20;i++){
-        cout<<x<<endl;
-        x*=3;
-
-    }
     return 0;
 }
+
