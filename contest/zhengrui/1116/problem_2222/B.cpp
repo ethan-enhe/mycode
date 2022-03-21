@@ -1,6 +1,10 @@
-//#pragma GCC optimize("Ofast", "-funroll-loops")
-//#pragma GCC target("sse4.1", "sse4.2", "ssse3", "sse3", "sse2", "sse", "avx2", "avx", "popcnt", "tune=native")
+#include <algorithm>
+#include <vector>
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
 #include <bits/stdc++.h>
+
+#include "lib.h"
 
 using namespace std;
 //{{{ Def
@@ -117,15 +121,52 @@ struct mod {
 };
 //}}}
 const char nl = '\n';
-const ll MXN = 1e6 + 5;
-const ll INF = 1e18;
-const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 
-ll n, m, arr[MXN];
-char str[MXN];
-int main() {
-    ios::sync_with_stdio(0);
-    cin.tie(0);
-    setp(6);
-    return 0;
+const ll MXN = 1e5, LG = 10;
+
+ll n, m1;
+Data ZERO, arr[MXN];
+ll mnk[MXN][LG];
+struct add {
+    // 0 fm
+    //-1 fq
+    // other Bsize
+    ll len, tp;
+    Data tot;
+    vector<add> son;
+    void init(ll _len, ll qc) {
+        len = _len;
+        if (len <= 1) {
+            tot = ZERO;
+            return;
+        }
+        ll k = mnk[len][qc];
+        if (k) {
+            tp = (len + k - 1) / k;
+            son.resize(k + 1);
+            for (ll i = 1; i <= k; i++) son[i].init(min(_len, tp), qc - 2);
+            _len -= tp;
+        } else if (qc >= len - 1) {
+            tp = -1;
+            son.resize(len + 1);
+        }
+        else{
+
+        }
+    }
+};
+
+void init(int n, int k, Data d) {
+    ZERO = d;
+    ::n = n;
+    m1 = k;
+    fill(arr + 1, arr + 1 + n, ZERO);
+}
+
+void update(int x, Data d) { arr[x] = d; }
+
+Data query(int l, int r) {
+    Data res = arr[l];
+    for (ll i = l + 1; i <= r; i++) res = res + arr[i];
+    return res;
 }

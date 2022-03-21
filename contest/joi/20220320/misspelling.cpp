@@ -1,5 +1,5 @@
-//#pragma GCC optimize("Ofast", "-funroll-loops")
-//#pragma GCC target("sse4.1", "sse4.2", "ssse3", "sse3", "sse2", "sse", "avx2", "avx", "popcnt", "tune=native")
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -117,15 +117,51 @@ struct mod {
 };
 //}}}
 const char nl = '\n';
-const ll MXN = 1e6 + 5;
+const ll MXN = 5e5 + 5, C = 26;
 const ll INF = 1e18;
 const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 
-ll n, m, arr[MXN];
-char str[MXN];
+ll n, m;
+mod dp[MXN][C], pre[MXN][C];
+priority_queue<pi> geq, leq;
+vector<pi> gel[MXN], lel[MXN];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
+    /* freopen("test.in", "r", stdin); */
+    /* freopen("test.out","w",stdout); */
+    cin >> n >> m;
+    while (m--) {
+        ll l, r;
+        cin >> l >> r;
+        if (l <= r) {
+            gel[l + 1].push_back({l + 1, r});
+            /* for (ll i = l + 1; i <= r; i++) umx(ge[i], l + 1); */
+        } else {
+            lel[r + 1].push_back({r + 1, l});
+            /* for (ll i = r + 1; i <= l; i++) umx(le[i], r + 1); */
+        }
+    }
+    dp[0][0] = pre[0][0] = 1;
+    for (ll i = 1; i <= n + 1; i++) {
+        ll le = 0, ge = 0;
+        for (auto j : gel[i]) geq.push(j);
+        for (auto j : lel[i]) leq.push(j);
+        while (!geq.empty() && geq.top().se < i) geq.pop();
+        while (!leq.empty() && leq.top().se < i) leq.pop();
+        if (!geq.empty()) ge = geq.top().fi;
+        if (!leq.empty()) le = leq.top().fi;
+        for (ll j = 0; j < C; j++) {
+            //当前比前一个大
+            for (ll k = 0; k < j; k++) dp[i][j] += pre[i - 1][k] - (le ? pre[le - 1][k] : 0);
+            //当前比上一个小
+            for (ll k = j + 1; k < C; k++) dp[i][j] += pre[i - 1][k] - (ge ? pre[ge - 1][k] : 0);
+            pre[i][j] = pre[i - 1][j] + dp[i][j];
+        }
+    }
+    mod ans = 0;
+    for (ll i = 0; i < C; i++) ans += dp[n + 1][i];
+    cout << ans / (C - 1) << nl;
     return 0;
 }

@@ -1,5 +1,7 @@
-//#pragma GCC optimize("Ofast", "-funroll-loops")
-//#pragma GCC target("sse4.1", "sse4.2", "ssse3", "sse3", "sse2", "sse", "avx2", "avx", "popcnt", "tune=native")
+#include <numeric>
+#include <vector>
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -121,11 +123,40 @@ const ll MXN = 1e6 + 5;
 const ll INF = 1e18;
 const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 
-ll n, m, arr[MXN];
+ll n, m, len;
 char str[MXN];
+ll rk1[MXN], rk2[MXN];
+bool cmp(ll x, ll y) {
+    pi a = {rk1[x & (len / 2 - 1)], rk2[x & (len / 2 - 1)]};
+    pi b = {rk1[y & (len / 2 - 1)], rk2[y & (len / 2 - 1)]};
+    if (x & (len / 2)) swap(a.fi, a.se);
+    if (y & (len / 2)) swap(b.fi, b.se);
+    return a < b;
+}
+vector<ll> solve(ll l, ll r) {
+    if (l == r) return {0};
+    ll mid = (l + r) >> 1;
+    len = (r - l + 1);
+    vector<ll> sl = solve(l, mid), sr = solve(mid + 1, r), res;
+    for (ll i = 0; i <= (len >> 1); i++) {
+        rk1[sl[i]] = i;
+        rk2[sr[i]] = i;
+    }
+    res.resize(len);
+    iota(all(res), 0);
+    sort(all(res), cmp);
+    return res;
+}
 int main() {
+    /* freopen("test.in", "r", stdin); */
+    /* freopen("test.out","w",stdout); */
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
+    cin >> n;
+    n = 1 << n;
+    cin >> str;
+    vector<ll> ans = solve(0, n - 1);
+    for (ll i = 0; i < n; i++) cout << str[i ^ (*ans.begin())];
     return 0;
 }

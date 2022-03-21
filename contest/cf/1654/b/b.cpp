@@ -1,5 +1,6 @@
-//#pragma GCC optimize("Ofast", "-funroll-loops")
-//#pragma GCC target("sse4.1", "sse4.2", "ssse3", "sse3", "sse2", "sse", "avx2", "avx", "popcnt", "tune=native")
+#include <cstring>
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -123,9 +124,25 @@ const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1
 
 ll n, m, arr[MXN];
 char str[MXN];
+int f[30];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
+    int t;
+    cin >> t;
+    while (t--) {
+        cin >> (str + 1);
+        n = strlen(str + 1);
+        memset(f, 0, sizeof(f));
+        ll mn=INF;
+        for (ll i=n; i; i--) {
+            if(++f[str[i] - 'a']==1)mn=i;
+        }
+        while (mn <= n) {
+            cout << str[mn++];
+        }
+        cout << nl;
+    }
     return 0;
 }

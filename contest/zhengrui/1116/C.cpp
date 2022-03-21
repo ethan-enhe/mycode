@@ -1,5 +1,5 @@
-//#pragma GCC optimize("Ofast", "-funroll-loops")
-//#pragma GCC target("sse4.1", "sse4.2", "ssse3", "sse3", "sse2", "sse", "avx2", "avx", "popcnt", "tune=native")
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -117,15 +117,39 @@ struct mod {
 };
 //}}}
 const char nl = '\n';
-const ll MXN = 1e6 + 5;
+const ll MXN = 1005;
 const ll INF = 1e18;
 const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 
-ll n, m, arr[MXN];
+ll n, m, q, arr[MXN];
 char str[MXN];
+vec<ll> g[MXN];
+ll nx[MXN][MXN];
+void dfs(ll p, ll rt, ll son, ll fa) {
+    nx[rt][p] = son ? son : p;
+    for (ll nx : g[p])
+        if (nx != fa) dfs(nx, rt, son ? son : nx, p);
+}
+ll cal(ll l, ll r, ll x) {
+    for (ll i = l; i <= r; i++) x = nx[x][arr[i]];
+    return x;
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
+    cin >> n >> m >> q;
+    for (ll i = 2; i <= n; i++) {
+        ll u = nxt();
+        g[u].push_back(i);
+        g[i].push_back(u);
+    }
+    for (ll i = 1; i <= n; i++) dfs(i, i, 0, 0);
+    for (ll i = 1; i <= m; i++) arr[i] = nxt();
+    while (q--) {
+        ll l, r, x;
+        cin >> l >> r >> x;
+        cout << cal(l, r, x) << nl;
+    }
     return 0;
 }

@@ -1,5 +1,3 @@
-//#pragma GCC optimize("Ofast", "-funroll-loops")
-//#pragma GCC target("sse4.1", "sse4.2", "ssse3", "sse3", "sse2", "sse", "avx2", "avx", "popcnt", "tune=native")
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -127,5 +125,11 @@ int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
+    /* freopen(".in","r",stdin); */
+    freopen("zote.in","w",stdout);
+    n = 100;
+    cout << n << endl;
+    for (int i = 1; i <= n; i++) cout << ri(1, 998244352)<<" ";
+
     return 0;
 }

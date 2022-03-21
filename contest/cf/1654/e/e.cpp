@@ -1,5 +1,5 @@
-//#pragma GCC optimize("Ofast", "-funroll-loops")
-//#pragma GCC target("sse4.1", "sse4.2", "ssse3", "sse3", "sse2", "sse", "avx2", "avx", "popcnt", "tune=native")
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -117,15 +117,40 @@ struct mod {
 };
 //}}}
 const char nl = '\n';
-const ll MXN = 1e6 + 5;
+const ll ZERO = 4e5 + 5, MXN = ZERO * 2;
 const ll INF = 1e18;
 const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 
+ll ans = 1;
 ll n, m, arr[MXN];
-char str[MXN];
+map<pi, ll> occ;
+void calc(ll ind) {
+    /* cerr<<ind<<endl; */
+    occ.clear();
+    for (ll i = 1; i <= n; i++) {
+        ll k = i - ind, b = arr[i] - arr[ind];
+        if (k >= 0) {
+            for (ll j = 0; j < ZERO && b + j * k < ZERO; j++) umx(ans, ++occ[{b + j * k + ZERO, j}]);
+            for (ll j = -1; j > -ZERO && b + j * k > -ZERO; j--) umx(ans, ++occ[{b + j * k + ZERO, j}]);
+        } else {
+            for (ll j = -1; j > -ZERO && b + j * k < ZERO; j--) umx(ans, ++occ[{b + j * k + ZERO, j}]);
+            for (ll j = 0; j < ZERO && b + j * k > -ZERO; j++) umx(ans, ++occ[{b + j * k + ZERO, j}]);
+        }
+    }
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
+    cin >> n;
+    generate(arr + 1, arr + 1 + n, nxt<ll>);
+    ll bsz = 2 * sqrt(n) + 1;
+    ll id = 1;
+    while (id <= n) {
+        calc(id);
+        id += bsz;
+    }
+
+    cout << n - ans << nl;
     return 0;
 }

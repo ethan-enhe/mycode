@@ -1,5 +1,3 @@
-//#pragma GCC optimize("Ofast", "-funroll-loops")
-//#pragma GCC target("sse4.1", "sse4.2", "ssse3", "sse3", "sse2", "sse", "avx2", "avx", "popcnt", "tune=native")
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -121,11 +119,63 @@ const ll MXN = 1e6 + 5;
 const ll INF = 1e18;
 const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 
-ll n, m, arr[MXN];
-char str[MXN];
+ll n, m, k, ans[MXN];
+struct edge {
+    ll u, v, id;
+} e[MXN];
+bool cmp(const edge &x, const edge &y) { return x.u == y.u ? x.v < y.v : x.u > y.u; }
+vector<ll> g[MXN];
+
+ll dfn[MXN], low[MXN], dfnc, cnt;
+bool instk[MXN];
+stack<ll> stk;
+void tarjan(ll p) {
+    dfn[p] = low[p] = ++dfnc;
+    instk[p] = 1;
+    stk.push(p);
+    for (ll nx : g[p]) {
+        if (!dfn[nx]) {
+            tarjan(nx);
+            umn(low[p], low[nx]);
+        } else if (instk[nx])
+            umn(low[p], dfn[nx]);
+    }
+    if (low[p] == dfn[p]) {
+        ++cnt;
+        ll x;
+        do {
+            x = stk.top();
+            stk.pop();
+            instk[x] = 0;
+        } while (x != p);
+    }
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
+    cin >> n >> m >> k;
+    for (int i = 1; i < n; i++) g[i].push_back(i + 1);
+    for (int i = 1; i < m; i++) g[i + n].push_back(i + n + 1);
+    for (ll i = 1, u, v; i <= k; i++) {
+        cin >> u >> v;
+        e[i] = {u, v, i};
+    }
+    sort(e + 1, e + 1 + k, cmp);
+    ll mn = INF;
+    for (ll i = 1; i <= k; i++) {
+        if (e[i].v < mn) {
+            g[e[i].u].push_back(e[i].v + n);
+            mn = e[i].v;
+        } else {
+            g[e[i].v + n].push_back(e[i].u);
+            ans[e[i].id] = 1;
+        }
+    }
+    for (ll i = 1; i <= n + m; i++)
+        if (!dfn[i]) tarjan(i);
+    cout << cnt << nl;
+    prt(ans, 1, k);
+
     return 0;
 }

@@ -1,5 +1,6 @@
-//#pragma GCC optimize("Ofast", "-funroll-loops")
-//#pragma GCC target("sse4.1", "sse4.2", "ssse3", "sse3", "sse2", "sse", "avx2", "avx", "popcnt", "tune=native")
+#include <vector>
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -85,7 +86,7 @@ T nxt() {
     return x;
 }
 //}}}
-const ll P = 1e9 + 7;
+const ll P = 998244353;
 //{{{ Type
 inline int redu(const int &x) { return x >= P ? x - P : x; }
 inline int incr(const int &x) { return x + ((x >> 31) & P); }
@@ -117,15 +118,78 @@ struct mod {
 };
 //}}}
 const char nl = '\n';
-const ll MXN = 1e6 + 5;
+const ll MXN = 2e5 + 5;
 const ll INF = 1e18;
 const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 
-ll n, m, arr[MXN];
-char str[MXN];
+ll n, m;
+
+struct e {
+    ll v, x, y;
+};
+vector<e> g[MXN];
+ll cnt[MXN];
+vec<pi> fac[MXN];
+void init() {
+    for (ll i = 2; i < MXN; i++)
+        if (fac[i].empty()) {
+            fac[i].push_back({i, 1});
+            for (ll nx = i << 1; nx < MXN; nx += i) {
+                ll tmp = nx, c = 0;
+                do
+                    tmp /= i, ++c;
+                while (tmp % i == 0);
+                fac[nx].push_back({i, c});
+            }
+        }
+}
+mod sum, cur;
+void dfs(ll p, ll fa) {
+    sum += cur;
+    for (auto &[nx, x, y] : g[p])
+        if (nx != fa) {
+            for (auto &[f, c] : fac[x])
+                if (cnt[f] < c) {
+                    mod tmp = qpow((mod)f, c - cnt[f]);
+                    cur *= tmp;
+                    sum *= tmp;
+                    cnt[f] = c;
+                }
+            for (auto &[f, c] : fac[x]) cnt[f] -= c;
+            for (auto &[f, c] : fac[y]) cnt[f] += c;
+            cur = cur / x * y;
+            dfs(nx, p);
+            cur = cur / y * x;
+            for (auto &[f, c] : fac[y]) cnt[f] -= c;
+            for (auto &[f, c] : fac[x]) cnt[f] += c;
+        }
+}
+
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
+    init();
+    /* for (auto [i, j] : fac[12]) cout << i << j << endl; */
+    int t;
+    cin >> t;
+    while (t--) {
+        cin >> n;
+        for (ll i = 1; i <= n; i++) {
+            cnt[i] = 0;
+            g[i].clear();
+        }
+        for (ll i = 1; i < n; i++) {
+            ll u, v, x, y, _g;
+            cin >> u >> v >> x >> y;
+            _g = gcd(x, y);
+            x /= _g, y /= _g;
+            g[u].push_back({v, x, y});
+            g[v].push_back({u, y, x});
+        }
+        sum = 0, cur = 1;
+        dfs(1, 0);
+        cout << sum << nl;
+    }
     return 0;
 }

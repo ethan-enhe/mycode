@@ -1,5 +1,5 @@
-//#pragma GCC optimize("Ofast", "-funroll-loops")
-//#pragma GCC target("sse4.1", "sse4.2", "ssse3", "sse3", "sse2", "sse", "avx2", "avx", "popcnt", "tune=native")
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -127,5 +127,20 @@ int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
+    int t;
+    cin >> t;
+    while (t--) {
+        cin >> n;
+        ll f = -INF, s = -INF;
+        for (ll i = 1; i <= n; i++) {
+            ll x;
+            cin >> x;
+            if (x > f)
+                s = f, f = x;
+            else if (x > s)
+                s = x;
+        }
+        cout<<f+s<<nl;
+    }
     return 0;
 }

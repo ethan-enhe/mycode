@@ -1,5 +1,3 @@
-//#pragma GCC optimize("Ofast", "-funroll-loops")
-//#pragma GCC target("sse4.1", "sse4.2", "ssse3", "sse3", "sse2", "sse", "avx2", "avx", "popcnt", "tune=native")
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -127,5 +125,16 @@ int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
+    cin >> n;
+    generate(arr + 1, arr + 1 + n, nxt<ll>);
+    ll sum = 0, mx = 0, mn = 0, mxans = 0, mnans = 0;
+    for (ll i = 1; i <= n; i++) {
+        sum += arr[i] ? 1 : -1;
+        umx(mxans, sum - mn);
+        umn(mnans, sum - mx);
+        umx(mx, sum);
+        umn(mn, sum);
+    }
+    cout << abs(mxans) + abs(mnans) + 1 << endl;
     return 0;
 }

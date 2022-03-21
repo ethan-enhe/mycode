@@ -1,5 +1,7 @@
-//#pragma GCC optimize("Ofast", "-funroll-loops")
-//#pragma GCC target("sse4.1", "sse4.2", "ssse3", "sse3", "sse2", "sse", "avx2", "avx", "popcnt", "tune=native")
+#include <queue>
+#include <set>
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -122,10 +124,37 @@ const ll INF = 1e18;
 const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 
 ll n, m, arr[MXN];
-char str[MXN];
+priority_queue<ll> q;
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
+    int t;
+    cin >> t;
+    while (t--) {
+        cin >> n;
+        ll sum = 0;
+        for (ll i = 1; i <= n; i++) {
+            cin >> arr[i];
+            sum += arr[i];
+        }
+        sort(arr + 1, arr + 1 + n);
+        while (!q.empty()) q.pop();
+        q.push(sum);
+        while (n) {
+            ll p = q.top();
+            q.pop();
+            if (p == arr[n])
+                --n;
+            else if (p < arr[n]) {
+                cout << "NO" << nl;
+                break;
+            } else {
+                q.push(p >> 1);
+                q.push((p + 1) >> 1);
+            }
+        }
+        if (!n) cout << "YES" << nl;
+    }
     return 0;
 }

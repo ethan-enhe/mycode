@@ -1,6 +1,9 @@
-//#pragma GCC optimize("Ofast", "-funroll-loops")
-//#pragma GCC target("sse4.1", "sse4.2", "ssse3", "sse3", "sse2", "sse", "avx2", "avx", "popcnt", "tune=native")
+#include <vector>
+#pragma GCC optimize("Ofast", "-funroll-loops")
+#pragma GCC target("sse4.1", "sse4.2", "ssse3", "sse3", "sse2", "sse", "avx2", "avx", "popcnt")
 #include <bits/stdc++.h>
+
+#include <cstring>
 
 using namespace std;
 //{{{ Def
@@ -16,7 +19,7 @@ using ll = long long;
 using ull = unsigned long long;
 using db = double;
 using ld = long double;
-using pi = pair<ll, ll>;
+using pi = pair<ull, ll>;
 mt19937_64 mr(chrono::system_clock::now().time_since_epoch().count());
 //}}}
 //{{{ Func
@@ -85,47 +88,48 @@ T nxt() {
     return x;
 }
 //}}}
-const ll P = 1e9 + 7;
-//{{{ Type
-inline int redu(const int &x) { return x >= P ? x - P : x; }
-inline int incr(const int &x) { return x + ((x >> 31) & P); }
-struct mod {
-    int v;
-    mod() : v() {}
-    template <typename T>
-    mod(const T &_v) : v(_v) {
-        if (v >= P || v < 0) v = incr(v % P);
-    }
-    explicit operator ll() const { return v; }
-    explicit operator int() const { return v; }
-    mod operator+(const mod &y) const { return mod{redu(v + y.v)}; }
-    mod operator-(const mod &y) const { return mod{incr(v - y.v)}; }
-    mod operator*(const mod &y) const { return mod{1ll * v * y.v % P}; }
-    mod operator/(const mod &y) const { return mod{1ll * v * (ll)qpow(y, P - 2) % P}; }
-    mod &operator+=(const mod &y) { return v = redu(v + y.v), *this; }
-    mod &operator-=(const mod &y) { return v = incr(v - y.v), *this; }
-    mod &operator*=(const mod &y) { return v = 1ll * v * y.v % P, *this; }
-    mod &operator/=(const mod &y) { return v = 1ll * v * (ll)qpow(y, P - 2) % P, *this; }
-    bool operator==(const mod &y) const { return v == y.v; }
-    bool operator!=(const mod &y) const { return v != y.v; }
-    friend istream &operator>>(istream &is, mod &y) {
-        ll x;
-        is >> x;
-        return y = mod(x), is;
-    }
-    friend ostream &operator<<(ostream &os, const mod &y) { return os << y.v; }
-};
-//}}}
 const char nl = '\n';
-const ll MXN = 1e6 + 5;
+const ll MXN = 2505;
 const ll INF = 1e18;
 const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
+const ull P = 131;
 
-ll n, m, arr[MXN];
+ll n, ind, A, B, C;
 char str[MXN];
+ull pw[MXN], h[MXN];
+ull geth(ll l, ll r) { return h[r] - h[l - 1] * pw[r - l + 1]; }
+ll dp[MXN][MXN];
 int main() {
+    /* freopen("copypaste.in", "r", stdin); */
+    /* freopen("copypaste.out","w",stdout); */
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
+    cin >> n >> (str + 1) >> A >> B >> C;
+    pw[0] = 1;
+    for (ll i = 1; i <= n; i++) {
+        h[i] = h[i - 1] * P + str[i];
+        pw[i] = pw[i - 1] * P;
+    }
+    memset(dp, 0x3f, sizeof(dp));
+
+    for (ll i = n; i; i--)
+        for (ll j = i; j <= n; j++) {
+            if (j == i) dp[i][j] = A;
+            umn(dp[i - 1][j], dp[i][j] + A);
+            umn(dp[i][j + 1], dp[i][j] + A);
+            ll c = dp[i][j] + B + C, last = j;
+            ull ch = geth(i, j);
+            for (ll k = j + 1; k <= n; k++) {
+                c += A;
+                if (k - j + i > last && geth(k - j + i, k) == ch) {
+                    c -= A * (j - i + 1);
+                    c += C;
+                    last = k;
+                    umn(dp[i][k], c);
+                }
+            }
+        }
+    cout << dp[1][n] << nl;
     return 0;
 }

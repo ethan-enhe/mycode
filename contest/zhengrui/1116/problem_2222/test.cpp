@@ -1,5 +1,7 @@
-//#pragma GCC optimize("Ofast", "-funroll-loops")
-//#pragma GCC target("sse4.1", "sse4.2", "ssse3", "sse3", "sse2", "sse", "avx2", "avx", "popcnt", "tune=native")
+#include <cstdio>
+#include <cstring>
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -117,15 +119,50 @@ struct mod {
 };
 //}}}
 const char nl = '\n';
-const ll MXN = 1e6 + 5;
-const ll INF = 1e18;
+const ll MXN = 1e5 + 5;
+const ll INF = 1e18, LG = 10, LIM = 300;
 const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 
-ll n, m, arr[MXN];
-char str[MXN];
+ll n, m, dp[MXN][LG];
+ll mnk[MXN][LG], lastbig[LG];
+ll upd(ll i, ll j, ll k) {
+    ll nxi = (i + k - 1) / k, mn = INF;
+    bool f = k != 2;
+    for (ll l = 0; l <= j - 1 - f; l++) {
+        //正好边界,一边边界，两边边界，里面
+        ll tmp = max({dp[k][l] + dp[nxi][j - l], dp[k - 1][l] + dp[nxi][j - 1 - l],
+                      dp[k - 2][l] + dp[nxi][(j - 1 - f - l) / 2], dp[nxi][j]});
+        umn(mn, tmp);
+    }
+    if (mn < dp[i][j]) {
+        dp[i][j] = mn;
+        mnk[i][j] = k;
+    }
+    return mn;
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
+    /* freopen("test.in","r",stdin); */
+    freopen("B.out", "w", stdout);
+    /* cin >> n; */
+    n = 3000;
+    memset(dp, 0x3f, sizeof(dp));
+    memset(dp[1], 0, sizeof(dp[1]));
+    memset(dp[0], 0, sizeof(dp[1]));
+    for (ll i = 2; i <= n; i++) {
+        if (i % 1000 == 0) cerr << i << nl;
+        for (ll j = 0; j < LG; j++) {
+            //叉数
+            dp[i][j] = i * (i + 1) / 2;
+            if (j - i + 1 >= 0) dp[i][j] = 0;
+            for (ll k = 2; k < i; k++) upd(i, j, k);
+            cout << i << " " << j << " " << dp[i][j] << " " << mnk[i][j] << nl;
+        }
+    }
+    for (ll i = 0; i < LG; i++) {
+        cerr << i << " " << dp[n][i] << " " << mnk[n][i] << nl;
+    }
     return 0;
 }

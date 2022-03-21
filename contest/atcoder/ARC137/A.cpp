@@ -1,5 +1,3 @@
-//#pragma GCC optimize("Ofast", "-funroll-loops")
-//#pragma GCC target("sse4.1", "sse4.2", "ssse3", "sse3", "sse2", "sse", "avx2", "avx", "popcnt", "tune=native")
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -121,11 +119,19 @@ const ll MXN = 1e6 + 5;
 const ll INF = 1e18;
 const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 
-ll n, m, arr[MXN];
+ll l, r, ans = 0, arr[MXN];
 char str[MXN];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
+    cin >> l >> r;
+    for (ll i = l; i + ans < r; i++)
+        for (ll j = r; j > i + ans; j--)
+            if (gcd(i, j) == 1) {
+                ans = j - i;
+                break;
+            }
+    cout << ans << nl;
     return 0;
 }

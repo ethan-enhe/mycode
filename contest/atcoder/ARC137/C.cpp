@@ -1,5 +1,3 @@
-//#pragma GCC optimize("Ofast", "-funroll-loops")
-//#pragma GCC target("sse4.1", "sse4.2", "ssse3", "sse3", "sse2", "sse", "avx2", "avx", "popcnt", "tune=native")
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -129,3 +127,4 @@ int main() {
     setp(6);
     return 0;
 }
+

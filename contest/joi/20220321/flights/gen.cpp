@@ -127,5 +127,14 @@ int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
+    freopen("test.in", "w", stdout);
+    /* freopen("test.out","w",stdout); */
+    ll q = 100;
+    cout << q << nl;
+    while (q--) {
+        ll n = ri(1, 10000), u = ri(0, n - 1), v = ri(0, n - 1);
+        cout << n << " " << u << " " << v << nl;
+        for (ll i = 1; i < n; i++) cout << ri(0, i - 1) << " " << i << nl;
+    }
     return 0;
 }

@@ -1,13 +1,14 @@
-//#pragma GCC optimize("Ofast", "-funroll-loops")
-//#pragma GCC target("sse4.1", "sse4.2", "ssse3", "sse3", "sse2", "sse", "avx2", "avx", "popcnt", "tune=native")
 #include <bits/stdc++.h>
+#include <math.h>
+
+#include <cmath>
 
 using namespace std;
 //{{{ Def
 #define fi first
 #define se second
 #define vec vector
-#define log2(x) (63 - __builtin_clzll(x))
+/* #define log2(x) (63 - __builtin_clzll(x)) */
 #define popc(x) __builtin_popcountll(x)
 #define all(x) (x).begin(), (x).end()
 #define unq(x) (x).erase(unique(all(x)), (x).end())
@@ -117,7 +118,7 @@ struct mod {
 };
 //}}}
 const char nl = '\n';
-const ll MXN = 1e6 + 5;
+const ll MXN = 2e6 + 5;
 const ll INF = 1e18;
 const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 
@@ -127,5 +128,15 @@ int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
+    cin >> n >> m;
+    for (int i = 1; i <= n; i++) cin >> arr[n - i];
+
+    ll lg = ceil(log2(n));
+    for (ll i = 0; i < lg; i++)
+        for (ll j = 0; j < (1 << lg); j++)
+            if ((j >> i) & 1) arr[j] ^= arr[j ^ (1 << i)];
+    /* cerr<<1<<lg<<endl; */
+    /* for (ll i = 0; i < (1 << lg); i++) cout << arr[i]<<" "; */
+    for (int i = 1; i <= m; i++) cout << arr[((i - 1) & ((1 << lg) - 1)) ^ ((1 << lg) - 1)] << " ";
     return 0;
 }

@@ -1,6 +1,7 @@
 //#pragma GCC optimize("Ofast", "-funroll-loops")
 //#pragma GCC target("sse4.1", "sse4.2", "ssse3", "sse3", "sse2", "sse", "avx2", "avx", "popcnt", "tune=native")
 #include <bits/stdc++.h>
+#include <cstdlib>
 
 using namespace std;
 //{{{ Def
@@ -127,5 +128,14 @@ int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
+    for(ll i=1;i<=100;i++){
+        system("./gen");
+        if(system("./grader<test.in")){
+            break;
+
+        }
+
+    }
     return 0;
 }
+

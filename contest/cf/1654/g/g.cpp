@@ -1,5 +1,5 @@
-//#pragma GCC optimize("Ofast", "-funroll-loops")
-//#pragma GCC target("sse4.1", "sse4.2", "ssse3", "sse3", "sse2", "sse", "avx2", "avx", "popcnt", "tune=native")
+#pragma GCC optimize ("Ofast")
+#pragma GCC optimize ("unroll-loops")
 #include <bits/stdc++.h>
 
 using namespace std;

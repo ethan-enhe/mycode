@@ -1,5 +1,7 @@
-//#pragma GCC optimize("Ofast", "-funroll-loops")
-//#pragma GCC target("sse4.1", "sse4.2", "ssse3", "sse3", "sse2", "sse", "avx2", "avx", "popcnt", "tune=native")
+#include <algorithm>
+#include <cstring>
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -117,15 +119,35 @@ struct mod {
 };
 //}}}
 const char nl = '\n';
-const ll MXN = 1e6 + 5;
+const ll MXN = 1e3 + 5;
 const ll INF = 1e18;
 const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 
-ll n, m, arr[MXN];
-char str[MXN];
+ll n, m, arr[MXN], brr[MXN];
+ll ans;
+ll mni(ll *x, ll l, ll r) {
+    ll res = l;
+    for (ll i = l; i <= r; i++)
+        if (x[i] <= x[res]) res = i;
+    return res;
+}
+ll lt2(ll x, ll y, ll del) {
+    if (x <= 1 || y <= 1) return 0;
+    ll ai = mni(arr, 1, n - 1), bi = mni(brr, 1, m - 1);
+    return min{};
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     setp(6);
+    cin >> n >> m;
+    arr[0] = brr[0] = INF;
+    for (ll i = 1; i <= n; i++) cin >> arr[i];
+    for (ll i = 1; i <= m; i++) cin >> brr[i];
+    ll ai = mni(arr, 1, n);
+    ll bi = mni(arr, 1, m);
+    ans += arr[ai] * (m - 1) + brr[bi] * (n - 1);
+
+    cout << ans << nl;
     return 0;
 }
