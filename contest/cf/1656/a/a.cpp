@@ -7,6 +7,8 @@ using namespace std;
 #define fi first
 #define se second
 #define vec vector
+#define log2(x) (63 - __builtin_clzll(x))
+#define popc(x) __builtin_popcountll(x)
 #define all(x) (x).begin(), (x).end()
 #define unq(x) (x).erase(unique(all(x)), (x).end())
 
@@ -18,24 +20,24 @@ using pi = pair<ll, ll>;
 mt19937_64 mr(chrono::system_clock::now().time_since_epoch().count());
 //}}}
 //{{{ Func
-template <typename T>
-pair<T, T> operator+(const pair<T, T> &x, const pair<T, T> &y) {
+template <typename T1, typename T2>
+pair<T1, T2> operator+(const pair<T1, T2> &x, const pair<T1, T2> &y) {
     return {x.fi + y.fi, x.se + y.se};
 }
-template <typename T>
-pair<T, T> operator-(const pair<T, T> &x, const pair<T, T> &y) {
+template <typename T1, typename T2>
+pair<T1, T2> operator-(const pair<T1, T2> &x, const pair<T1, T2> &y) {
     return {x.fi - y.fi, x.se - y.se};
 }
-template <typename T, typename C>
-pair<T, T> operator*(const pair<T, T> &x, const C &y) {
+template <typename T1, typename T2>
+pair<T1, T2> operator*(const pair<T1, T2> &x, const ll &y) {
     return {x.fi * y, x.se * y};
 }
-template <typename T>
-istream &operator>>(istream &is, pair<T, T> &y) {
+template <typename T1, typename T2>
+istream &operator>>(istream &is, pair<T1, T2> &y) {
     return is >> y.fi >> y.se;
 }
-template <typename T>
-ostream &operator<<(ostream &os, const pair<T, T> &y) {
+template <typename T1, typename T2>
+ostream &operator<<(ostream &os, const pair<T1, T2> &y) {
     return os << '(' << y.fi << ',' << y.se << ')';
 }
 template <typename T>
@@ -56,7 +58,7 @@ template <typename T>
 void umn(T &x, const T &y) {
     x = min(x, y);
 }
-bool inrng(const ll &x, const ll &l, const ll &r) { return l <= x && x <= r; }
+ll abs(const pi &x) { return (x.fi < 0 ? -x.fi : x.fi) + (x.se < 0 ? -x.se : x.se); }
 bool insqr(const pi &x, const pi &lt, const pi &rb) {
     return lt.fi <= x.fi && x.fi <= rb.fi && lt.se <= x.se && x.se <= rb.se;
 }
@@ -71,6 +73,10 @@ ld rd(const ld &l, const ld &r) {
 void setp(const ll &x) {
     cout.flags(ios::fixed);
     cout.precision(x);
+}
+template <typename T>
+void prt(T &x, const ll &l, const ll &r, const char *join = " ") {
+    for (ll i = l; i <= r; i++) cout << x[i] << join;
 }
 template <typename T = ll>
 T nxt() {
@@ -109,12 +115,26 @@ struct mod {
 };
 //}}}
 const char nl = '\n';
-const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
+const ll INF = 1e18;
 
 ll n, m, arr[MXN];
+char str[MXN];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
+    setp(6);
+    int t;
+    cin>>t;
+    while(t--){
+        cin>>n;
+        ll mxi=1,mni=1;
+        for(ll i=1;i<=n;i++){
+            cin>>arr[i];
+            if(arr[i]>arr[mxi])mxi=i;
+            if(arr[i]<arr[mni])mni=i;
+        }
+        cout<<mni<<" "<<mxi<<nl;
+    }
     return 0;
 }

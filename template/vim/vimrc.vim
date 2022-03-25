@@ -485,7 +485,7 @@ if g:usecoc
     "}}}
     "{{{ COC
     let g:coc_global_extensions = ['coc-clangd','coc-markdownlint','coc-vimlsp', 'coc-json','coc-snippets','coc-lists','coc-explorer','coc-floaterm']
-    "autocmd FileType * let b:coc_pairs_disabled = ['<']
+    autocmd FileType * let b:coc_pairs_disabled = ['<']
     " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
     " delays and poor user experience.
     " set updatetime=300
