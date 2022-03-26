@@ -60,14 +60,8 @@ bool inrng(const ll &x, const ll &l, const ll &r) { return l <= x && x <= r; }
 bool insqr(const pi &x, const pi &lt, const pi &rb) {
     return lt.fi <= x.fi && x.fi <= rb.fi && lt.se <= x.se && x.se <= rb.se;
 }
-ll ri(const ll &l, const ll &r) {
-    uniform_int_distribution<ll> res(l, r);
-    return res(mr);
-}
-ld rd(const ld &l, const ld &r) {
-    uniform_real_distribution<ld> res(l, r);
-    return res(mr);
-}
+ll ri(const ll &l, const ll &r) { return uniform_int_distribution<ll>(l, r)(mr); }
+ld rd(const ld &l, const ld &r) { return uniform_real_distribution<ld>(l, r)(mr); }
 void setp(const ll &x) {
     cout.flags(ios::fixed);
     cout.precision(x);
@@ -93,11 +87,11 @@ struct mod {
     mod operator+(const mod &y) const { return mod(redu(v + y.v)); }
     mod operator-(const mod &y) const { return mod(incr(v - y.v)); }
     mod operator*(const mod &y) const { return mod((ll)v * y.v % P); }
-    mod operator/(const mod &y) const { return mod((ll)v * (ll)qpow(y, P - 2) % P); }
+    mod operator/(const mod &y) const { return mod((ll)v * qpow(y, P - 2).v % P); }
     mod &operator+=(const mod &y) { return v = redu(v + y.v), *this; }
     mod &operator-=(const mod &y) { return v = incr(v - y.v), *this; }
     mod &operator*=(const mod &y) { return v = (ll)v * y.v % P, *this; }
-    mod &operator/=(const mod &y) { return v = (ll)v * (ll)qpow(y, P - 2) % P, *this; }
+    mod &operator/=(const mod &y) { return v = (ll)v * qpow(y, P - 2).v % P, *this; }
     bool operator==(const mod &y) const { return v == y.v; }
     bool operator!=(const mod &y) const { return v != y.v; }
     friend istream &operator>>(istream &is, mod &y) {
