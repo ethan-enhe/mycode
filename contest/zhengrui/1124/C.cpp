@@ -1,6 +1,9 @@
-// #pragma GCC optimize("Ofast", "-funroll-loops")
-// #pragma GCC target("sse4.1", "sse4.2", "ssse3", "sse3", "sse2", "sse", "avx2", "avx", "popcnt")
+#pragma GCC optimize("Ofast", "-funroll-loops")
+#pragma GCC target("sse4.1", "sse4.2", "ssse3", "sse3", "sse2", "sse", "avx2", "avx", "popcnt")
 #include <bits/stdc++.h>
+
+#include <algorithm>
+#include <cmath>
 
 using namespace std;
 //{{{ Def
@@ -15,11 +18,20 @@ using ull = unsigned long long;
 using db = double;
 using ld = long double;
 using pi = pair<ll, ll>;
+mt19937_64 mr(chrono::system_clock::now().time_since_epoch().count());
 //}}}
 //{{{ Func
 template <typename T>
 pair<T, T> operator+(const pair<T, T> &x, const pair<T, T> &y) {
     return {x.fi + y.fi, x.se + y.se};
+}
+template <typename T>
+pair<T, T> operator-(const pair<T, T> &x, const pair<T, T> &y) {
+    return {x.fi - y.fi, x.se - y.se};
+}
+template <typename T, typename C>
+pair<T, T> operator*(const pair<T, T> &x, const C &y) {
+    return {x.fi * y, x.se * y};
 }
 template <typename T>
 istream &operator>>(istream &is, pair<T, T> &y) {
@@ -38,20 +50,7 @@ T qpow(T x, ll y) {
     }
     return r;
 }
-ll gcd(ll a, ll b) {
-    if (a < 0) a = -a;
-    if (b < 0) b = -b;
-    if (!a || !b) return a | b;
-    ll U = __builtin_ctzll(a), V = __builtin_ctzll(b);
-    a >>= U, b >>= V;
-    if (U > V) U = V;
-    while (a) {
-        if (a < b) swap(a, b);
-        a -= b;
-        a >>= __builtin_ctzll(a);
-    }
-    return b << U;
-}
+ll gcd(ll x, ll y) { return y ? gcd(y, x % y) : x; }
 template <typename T>
 void umx(T &x, const T &y) {
     x = max(x, y);
@@ -64,6 +63,8 @@ bool inrng(const ll &x, const ll &l, const ll &r) { return l <= x && x <= r; }
 bool insqr(const pi &x, const pi &lt, const pi &rb) {
     return lt.fi <= x.fi && x.fi <= rb.fi && lt.se <= x.se && x.se <= rb.se;
 }
+ll ri(const ll &l, const ll &r) { return uniform_int_distribution<ll>(l, r)(mr); }
+ld rd(const ld &l, const ld &r) { return uniform_real_distribution<ld>(l, r)(mr); }
 void setp(const ll &x) {
     cout.flags(ios::fixed);
     cout.precision(x);
@@ -74,9 +75,6 @@ T nxt() {
     cin >> x;
     return x;
 }
-mt19937_64 mr(chrono::system_clock::now().time_since_epoch().count());
-ll ri(const ll &l, const ll &r) { return uniform_int_distribution<ll>(l, r)(mr); }
-ld rd(const ld &l, const ld &r) { return uniform_real_distribution<ld>(l, r)(mr); }
 //}}}
 const ll P = 1e9 + 7;
 //{{{ Type
@@ -109,11 +107,55 @@ struct mod {
 //}}}
 const char nl = '\n';
 const ll INF = 1e18;
-const ll MXN = 1e6 + 5;
+const ll MXN = 3e4 + 5;
 
 ll n, m, arr[MXN];
+vec<pi> g[MXN];
+bool vis[MXN];
+ll mndis[MXN], dis[MXN];
+ll q[MXN], ql, qr;
+ll ins(ll x) {
+    vis[x] = 1;
+    q[ql = qr = 1] = x;
+    dis[x] = 0;
+    while (ql <= qr) {
+        ll u = q[ql++];
+        for (auto &nx : g[u])
+            if (dis[nx.fi] == INF) {
+                dis[nx.fi] = dis[u] + nx.se;
+                q[++qr] = nx.fi;
+            }
+    }
+    ll mni = 0;
+    for (ll i = 1; i <= n; i++) {
+        /* cout << i << " " << dis[i] << nl; */
+        if (!vis[i]) {
+            umn(mndis[i], abs(dis[i]));
+            if (mndis[i] < mndis[mni]) mni = i;
+        }
+        dis[i] = INF;
+    }
+    /* cout << mni << nl; */
+    return mni;
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
+    cin >> n;
+    for (ll i = 1; i < n; i++) {
+        ll u, v, w;
+        cin >> u >> v >> w;
+        g[u].push_back({v, w});
+        g[v].push_back({u, w});
+    }
+    for (ll i = 0; i <= n; i++) dis[i] = mndis[i] = INF;
+    ll nx = 1, ans = -INF;
+    while (nx) {
+        nx = ins(nx);
+        ans += mndis[nx];
+        /* cout << mndis[nx] << nl; */
+    }
+    cout << ans << nl;
+
     return 0;
 }

@@ -15,11 +15,20 @@ using ull = unsigned long long;
 using db = double;
 using ld = long double;
 using pi = pair<ll, ll>;
+mt19937_64 mr(chrono::system_clock::now().time_since_epoch().count());
 //}}}
 //{{{ Func
 template <typename T>
 pair<T, T> operator+(const pair<T, T> &x, const pair<T, T> &y) {
     return {x.fi + y.fi, x.se + y.se};
+}
+template <typename T>
+pair<T, T> operator-(const pair<T, T> &x, const pair<T, T> &y) {
+    return {x.fi - y.fi, x.se - y.se};
+}
+template <typename T, typename C>
+pair<T, T> operator*(const pair<T, T> &x, const C &y) {
+    return {x.fi * y, x.se * y};
 }
 template <typename T>
 istream &operator>>(istream &is, pair<T, T> &y) {
@@ -38,20 +47,7 @@ T qpow(T x, ll y) {
     }
     return r;
 }
-ll gcd(ll a, ll b) {
-    if (a < 0) a = -a;
-    if (b < 0) b = -b;
-    if (!a || !b) return a | b;
-    ll U = __builtin_ctzll(a), V = __builtin_ctzll(b);
-    a >>= U, b >>= V;
-    if (U > V) U = V;
-    while (a) {
-        if (a < b) swap(a, b);
-        a -= b;
-        a >>= __builtin_ctzll(a);
-    }
-    return b << U;
-}
+ll gcd(ll x, ll y) { return y ? gcd(y, x % y) : x; }
 template <typename T>
 void umx(T &x, const T &y) {
     x = max(x, y);
@@ -64,6 +60,8 @@ bool inrng(const ll &x, const ll &l, const ll &r) { return l <= x && x <= r; }
 bool insqr(const pi &x, const pi &lt, const pi &rb) {
     return lt.fi <= x.fi && x.fi <= rb.fi && lt.se <= x.se && x.se <= rb.se;
 }
+ll ri(const ll &l, const ll &r) { return uniform_int_distribution<ll>(l, r)(mr); }
+ld rd(const ld &l, const ld &r) { return uniform_real_distribution<ld>(l, r)(mr); }
 void setp(const ll &x) {
     cout.flags(ios::fixed);
     cout.precision(x);
@@ -74,9 +72,6 @@ T nxt() {
     cin >> x;
     return x;
 }
-mt19937_64 mr(chrono::system_clock::now().time_since_epoch().count());
-ll ri(const ll &l, const ll &r) { return uniform_int_distribution<ll>(l, r)(mr); }
-ld rd(const ld &l, const ld &r) { return uniform_real_distribution<ld>(l, r)(mr); }
 //}}}
 const ll P = 1e9 + 7;
 //{{{ Type
@@ -109,11 +104,18 @@ struct mod {
 //}}}
 const char nl = '\n';
 const ll INF = 1e18;
-const ll MXN = 1e6 + 5;
+const ll MXN = 35, ZERO = 31, MXM = ZERO * 2, MXK = 100;
 
-ll n, m, arr[MXN];
+ll k;
+ll dp[MXN][MXM][MXK];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
+
+    ll t, tp;
+    cin >> t >> tp;
+    while (t--) {
+        cin >> k;
+    }
     return 0;
 }

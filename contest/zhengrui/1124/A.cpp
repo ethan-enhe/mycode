@@ -1,5 +1,5 @@
-// #pragma GCC optimize("Ofast", "-funroll-loops")
-// #pragma GCC target("sse4.1", "sse4.2", "ssse3", "sse3", "sse2", "sse", "avx2", "avx", "popcnt")
+#pragma GCC optimize("Ofast", "-funroll-loops")
+#pragma GCC target("sse4.1", "sse4.2", "ssse3", "sse3", "sse2", "sse", "avx2", "avx", "popcnt")
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -15,11 +15,20 @@ using ull = unsigned long long;
 using db = double;
 using ld = long double;
 using pi = pair<ll, ll>;
+mt19937_64 mr(chrono::system_clock::now().time_since_epoch().count());
 //}}}
 //{{{ Func
 template <typename T>
 pair<T, T> operator+(const pair<T, T> &x, const pair<T, T> &y) {
     return {x.fi + y.fi, x.se + y.se};
+}
+template <typename T>
+pair<T, T> operator-(const pair<T, T> &x, const pair<T, T> &y) {
+    return {x.fi - y.fi, x.se - y.se};
+}
+template <typename T, typename C>
+pair<T, T> operator*(const pair<T, T> &x, const C &y) {
+    return {x.fi * y, x.se * y};
 }
 template <typename T>
 istream &operator>>(istream &is, pair<T, T> &y) {
@@ -38,20 +47,7 @@ T qpow(T x, ll y) {
     }
     return r;
 }
-ll gcd(ll a, ll b) {
-    if (a < 0) a = -a;
-    if (b < 0) b = -b;
-    if (!a || !b) return a | b;
-    ll U = __builtin_ctzll(a), V = __builtin_ctzll(b);
-    a >>= U, b >>= V;
-    if (U > V) U = V;
-    while (a) {
-        if (a < b) swap(a, b);
-        a -= b;
-        a >>= __builtin_ctzll(a);
-    }
-    return b << U;
-}
+ll gcd(ll x, ll y) { return y ? gcd(y, x % y) : x; }
 template <typename T>
 void umx(T &x, const T &y) {
     x = max(x, y);
@@ -64,6 +60,8 @@ bool inrng(const ll &x, const ll &l, const ll &r) { return l <= x && x <= r; }
 bool insqr(const pi &x, const pi &lt, const pi &rb) {
     return lt.fi <= x.fi && x.fi <= rb.fi && lt.se <= x.se && x.se <= rb.se;
 }
+ll ri(const ll &l, const ll &r) { return uniform_int_distribution<ll>(l, r)(mr); }
+ld rd(const ld &l, const ld &r) { return uniform_real_distribution<ld>(l, r)(mr); }
 void setp(const ll &x) {
     cout.flags(ios::fixed);
     cout.precision(x);
@@ -74,9 +72,6 @@ T nxt() {
     cin >> x;
     return x;
 }
-mt19937_64 mr(chrono::system_clock::now().time_since_epoch().count());
-ll ri(const ll &l, const ll &r) { return uniform_int_distribution<ll>(l, r)(mr); }
-ld rd(const ld &l, const ld &r) { return uniform_real_distribution<ld>(l, r)(mr); }
 //}}}
 const ll P = 1e9 + 7;
 //{{{ Type
@@ -109,11 +104,89 @@ struct mod {
 //}}}
 const char nl = '\n';
 const ll INF = 1e18;
-const ll MXN = 1e6 + 5;
+const ll MXN = 300;
 
-ll n, m, arr[MXN];
+ll k, d, n;
+ll h[MXN];
+struct good {
+    ll ch;
+    bitset<MXN> vis;
+    good() {
+        ch = 0;
+        vis.reset();
+    }
+    void ins(int x) {
+        if (vis[x]) return;
+        queue<int> q;
+        q.push(x);
+        vis[x] = 1;
+        ch ^= h[x];
+        while (!q.empty()) {
+            int p = q.front();
+            q.pop();
+            for (int i = 0; i < d; i++)
+                if (vis[i]) {
+                    if (!vis[i | p]) {
+                        vis[i | p] = 1;
+                        ch ^= h[i | p];
+                        q.push(i | p);
+                    }
+                    if (!vis[i & p]) {
+                        vis[i & p] = 1;
+                        ch ^= h[i & p];
+                        q.push(i & p);
+                    }
+                }
+        }
+    }
+    string inbit(int x) {
+        if (!x) return "0";
+        string ans;
+        while (x) {
+            ans = char('0' + (x & 1)) + ans;
+            x >>= 1;
+        }
+        return ans;
+    }
+    void prt() {
+        for (ll i = 0; i < d; i++)
+            if (vis[i]) cout << inbit(i) << " ";
+        cout << nl;
+    }
+} init;
+
+set<ll> vis;
+void dfs(good &cur, int last) {
+    vis.insert(cur.ch);
+    /* cur.prt(); */
+    good tmp;
+    for (ll i = last; i < d; i++)
+        if (!cur.vis[i]) {
+            tmp = cur;
+            tmp.ins(i);
+            if (vis.count(tmp.ch))
+                continue;
+            else
+                dfs(tmp, i + 1);
+        }
+}
+
 int main() {
+    /* freopen("A.in", "r", stdin); */
+    /* freopen("A.out","w",stdout); */
     ios::sync_with_stdio(0);
     cin.tie(0);
+    cin >> k >> n;
+    d = 1 << k;
+    generate(h, h + MXN, mr);
+
+    for (ll i = 1; i <= n; i++) {
+        ll x;
+        cin >> x;
+        init.ins(x);
+    }
+    /* init.prt(); */
+    dfs(init, 0);
+    cout << vis.size() - (n == 0);
     return 0;
 }
