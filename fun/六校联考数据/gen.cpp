@@ -129,9 +129,9 @@ ll n, m;
 ll arr[MXN];
 
 int main(int argc, char *argv[]) {
-    n = m = 13;
-    /* ll mnnm = atoll(argv[1]); */
-    /* ll mxnm = atoll(argv[2]); */
+    /* n = m = 13; */
+     n = atoll(argv[1]);
+     m = atoll(argv[2]);
 
     /* normal_distribution<> x(sqrt(mxnm), sqrt(mxnm) / 2); */
     /* n = x(myrand); */

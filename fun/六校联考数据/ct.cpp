@@ -11,13 +11,15 @@ int main() {
     int ind = 0;
     cin >> prob;
     while (1) {
-        int len;
+        int len = 1;
+        cout << "num:" << endl;
         cin >> len;
         cin.getline(args, LS - 10);
+        cout << "args:" << endl;
         cin.getline(args, LS - 10);
         for (int i = 1; i <= len; i++) {
             ind++;
-            cout << "gen" << ind << endl;
+            /* cout << "gen" << ind << endl; */
             sprintf(gen, "./gen %s > %s%d.in", args, prob, ind);
             sprintf(cal, "./std < %s%d.in > %s%d.out", prob, ind, prob, ind);
             system(gen);
