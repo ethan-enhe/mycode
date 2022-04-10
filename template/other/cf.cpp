@@ -1,5 +1,5 @@
-// #pragma GCC optimize("Ofast,unroll-loops")
-// #pragma GCC target("sse,sse2,sse3,ssse3,sse4.1,sse4.2,avx,avx2,popcnt")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("sse,sse2,sse3,ssse3,sse4.1,sse4.2,avx,avx2,bmi,bmi2,lzcnt,popcnt")
 #ifdef LOCAL
 #define dbg(x) cerr << #x << " = " << (x) << endl
 #else
@@ -110,6 +110,5 @@ ll n, m, arr[MXN];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    cout << pi(pi(1, 2) + pi(1, 3));
     return 0;
 }
