@@ -1,12 +1,9 @@
 // #pragma GCC optimize("Ofast", "-funroll-loops")
 // #pragma GCC target("sse4.1", "sse4.2", "ssse3", "sse3", "sse2", "sse", "avx2", "avx", "popcnt")
-#ifdef LOCAL
-#define dbg(x) cerr << #x << " = " << (x) << endl
-#else
-#define dbg(...) 42
-#define NDEBUG
-#endif
 #include <bits/stdc++.h>
+
+#include <algorithm>
+#include <numeric>
 
 using namespace std;
 //{{{ Def
@@ -115,11 +112,29 @@ struct mod {
 //}}}
 const char nl = '\n';
 const ll INF = 1e18;
-const ll MXN = 1e6 + 5;
+const ll MXN = 1000 + 5;
 
-ll n, m, arr[MXN];
+ll n, arr[MXN], pmx[MXN];
+ll dp[MXN][MXN];
 int main() {
+    freopen("separate.in","r",stdin);
+    freopen("separate.out","w",stdout);
     ios::sync_with_stdio(0);
     cin.tie(0);
+    cin >> n;
+    for (ll i = 1; i <= n; i++) {
+        cin >> arr[i];
+        pmx[i] = max(arr[i], pmx[i - 1]);
+    }
+    memset(dp, 0x3f, sizeof(dp));
+    dp[0][0] = 0;
+    for (ll i = 0; i < n; i++)
+        for (ll j = 0; j <= n; j++) {
+            umn(dp[i + 1][max(j, arr[i + 1])], dp[i][j] + max(j, arr[i + 1]));
+            umn(dp[i + 1][j], dp[i][j] + pmx[i + 1]);
+        }
+    ll ans = INF;
+    for (ll j = 0; j <= n; j++) umn(ans, dp[n][j]);
+    cout << ans << nl;
     return 0;
 }

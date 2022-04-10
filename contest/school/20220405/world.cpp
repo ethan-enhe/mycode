@@ -1,12 +1,10 @@
 // #pragma GCC optimize("Ofast", "-funroll-loops")
 // #pragma GCC target("sse4.1", "sse4.2", "ssse3", "sse3", "sse2", "sse", "avx2", "avx", "popcnt")
-#ifdef LOCAL
-#define dbg(x) cerr << #x << " = " << (x) << endl
-#else
-#define dbg(...) 42
-#define NDEBUG
-#endif
 #include <bits/stdc++.h>
+
+#include <algorithm>
+#include <numeric>
+#include <vector>
 
 using namespace std;
 //{{{ Def
@@ -115,11 +113,51 @@ struct mod {
 //}}}
 const char nl = '\n';
 const ll INF = 1e18;
-const ll MXN = 1e6 + 5;
 
-ll n, m, arr[MXN];
+ll n, k;
+vector<ll> arr, brr;
+
+void upd(vector<vector<ll>> &x) {
+    for (ll j = 1; j <= n; j++) umn(x[0][j], x[0][j - 1]);
+    for (ll i = 1; i <= n; i++) {
+        umn(x[i][i], x[i - 1][i]);
+        for (ll j = i + 1; j <= n; j++) umn(x[i][j], min(x[i - 1][j], x[i][j - 1]));
+    }
+}
+ll force() {
+    vector<vector<ll>> cur(n + 1, vector<ll>(n + 1, INF)), nx(n + 1, vector<ll>(n + 1, INF));
+    cur[0][0] = 0;
+    for (ll l = 1; l <= k; l++) {
+        upd(cur);
+        fill(all(nx[0]), INF);
+        for (ll i = 1; i <= n; i++) {
+            nx[i][0] = INF;
+            for (ll j = i; j <= n; j++) nx[i][j] = cur[i - 1][j - 1] + arr[i] + brr[j];
+        }
+        swap(cur, nx);
+    }
+    upd(cur);
+    return cur[n][n];
+}
+ll A() {
+    for (ll i = 1; i <= n; i++) arr[i] += brr[i];
+    sort(1 + all(arr));
+    return accumulate(arr.begin() + 1, arr.begin() + 1 + k, 0);
+}
+
 int main() {
+    freopen("world.in", "r", stdin);
+    freopen("world.out","w",stdout);
     ios::sync_with_stdio(0);
     cin.tie(0);
+    cin >> n >> k;
+    arr.resize(n + 1);
+    brr.resize(n + 1);
+    generate(1 + all(arr), nxt<ll>);
+    generate(1 + all(brr), nxt<ll>);
+    if (n <= (ll)1e4 + 5)
+        cout << force();
+    else
+        cout << A();
     return 0;
 }

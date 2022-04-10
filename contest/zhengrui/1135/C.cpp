@@ -1,12 +1,8 @@
 // #pragma GCC optimize("Ofast", "-funroll-loops")
 // #pragma GCC target("sse4.1", "sse4.2", "ssse3", "sse3", "sse2", "sse", "avx2", "avx", "popcnt")
-#ifdef LOCAL
-#define dbg(x) cerr << #x << " = " << (x) << endl
-#else
-#define dbg(...) 42
-#define NDEBUG
-#endif
 #include <bits/stdc++.h>
+
+#include <cstring>
 
 using namespace std;
 //{{{ Def
@@ -115,11 +111,51 @@ struct mod {
 //}}}
 const char nl = '\n';
 const ll INF = 1e18;
-const ll MXN = 1e6 + 5;
+const ll MXN = 1e6 + 5, C = 26;
 
-ll n, m, arr[MXN];
+ll n, m;
+char str[MXN];
+ll cnt[MXN][C];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
+    /* freopen("test.in", "r", stdin); */
+    /* freopen("test.out","w",stdout); */
+    int t;
+    cin >> t;
+    while (t--) {
+        cin >> m >> (str + 1);
+        n = strlen(str + 1);
+        auto cal = [](ll i) -> ll {
+            ll sum = 0, mx = 0;
+            for (ll j = 0; j < C; j++) {
+                sum += cnt[i][j];
+                umx(mx, cnt[i][j]);
+            }
+            return sum - mx;
+        };
+#define id(x) ((x) % diff)
+        ll ans = 1;
+        for (ll diff = 1; diff + ans <= n; diff++) {
+            ll r = n - diff, tot = 0;
+            for (ll l = r; l; l--) {
+                ll cid = id(l);
+                tot -= cal(cid);
+                ++cnt[cid][str[l] - 'a'];
+                if (l + diff > n - diff) ++cnt[cid][str[l + diff] - 'a'];
+                tot += cal(cid);
+                while (tot > m && r > l) {
+                    ll nid = id(r);
+                    tot -= cal(nid);
+                    --cnt[nid][str[r + diff] - 'a'];
+                    tot += cal(nid);
+                    --r;
+                }
+                umx(ans, r - l + 1);
+            }
+            for (ll i = 0; i < diff; i++) memset(cnt[i], 0, sizeof(cnt[i]));
+        }
+        cout << ans << nl;
+    }
     return 0;
 }

@@ -1,5 +1,7 @@
 #include <bits/stdc++.h>
 
+#include <cstdlib>
+
 using namespace std;
 
 //{{{ Def
@@ -105,6 +107,7 @@ void solve() {
         if (system("diff -Z wrong.out std.out")) {
             break;
         }
+        system("cat test.out");
         cerr << "!!!" << endl;
     }
 }

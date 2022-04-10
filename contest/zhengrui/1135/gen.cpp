@@ -1,11 +1,5 @@
 // #pragma GCC optimize("Ofast", "-funroll-loops")
 // #pragma GCC target("sse4.1", "sse4.2", "ssse3", "sse3", "sse2", "sse", "avx2", "avx", "popcnt")
-#ifdef LOCAL
-#define dbg(x) cerr << #x << " = " << (x) << endl
-#else
-#define dbg(...) 42
-#define NDEBUG
-#endif
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -121,5 +115,14 @@ ll n, m, arr[MXN];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
+    /* freopen("gen.in","r",stdin); */
+    freopen("test.in", "w", stdout);
+    n = ri(1, 80), m = ri(1, n);
+    /* n = 500, m = 250; */
+    cerr << endl << n << " " << m << endl;
+    cout << n << " " << m << nl;
+    for (ll i = 1; i <= n; i++, cout << nl)
+        for (ll j = 1; j <= n; j++) cout << ri(0, 10000) << " "; // cout << ((i + j) & 1 ? 0 : 10000) << " ";
+
     return 0;
 }

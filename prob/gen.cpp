@@ -1,58 +1,36 @@
-
+// #pragma GCC optimize("Ofast", "-funroll-loops")
+// #pragma GCC target("sse4.1", "sse4.2", "ssse3", "sse3", "sse2", "sse", "avx2", "avx", "popcnt")
 #include <bits/stdc++.h>
+
 using namespace std;
 //{{{ Def
 #define fi first
 #define se second
-#define pb push_back
+#define vec vector
+#define all(x) (x).begin(), (x).end()
+#define unq(x) (x).erase(unique(all(x)), (x).end())
 
-#ifdef ONLINE_JUDGE
-#define logf(fmt...) void()
-#else
-#define logf(fmt...) fprintf(stderr, fmt)
-#endif
-
-#define va2d(x, y) x[(y.fi)][(y.se)]
-
-typedef long long ll;
-typedef unsigned long long ull;
-typedef double db;
-typedef long double ld;
-typedef pair<ll, ll> pi;
-mt19937_64 myrand(chrono::system_clock::now().time_since_epoch().count());
+using ll = long long;
+using ull = unsigned long long;
+using db = double;
+using ld = long double;
+using pi = pair<ll, ll>;
 //}}}
-//{{{ FastMod
-#ifdef __SIZEOF_INT128__
-constexpr ull top64(ull x, ull y) { return (__uint128_t)x * y >> 64; }
-#else
-constexpr ull top64(ull x, ull y) {
-    ull a = x >> 32, b = x & 0xffffffff;
-    ull c = y >> 32, d = y & 0xffffffff;
-    ull ac = a * c, bc = b * c, ad = a * d, bd = b * d;
-    ull mid34 = (bd >> 32) + (bc & 0xffffffff) + (ad & 0xffffffff);
-    ull upper64 = ac + (bc >> 32) + (ad >> 32) + (mid34 >> 32);
-    return upper64;
-}
-#endif
-struct brt {
-    ull m, b;
-    constexpr brt(const ull &m = 1) : m(m), b(((ull)1 << 63) / m << 1) {}
-    friend constexpr ull operator/(const ull &a, const brt &mod) {
-        ull r = top64(mod.b, a) + 1;
-        return r - ((a - r * mod.m) >> 63);
-    }
-    friend constexpr ull operator%(const ull &a, const brt &mod) {
-        ull r = a - mod.m * top64(mod.b, a);
-        return r >= mod.m ? r - mod.m : r;
-    }
-};
-//}}}
-constexpr ll INF = 1e18;
-constexpr brt P(1e9 + 7);
-constexpr ll MXN = 1e6 + 5;
 //{{{ Func
 template <typename T>
-constexpr T qpow(T x, ll y) {
+pair<T, T> operator+(const pair<T, T> &x, const pair<T, T> &y) {
+    return {x.fi + y.fi, x.se + y.se};
+}
+template <typename T>
+istream &operator>>(istream &is, pair<T, T> &y) {
+    return is >> y.fi >> y.se;
+}
+template <typename T>
+ostream &operator<<(ostream &os, const pair<T, T> &y) {
+    return os << '(' << y.fi << ',' << y.se << ')';
+}
+template <typename T>
+T qpow(T x, ll y) {
     T r(1);
     while (y) {
         if (y & 1) r = r * x;
@@ -60,86 +38,95 @@ constexpr T qpow(T x, ll y) {
     }
     return r;
 }
-constexpr ll gcd(ll x, ll y) { return y ? gcd(y, x % y) : x; }
+ll gcd(ll a, ll b) {
+    if (a < 0) a = -a;
+    if (b < 0) b = -b;
+    if (!a || !b) return a | b;
+    ll U = __builtin_ctzll(a), V = __builtin_ctzll(b);
+    a >>= U, b >>= V;
+    if (U > V) U = V;
+    while (a) {
+        if (a < b) swap(a, b);
+        a -= b;
+        a >>= __builtin_ctzll(a);
+    }
+    return b << U;
+}
 template <typename T>
-constexpr void umx(T &x, T y) {
+void umx(T &x, const T &y) {
     x = max(x, y);
 }
 template <typename T>
-constexpr void umn(T &x, T y) {
+void umn(T &x, const T &y) {
     x = min(x, y);
 }
-constexpr ll abs(pi x) { return (x.fi < 0 ? -x.fi : x.fi) + (x.se < 0 ? -x.se : x.se); }
-ll randint(ll l, ll r) {
-    uniform_int_distribution<ll> res(l, r);
-    return res(myrand);
+bool inrng(const ll &x, const ll &l, const ll &r) { return l <= x && x <= r; }
+bool insqr(const pi &x, const pi &lt, const pi &rb) {
+    return lt.fi <= x.fi && x.fi <= rb.fi && lt.se <= x.se && x.se <= rb.se;
 }
-ld randdb(ld l, ld r) {
-    uniform_real_distribution<ld> res(l, r);
-    return res(myrand);
+void setp(const ll &x) {
+    cout.flags(ios::fixed);
+    cout.precision(x);
 }
+template <typename T = ll>
+T nxt() {
+    T x;
+    cin >> x;
+    return x;
+}
+mt19937_64 mr(chrono::system_clock::now().time_since_epoch().count());
+ll ri(const ll &l, const ll &r) { return uniform_int_distribution<ll>(l, r)(mr); }
+ld rd(const ld &l, const ld &r) { return uniform_real_distribution<ld>(l, r)(mr); }
 //}}}
+const ll P = 1e9 + 7;
 //{{{ Type
-constexpr pi go[] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
-constexpr pi operator+(const pi &x, const pi &y) { return pi(x.fi + y.fi, x.se + y.se); }
-constexpr pi operator-(const pi &x, const pi &y) { return pi(x.fi - y.fi, x.se - y.se); }
-constexpr pi operator*(const pi &x, const ll &y) { return pi(x.fi * y, x.se * y); }
-struct mll {
-    ll v;
-    constexpr explicit mll(ll _v = 0) : v(_v) {}
-    constexpr explicit operator ll() const { return v; }
-    mll operator+(const mll &y) const { return mll((v + y.v) % P); }
-    mll operator-(const mll &y) const { return mll((P.m + v - y.v) % P); }
-    mll operator*(const mll &y) const { return mll((v * y.v) % P); }
-    mll operator/(const mll &y) const { return mll((v * (ll)qpow(y, P.m - 2)) % P); }
-    mll &operator=(const mll &y) { return v = y.v, *this; }
-    mll &operator+=(const mll &y) { return v = (v + y.v) % P, *this; }
-    mll &operator-=(const mll &y) { return v = (P.m + v - y.v) % P, *this; }
-    mll &operator*=(const mll &y) { return v = v * y.v % P, *this; }
-    mll &operator/=(const mll &y) { return v = v * (ll)qpow(y, P.m - 2) % P, *this; }
-    constexpr bool operator==(const mll &y) const { return v == y.v; }
-    constexpr bool operator!=(const mll &y) const { return v != y.v; }
-};
-constexpr mll ltm(const ll &x) { return mll(x % P); }
-template <typename T>
-struct myvec {
-    T *v;
-    int sz, dsz;
-    myvec() { v = NULL, sz = dsz = 0; }
-    ~myvec() { free(v); }
-    operator T *() const { return v; }
-    T *begin() { return v; }
-    T *end() { return v + sz; }
-    void rsz(int x) { v = (T *)realloc(v, sizeof(T) * (dsz = sz = x)); }
-    void pb(T x) {
-        if (sz == dsz) v = (T *)realloc(v, sizeof(T) * (dsz = dsz << 1 | 1));
-        v[sz++] = x;
+inline int redu(const int &x) { return x >= P ? x - P : x; }
+inline int incr(const int &x) { return x + ((x >> 31) & P); }
+struct mod {
+    int v;
+    mod() {}
+    template <typename T>
+    mod(const T &_v) : v(_v) {}
+    explicit operator ll() const { return v; }
+    explicit operator int() const { return v; }
+    mod operator+(const mod &y) const { return mod(redu(v + y.v)); }
+    mod operator-(const mod &y) const { return mod(incr(v - y.v)); }
+    mod operator*(const mod &y) const { return mod((ll)v * y.v % P); }
+    mod operator/(const mod &y) const { return mod((ll)v * qpow(y, P - 2).v % P); }
+    mod &operator+=(const mod &y) { return v = redu(v + y.v), *this; }
+    mod &operator-=(const mod &y) { return v = incr(v - y.v), *this; }
+    mod &operator*=(const mod &y) { return v = (ll)v * y.v % P, *this; }
+    mod &operator/=(const mod &y) { return v = (ll)v * qpow(y, P - 2).v % P, *this; }
+    bool operator==(const mod &y) const { return v == y.v; }
+    bool operator!=(const mod &y) const { return v != y.v; }
+    friend istream &operator>>(istream &is, mod &y) {
+        ll x;
+        is >> x;
+        return y.v = incr(x % P), is;
     }
-    void fill(T x) {
-        for (int i = 0; i < sz; i++) v[i] = x;
-    }
+    friend ostream &operator<<(ostream &os, const mod &y) { return os << y.v; }
 };
 //}}}
-ll n, m;
-ll arr[MXN];
+const char nl = '\n';
+const ll INF = 1e18;
+const ll MXN = 1e6 + 5;
 
-ll MXV = 5;
+ll n, m, arr[MXN];
+
 int main(int argc, char *argv[]) {
-    n = randint(2,2), m = randint(1, 1);
-    cout << n << " " << m << endl;
-    for (int i = 1; i <= n * 2; i++) {
-        /* cout<<"0 0 0\n"; */
-        cout << randint(1, MXV) << " ";
-        cout << randint(1, MXV) << " ";
-        cout << randint(1, MXV) << endl;
-    }
-    while (m--) {
-        ll u, v;
-        u = randint(1, n * 2), v = randint(1, n * 2);
-        while ((u + 1) / 2 == (v + 1) / 2) u = randint(1, n * 2), v = randint(1, n * 2);
-        cout << u << " " << v << " ";
-        cout << randint(1, MXV) << " ";
-        cout << randint(1, MXV) << endl;
+    ll t = 1;
+    cout << t << nl;
+    while (t--) {
+        ll n = ri(1, 5);
+        cout << n << nl;
+
+        while (n--) {
+            ll m = ri(1, 5);
+            while (m--) {
+                cout << (char)ri('a', 'c');
+            }
+            cout << nl;
+        }
     }
 
     return 0;

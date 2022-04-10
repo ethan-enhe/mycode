@@ -1,12 +1,7 @@
 // #pragma GCC optimize("Ofast", "-funroll-loops")
 // #pragma GCC target("sse4.1", "sse4.2", "ssse3", "sse3", "sse2", "sse", "avx2", "avx", "popcnt")
-#ifdef LOCAL
-#define dbg(x) cerr << #x << " = " << (x) << endl
-#else
-#define dbg(...) 42
-#define NDEBUG
-#endif
 #include <bits/stdc++.h>
+#include <cstdlib>
 
 using namespace std;
 //{{{ Def
@@ -121,5 +116,18 @@ ll n, m, arr[MXN];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
+    for(ll i=1;i<=1000;i++){
+        system("./gen");
+        system("./B");
+        system("./force");
+        if(system("diff s.out f.out")){
+            break;
+
+        }
+        cout<<"AC"<<i<<endl;
+        system("cat s.out");
+
+    }
     return 0;
 }
+

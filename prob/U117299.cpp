@@ -1,11 +1,5 @@
 // #pragma GCC optimize("Ofast", "-funroll-loops")
 // #pragma GCC target("sse4.1", "sse4.2", "ssse3", "sse3", "sse2", "sse", "avx2", "avx", "popcnt")
-#ifdef LOCAL
-#define dbg(x) cerr << #x << " = " << (x) << endl
-#else
-#define dbg(...) 42
-#define NDEBUG
-#endif
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -115,11 +109,25 @@ struct mod {
 //}}}
 const char nl = '\n';
 const ll INF = 1e18;
-const ll MXN = 1e6 + 5;
+const ll MXN = 4005;
 
-ll n, m, arr[MXN];
+ll n, m, c;
+//有 i 列，互不相同，且行互不相同的方案数
+mod dp[MXN], s[MXN][MXN];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
+    cin >> n >> m >> c;
+    s[0][0] = 1;
+    for (ll i = 1; i <= m; i++)
+        for (ll j = 1; j <= i; j++) s[i][j] = s[i - 1][j] * j + s[i - 1][j - 1];
+    mod line = 1;
+    for (ll i = 1; i <= m; i++) {
+        line *= c;
+        dp[i] = 1;
+        for (ll j = 0; j < n; j++) dp[i] *= line - j;
+        for (ll j = i - 1; j; j--) dp[i] -= dp[j] * s[i][j];
+    }
+    cout << dp[m];
     return 0;
 }

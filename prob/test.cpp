@@ -1,3 +1,11 @@
+// #pragma GCC optimize("Ofast", "-funroll-loops")
+// #pragma GCC target("sse4.1", "sse4.2", "ssse3", "sse3", "sse2", "sse", "avx2", "avx", "popcnt")
+#ifdef LOCAL
+#define dbg(x) cerr << #x << " = " << (x) << endl
+#else
+#define dbg(...) 42
+#define NDEBUG
+#endif
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -5,38 +13,26 @@ using namespace std;
 #define fi first
 #define se second
 #define vec vector
-#define log2(x) (63 - __builtin_clzll(x))
-#define popc(x) __builtin_popcountll(x)
 #define all(x) (x).begin(), (x).end()
 #define unq(x) (x).erase(unique(all(x)), (x).end())
-#define gen generate
 
 using ll = long long;
 using ull = unsigned long long;
 using db = double;
 using ld = long double;
 using pi = pair<ll, ll>;
-mt19937_64 mr(chrono::system_clock::now().time_since_epoch().count());
 //}}}
 //{{{ Func
-template <typename T1, typename T2>
-pair<T1, T2> operator+(const pair<T1, T2> &x, const pair<T1, T2> &y) {
+template <typename T>
+pair<T, T> operator+(const pair<T, T> &x, const pair<T, T> &y) {
     return {x.fi + y.fi, x.se + y.se};
 }
-template <typename T1, typename T2>
-pair<T1, T2> operator-(const pair<T1, T2> &x, const pair<T1, T2> &y) {
-    return {x.fi - y.fi, x.se - y.se};
-}
-template <typename T1, typename T2>
-pair<T1, T2> operator*(const pair<T1, T2> &x, const ll &y) {
-    return {x.fi * y, x.se * y};
-}
-template <typename T1, typename T2>
-istream &operator>>(istream &is, pair<T1, T2> &y) {
+template <typename T>
+istream &operator>>(istream &is, pair<T, T> &y) {
     return is >> y.fi >> y.se;
 }
-template <typename T1, typename T2>
-ostream &operator<<(ostream &os, const pair<T1, T2> &y) {
+template <typename T>
+ostream &operator<<(ostream &os, const pair<T, T> &y) {
     return os << '(' << y.fi << ',' << y.se << ')';
 }
 template <typename T>
@@ -48,7 +44,20 @@ T qpow(T x, ll y) {
     }
     return r;
 }
-ll gcd(ll x, ll y) { return y ? gcd(y, x % y) : x; }
+ll gcd(ll a, ll b) {
+    if (a < 0) a = -a;
+    if (b < 0) b = -b;
+    if (!a || !b) return a | b;
+    ll U = __builtin_ctzll(a), V = __builtin_ctzll(b);
+    a >>= U, b >>= V;
+    if (U > V) U = V;
+    while (a) {
+        if (a < b) swap(a, b);
+        a -= b;
+        a >>= __builtin_ctzll(a);
+    }
+    return b << U;
+}
 template <typename T>
 void umx(T &x, const T &y) {
     x = max(x, y);
@@ -57,25 +66,13 @@ template <typename T>
 void umn(T &x, const T &y) {
     x = min(x, y);
 }
-ll abs(const pi &x) { return (x.fi < 0 ? -x.fi : x.fi) + (x.se < 0 ? -x.se : x.se); }
+bool inrng(const ll &x, const ll &l, const ll &r) { return l <= x && x <= r; }
 bool insqr(const pi &x, const pi &lt, const pi &rb) {
     return lt.fi <= x.fi && x.fi <= rb.fi && lt.se <= x.se && x.se <= rb.se;
-}
-ll ri(const ll &l, const ll &r) {
-    uniform_int_distribution<ll> res(l, r);
-    return res(mr);
-}
-ld rd(const ld &l, const ld &r) {
-    uniform_real_distribution<ld> res(l, r);
-    return res(mr);
 }
 void setp(const ll &x) {
     cout.flags(ios::fixed);
     cout.precision(x);
-}
-template <typename T>
-void prt(T &x, const ll &l, const ll &r, const char &join = ' ') {
-    for (ll i = l; i <= r; i++) cout << x[i] << join;
 }
 template <typename T = ll>
 T nxt() {
@@ -83,6 +80,9 @@ T nxt() {
     cin >> x;
     return x;
 }
+mt19937_64 mr(chrono::system_clock::now().time_since_epoch().count());
+ll ri(const ll &l, const ll &r) { return uniform_int_distribution<ll>(l, r)(mr); }
+ld rd(const ld &l, const ld &r) { return uniform_real_distribution<ld>(l, r)(mr); }
 //}}}
 const ll P = 1e9 + 7;
 //{{{ Type
@@ -90,42 +90,37 @@ inline int redu(const int &x) { return x >= P ? x - P : x; }
 inline int incr(const int &x) { return x + ((x >> 31) & P); }
 struct mod {
     int v;
-    mod() : v() {}
+    mod() {}
     template <typename T>
-    mod(const T &_v) : v(_v) {
-        if (v >= P || v < 0) v = incr(v % P);
-    }
+    mod(const T &_v) : v(_v) {}
     explicit operator ll() const { return v; }
     explicit operator int() const { return v; }
-    mod operator+(const mod &y) const { return mod{redu(v + y.v)}; }
-    mod operator-(const mod &y) const { return mod{incr(v - y.v)}; }
-    mod operator*(const mod &y) const { return mod{1ll * v * y.v % P}; }
-    mod operator/(const mod &y) const { return mod{1ll * v * (ll)qpow(y, P - 2) % P}; }
+    mod operator+(const mod &y) const { return mod(redu(v + y.v)); }
+    mod operator-(const mod &y) const { return mod(incr(v - y.v)); }
+    mod operator*(const mod &y) const { return mod((ll)v * y.v % P); }
+    mod operator/(const mod &y) const { return mod((ll)v * qpow(y, P - 2).v % P); }
     mod &operator+=(const mod &y) { return v = redu(v + y.v), *this; }
     mod &operator-=(const mod &y) { return v = incr(v - y.v), *this; }
-    mod &operator*=(const mod &y) { return v = 1ll * v * y.v % P, *this; }
-    mod &operator/=(const mod &y) { return v = 1ll * v * (ll)qpow(y, P - 2) % P, *this; }
+    mod &operator*=(const mod &y) { return v = (ll)v * y.v % P, *this; }
+    mod &operator/=(const mod &y) { return v = (ll)v * qpow(y, P - 2).v % P, *this; }
     bool operator==(const mod &y) const { return v == y.v; }
     bool operator!=(const mod &y) const { return v != y.v; }
     friend istream &operator>>(istream &is, mod &y) {
         ll x;
         is >> x;
-        return y = mod(x), is;
+        return y.v = incr(x % P), is;
     }
     friend ostream &operator<<(ostream &os, const mod &y) { return os << y.v; }
 };
 //}}}
-const ll INF = 1e18;
-const pi go[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 const char nl = '\n';
+const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
 ll n, m, arr[MXN];
-char str[MXN];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    setp(6);
+    dbg(n);
     return 0;
 }
-

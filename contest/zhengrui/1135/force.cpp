@@ -1,12 +1,7 @@
-// #pragma GCC optimize("Ofast", "-funroll-loops")
-// #pragma GCC target("sse4.1", "sse4.2", "ssse3", "sse3", "sse2", "sse", "avx2", "avx", "popcnt")
-#ifdef LOCAL
-#define dbg(x) cerr << #x << " = " << (x) << endl
-#else
-#define dbg(...) 42
-#define NDEBUG
-#endif
 #include <bits/stdc++.h>
+
+#include <algorithm>
+#include <vector>
 
 using namespace std;
 //{{{ Def
@@ -20,12 +15,20 @@ using ll = long long;
 using ull = unsigned long long;
 using db = double;
 using ld = long double;
-using pi = pair<ll, ll>;
+using pi = pair<int, int>;
 //}}}
 //{{{ Func
 template <typename T>
 pair<T, T> operator+(const pair<T, T> &x, const pair<T, T> &y) {
     return {x.fi + y.fi, x.se + y.se};
+}
+template <typename T>
+pair<T, T> operator-(const pair<T, T> &x, const pair<T, T> &y) {
+    return {x.fi - y.fi, x.se - y.se};
+}
+template <typename T>
+pair<T, T> &operator+=(pair<T, T> &x, const pair<T, T> &y) {
+    return x.fi += y.fi, x.se += y.se, x;
 }
 template <typename T>
 istream &operator>>(istream &is, pair<T, T> &y) {
@@ -84,7 +87,7 @@ mt19937_64 mr(chrono::system_clock::now().time_since_epoch().count());
 ll ri(const ll &l, const ll &r) { return uniform_int_distribution<ll>(l, r)(mr); }
 ld rd(const ld &l, const ld &r) { return uniform_real_distribution<ld>(l, r)(mr); }
 //}}}
-const ll P = 1e9 + 7;
+const ll P = 1e4 + 7;
 //{{{ Type
 inline int redu(const int &x) { return x >= P ? x - P : x; }
 inline int incr(const int &x) { return x + ((x >> 31) & P); }
@@ -114,12 +117,72 @@ struct mod {
 };
 //}}}
 const char nl = '\n';
-const ll INF = 1e18;
-const ll MXN = 1e6 + 5;
+const ll MXN = 505, MXR = 1e4 + 5;
 
-ll n, m, arr[MXN];
+ll n, m, arr[MXN][MXN];
+
+struct p {
+    ll v, x, y;
+} inc[MXN * MXN];
+pi pre[MXN][MXN];
+//左(左上角)右（右上角）                       上下
+ll matgo[2][MXN][MXN];
+#define prt(x)                                \
+    cerr << #x << ":\n";                      \
+    for (ll i = 1; i <= n; i++, cerr << endl) \
+        for (ll j = 1; j <= n; j++) cerr << x[i][j] << " ";
+void solve(bool side) {
+    ll ind = 0;
+    for (ll i = 1; i <= n; i++)
+        for (ll j = 1; j <= n; j++) {
+            inc[++ind] = {arr[i][j], i, j};
+            pre[i][j] = {0, 0};
+        }
+    sort(inc + 1, inc + 1 + ind, [](const p &x, const p &y) { return x.v < y.v; });
+    for (ll i = 1; i <= ind; i++) {
+        p &cur = inc[i];
+        pi delt = {cur.v, 1}, sum;
+        for (ll j = cur.y; j <= n; j++) pre[j][cur.x] += delt;
+        auto sl = [&](ll x, ll l, ll r) -> ll {
+            sum = pre[r][x] - pre[l][x];
+            return sum.se * cur.v - sum.fi;
+        };
+        ll r1 = cur.y - side, l1 = max(0ll, cur.y - m);
+        ll r2 = min(n, cur.y + m - 1), l2 = cur.y + side - 1;
+        ll slf = 0, srh = 0;
+        ll st = min(cur.x, n - m + 1);
+        for (ll j = min(n, st + m); j > st; j--) {
+            slf += sl(j, l1, r1);
+            srh += sl(j, l2, r2);
+        }
+        for (ll j = st; j && j + m - 1 >= cur.x; j--) {
+            slf += sl(j, l1, r1) - sl(j + m, l1, r1);
+            srh += sl(j, l2, r2) - sl(j + m, l2, r2);
+            matgo[0][cur.y][j] += slf;
+            matgo[1][cur.y][j] += srh;
+        }
+    }
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
+    freopen("test.in", "r", stdin);
+    freopen("f.out", "w", stdout);
+    cin >> n >> m;
+    for (int i = 1; i <= n; i++)
+        for (int j = 1; j <= n; j++) cin >> arr[i][j];
+    ll ans = 0;
+    for (ll i = 1; i + m - 1 <= n; i++)
+        for (ll j = 1; j + m - 1 <= n; j++)
+            for (ll k = i; k <= i + m - 1; k++) {
+                for (ll l = i; l <= i + m - 1; l++)
+                    for (ll p = j; p <= j + m - 1; p++)
+                        for (ll q = j; q <= j + m - 1; q++) {
+                            ans += abs(arr[k][p] - arr[l][q]);
+                        }
+                ans %= P;
+            }
+    cout<<ans;
+
     return 0;
 }

@@ -83,6 +83,7 @@ nmap <leader>w <cmd>w!<cr>
 set nobackup
 set nowritebackup
 set noswapfile
+set udf
 "}}}
 "{{{ INTERFACE
 set completeopt=menu,menuone,noselect
@@ -254,10 +255,10 @@ map <C-c> :Commentary<cr>
 " autocmd FileType cpp setlocal commentstring=//%s cindent
 autocmd FileType cpp setlocal cindent
 map <F8> <cmd>call RunCode()<cr>
-map <F9> <cmd>call CompileCode('-O2')<cr>
 map <leader>ts <cmd>call RuninFloat('cf test')<cr>
 map <leader>sm <cmd>call RuninFloat('cf submit')<cr>
-map <leader><F9> <cmd>call CompileCode('-O2 -Wall -fsanitize=address,undefined')<cr>
+map <F9> <cmd>call CompileCode('-O2 -DLOCAL -Wall -fsanitize=address,undefined')<cr>
+map <leader><F9> <cmd>call CompileCode('-O2')<cr>
 let s:res=""
 function! s:OnEvent(job_id, data, event) dict
     if a:event == 'exit'
@@ -277,7 +278,7 @@ let g:pauser=g:iswindows?'pause':'bash -c "read -p Press\ enter\ to\ continue...
 func! CompileCode(copt)
     exec "w"
     echo "compiling... ".a:copt
-    let cpl=jobstart((g:iswindows?"g++ -Wl,-stack=536870912":"clang++")."\ ".a:copt."\ ".expand("%")."\ -o\ ".expand("%:t:r"),s:callbacks)
+    let cpl=jobstart((g:iswindows?"g++ -Wl,-stack=536870912":"g++")."\ ".a:copt."\ ".expand("%")."\ -o\ ".expand("%:t:r"),s:callbacks)
 endfunction
 func! RunCode()
     exec "w"
