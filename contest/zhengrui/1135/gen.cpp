@@ -117,8 +117,8 @@ int main() {
     cin.tie(0);
     /* freopen("gen.in","r",stdin); */
     freopen("test.in", "w", stdout);
-    n = ri(1, 80), m = ri(1, n);
-    /* n = 500, m = 250; */
+    /* n = ri(1, 80), m = ri(1, n); */
+    n = 500, m = 250;
     cerr << endl << n << " " << m << endl;
     cout << n << " " << m << nl;
     for (ll i = 1; i <= n; i++, cout << nl)
