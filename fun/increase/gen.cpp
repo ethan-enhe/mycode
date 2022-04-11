@@ -1,6 +1,6 @@
-// #pragma GCC optimize("O3,unroll-loops")
-// #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
-// #pragma GCC target("sse,sse2,sse3,ssse3,sse4.1,sse4.2,avx,avx2,bmi,bmi2,lzcnt,popcnt")
+
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
 #ifdef LOCAL
 #define dbg(x) cerr << #x << " = " << (x) << endl
 #else
@@ -107,9 +107,25 @@ const char nl = '\n';
 const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
-ll n, m, arr[MXN];
+ll n, m, t, arr[MXN];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
+    freopen("test.in", "w", stdout);
+    /* freopen("test.out","w",stdout); */
+    double rate = 20;
+    n = 1e5, m = ri(1, 1e18);
+    t = rate * n;
+    cout << n << " " << m << nl;
+    iota(arr + 1, arr + 1 + n, 1);
+    /* reverse(arr + 1, arr + 1 + n); */
+    shuffle(arr + 1, arr + 1 + n, mr);
+    while (t--) {
+        ll i = ri(1, n), j = ri(1, n);
+        if (i > j) swap(i, j);
+        if (arr[i] < arr[j]) swap(arr[i], arr[j]);
+    }
+    for (ll i = 1; i <= n; i++) cout << arr[i] << " ";
     return 0;
 }
+
