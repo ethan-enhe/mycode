@@ -3,6 +3,7 @@ set sw=4
 set cin
 set hls is
 set sm mat=2
+set mouse=a
 color desert
 
 inoremap jj <esc>
