@@ -359,16 +359,17 @@ if g:usecoc
     Plug 'neoclide/coc.nvim', {'branch': 'release'}
     " Plug 'jackguo380/vim-lsp-cxx-highlight'
 else
+    Plug 'github/copilot.vim'
     " Plug 'w0rp/ale'
-    Plug 'neovim/nvim-lspconfig'
-    Plug 'hrsh7th/cmp-nvim-lsp'
-    Plug 'hrsh7th/cmp-buffer'
-    Plug 'hrsh7th/cmp-path'
-    Plug 'hrsh7th/cmp-cmdline'
-    Plug 'hrsh7th/nvim-cmp'
+    " Plug 'neovim/nvim-lspconfig'
+    " Plug 'hrsh7th/cmp-nvim-lsp'
+    " Plug 'hrsh7th/cmp-buffer'
+    " Plug 'hrsh7th/cmp-path'
+    " Plug 'hrsh7th/cmp-cmdline'
+    " Plug 'hrsh7th/nvim-cmp'
 
-    Plug 'SirVer/ultisnips'
-    Plug 'quangnguyen30192/cmp-nvim-ultisnips'
+    " Plug 'SirVer/ultisnips'
+    " Plug 'quangnguyen30192/cmp-nvim-ultisnips'
 endif
 call plug#end()
 "}}}
@@ -784,136 +785,136 @@ if g:usecoc
                 \ })
     " }}}
 else
-    " {{{ ALE
-    "let g:ale_set_highlights = 0
-    "let g:ale_completion_autoimport = 1
-    "let g:ale_echo_msg_error_str = 'E'
-    "let g:ale_echo_msg_warning_str = 'W'
-    "let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+    "" {{{ ALE
+    ""let g:ale_set_highlights = 0
+    ""let g:ale_completion_autoimport = 1
+    ""let g:ale_echo_msg_error_str = 'E'
+    ""let g:ale_echo_msg_warning_str = 'W'
+    ""let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 
-    ""普通模式下，sp前往上一个错误或警告，sn前往下一个错误或警告
-    "nmap sp <Plug>(ale_previous_wrap)
-    "nmap sn <Plug>(ale_next_wrap)
+    """普通模式下，sp前往上一个错误或警告，sn前往下一个错误或警告
+    ""nmap sp <Plug>(ale_previous_wrap)
+    ""nmap sn <Plug>(ale_next_wrap)
 
-    "let g:ale_completion_enabled = 1
-    ""<Leader>s触发/关闭语法检查
-    "nmap <Leader>s <cmd>ALEToggle<cr>
-    ""<Leader>d查看错误或警告的详细信息
-    "nmap <Leader>d <cmd>ALEDetail<cr>
-    ""使用clang对c和c++进行语法检查，对python使用pylint进行语法检查
-    "let g:ale_linters = {
-    "\   'c++': ['clang'],
-    "\   'c': ['clang'],
-    "\}
-    " }}}
-    " {{{ cmp
-lua <<EOF
--- Setup nvim-cmp.
-local cmp = require'cmp'
+    ""let g:ale_completion_enabled = 1
+    """<Leader>s触发/关闭语法检查
+    ""nmap <Leader>s <cmd>ALEToggle<cr>
+    """<Leader>d查看错误或警告的详细信息
+    ""nmap <Leader>d <cmd>ALEDetail<cr>
+    """使用clang对c和c++进行语法检查，对python使用pylint进行语法检查
+    ""let g:ale_linters = {
+    ""\   'c++': ['clang'],
+    ""\   'c': ['clang'],
+    ""\}
+    "" }}}
+    "" {{{ cmp
+"lua <<EOF
+"-- Setup nvim-cmp.
+"local cmp = require'cmp'
 
-cmp.setup({
-snippet = {
-    -- REQUIRED - you must specify a snippet engine
-    expand = function(args)
-        --vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-        -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
-        -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
-        vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
-    end,
-},
-mapping = {
-    ["<Tab>"] = cmp.mapping({
-        c = function()
-            if cmp.visible() then
-                cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
-            else
-                cmp.complete()
-            end
-        end,
-        i = function(fallback)
-            if cmp.visible() then
-                cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
-            elseif vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
-                vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_forward)"), 'm', true)
-            else
-                fallback()
-            end
-        end,
-        s = function(fallback)
-            if vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
-                vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_forward)"), 'm', true)
-            else
-                fallback()
-            end
-        end
-    }),
-    ["<S-Tab>"] = cmp.mapping({
-        c = function()
-            if cmp.visible() then
-                cmp.select_prev_item({ behavior = cmp.SelectBehavior.Insert })
-            else
-                cmp.complete()
-            end
-        end,
-        i = function(fallback)
-            if cmp.visible() then
-                cmp.select_prev_item({ behavior = cmp.SelectBehavior.Insert })
-            elseif vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
-                return vim.api.nvim_feedkeys( t("<Plug>(ultisnips_jump_backward)"), 'm', true)
-            else
-                fallback()
-            end
-        end,
-        s = function(fallback)
-            if vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
-                return vim.api.nvim_feedkeys( t("<Plug>(ultisnips_jump_backward)"), 'm', true)
-            else
-                fallback()
-            end
-        end
-    }),
-    ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
-    ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
-    ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
-    --['<C-y>'] = cmp.config.disable, -- Specify `cmp.config.disable` if you want to remove the default `<C-y>` mapping.
-    ['<C-e>'] = cmp.mapping({
-    i = cmp.mapping.abort(),
-    c = cmp.mapping.close(),
-    }),
-    ['<cr>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-},
-    sources = cmp.config.sources({
-    { name = 'nvim_lsp' },
-    --{ name = 'vsnip' }, -- For vsnip users.
-    -- { name = 'luasnip' }, -- For luasnip users.
-    { name = 'ultisnips' }, -- For ultisnips users.
-    -- { name = 'snippy' }, -- For snippy users.
-    }, {
-    { name = 'buffer' },
-    })
-})
+"cmp.setup({
+"snippet = {
+    "-- REQUIRED - you must specify a snippet engine
+    "expand = function(args)
+    "    --vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+    "    -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+    "    -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
+    "    vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+    "end,
+"},
+"mapping = {
+    "["<Tab>"] = cmp.mapping({
+    "    c = function()
+    "        if cmp.visible() then
+    "            cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
+    "        else
+    "            cmp.complete()
+    "        end
+    "    end,
+    "    i = function(fallback)
+    "        if cmp.visible() then
+    "            cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
+    "        elseif vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
+    "            vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_forward)"), 'm', true)
+    "        else
+    "            fallback()
+    "        end
+    "    end,
+    "    s = function(fallback)
+    "        if vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
+    "            vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_forward)"), 'm', true)
+    "        else
+    "            fallback()
+    "        end
+    "    end
+    "}),
+    "["<S-Tab>"] = cmp.mapping({
+    "    c = function()
+    "        if cmp.visible() then
+    "            cmp.select_prev_item({ behavior = cmp.SelectBehavior.Insert })
+    "        else
+    "            cmp.complete()
+    "        end
+    "    end,
+    "    i = function(fallback)
+    "        if cmp.visible() then
+    "            cmp.select_prev_item({ behavior = cmp.SelectBehavior.Insert })
+    "        elseif vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
+    "            return vim.api.nvim_feedkeys( t("<Plug>(ultisnips_jump_backward)"), 'm', true)
+    "        else
+    "            fallback()
+    "        end
+    "    end,
+    "    s = function(fallback)
+    "        if vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
+    "            return vim.api.nvim_feedkeys( t("<Plug>(ultisnips_jump_backward)"), 'm', true)
+    "        else
+    "            fallback()
+    "        end
+    "    end
+    "}),
+    "['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
+    "['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
+    "['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
+    "--['<C-y>'] = cmp.config.disable, -- Specify `cmp.config.disable` if you want to remove the default `<C-y>` mapping.
+    "['<C-e>'] = cmp.mapping({
+    "i = cmp.mapping.abort(),
+    "c = cmp.mapping.close(),
+    "}),
+    "['<cr>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+"},
+    "sources = cmp.config.sources({
+    "{ name = 'nvim_lsp' },
+    "--{ name = 'vsnip' }, -- For vsnip users.
+    "-- { name = 'luasnip' }, -- For luasnip users.
+    "{ name = 'ultisnips' }, -- For ultisnips users.
+    "-- { name = 'snippy' }, -- For snippy users.
+    "}, {
+    "{ name = 'buffer' },
+    "})
+"})
 
--- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
-cmp.setup.cmdline('/', {
-    sources = {
-        { name = 'buffer' }
-        }
-    })
+"-- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
+"cmp.setup.cmdline('/', {
+    "sources = {
+    "    { name = 'buffer' }
+    "    }
+    "})
 
--- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
-cmp.setup.cmdline(':', {
-    sources = cmp.config.sources({
-    { name = 'path' }
-    }, {
-    { name = 'cmdline' }
-    })
-})
+"-- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+"cmp.setup.cmdline(':', {
+    "sources = cmp.config.sources({
+    "{ name = 'path' }
+    "}, {
+    "{ name = 'cmdline' }
+    "})
+"})
 
--- Setup lspconfig.
-local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
--- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
-require('lspconfig')['clangd'].setup {}
-EOF
+"-- Setup lspconfig.
+"local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+"-- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
+"require('lspconfig')['clangd'].setup {}
+"EOF
 
-    " }}}
+    "" }}}
 endif
