@@ -1,7 +1,7 @@
 // #pragma GCC optimize("O3,unroll-loops")
 // #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
 // #pragma GCC target("sse,sse2,sse3,ssse3,sse4.1,sse4.2,avx,avx2,bmi,bmi2,lzcnt,popcnt")
-#include <cmath>
+#include <cstdlib>
 #ifdef LOCAL
 #define dbg(x) cerr << #x << " = " << (x) << endl
 #else
@@ -112,13 +112,16 @@ ll n, m, arr[MXN];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    db s = 3, a = 3;
-    for (ll i = 1; i <= 100000; i++) {
-        db nx = (sqrt(s * s + 36) - s) / 2;
-        s += nx;
-        a = nx;
-        cerr<<a<<endl;
+    for(ll i=1;i<=100000;i++){
+        system("./gen");
+        system("./my");
+        system("./fyq");
+        if(system("./chk")){
+            break;
+        }
+        cerr<<i<<endl;
+
     }
-    cerr<<s<<endl;
     return 0;
 }
+

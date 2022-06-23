@@ -27,7 +27,6 @@ using pi = pair<ll, ll>;
 //}}}
 //{{{ Func
 tpl pair<T, T> &operator+=(pair<T, T> &x, const pair<T, T> &y) { return x.fi += y.fi, x.se += y.se, x; }
-tpl pair<T, T> operator+(const pair<T, T> &x, const pair<T, T> &y) { return {x.fi + y.fi, x.se + y.se}; }
 tpl pair<T, T> &operator-=(pair<T, T> &x, const pair<T, T> &y) { return x.fi -= y.fi, x.se -= y.se, x; }
 tpl pair<T, T> operator-(const pair<T, T> &x, const pair<T, T> &y) { return {x.fi - y.fi, x.se - y.se}; }
 tpl pair<T, T> &operator*=(pair<T, T> &x, const ll &y) { return x.fi *= y, x.se *= y, x; }
@@ -108,17 +107,112 @@ const char nl = '\n';
 const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
-ll n, m, arr[MXN];
+ll T, n, m, arr[MXN], nx[MXN];
+ll A[MXN], B[MXN];
+ll lp[MXN], rp[MXN];
+ll last[MXN];
+void jmp(ll *x, ll y) {
+    if (x[y] == 0)
+        x[y] = last[y];
+    else if (x[y] <= n * 2)
+        x[y] = nx[x[y]];
+}
+
+pi mrg(pi x, pi y) {
+    if (x.fi == y.fi) return {x.fi, x.se + y.se};
+    return max(x, y);
+}
+
+struct node {
+    pi mx;
+    ll tag;
+} t[MXN << 2];
+#define ls p << 1
+#define rs p << 1 | 1
+void pull(ll p) { t[p].mx = mrg(t[ls].mx, t[rs].mx), t[p].tag = 0; }
+void addt(ll p, ll k) {
+    t[p].tag += k;
+    t[p].mx.fi += k;
+}
+void push(ll p) {
+    if (t[p].tag) {
+        addt(ls, t[p].tag);
+        addt(rs, t[p].tag);
+        t[p].tag = 0;
+    }
+}
+void build(ll p = 1, ll l = 1, ll r = n * 2) {
+    if (l == r) {
+        t[p] = {{0, 1}, 0};
+        return;
+    }
+    ll mid = (l + r) >> 1;
+    build(ls, l, mid);
+    build(rs, mid + 1, r);
+    pull(p);
+}
+void mdf(ll ml, ll mr, ll mv, ll p = 1, ll l = 1, ll r = n * 2) {
+    if (mr < l || ml > r) return;
+    if (ml <= l && r <= mr) {
+        addt(p, mv);
+        return;
+    }
+    push(p);
+    ll mid = (l + r) >> 1;
+    mdf(ml, mr, mv, ls, l, mid);
+    mdf(ml, mr, mv, rs, mid + 1, r);
+    pull(p);
+}
+pi qry(ll ml, ll mr, ll p = 1, ll l = 1, ll r = n * 2) {
+    if (mr < l || ml > r) return {-INF, 0};
+    if (ml <= l && r <= mr) return t[p].mx;
+    push(p);
+    ll mid = (l + r) >> 1;
+    return mrg(qry(ml, mr, ls, l, mid), qry(ml, mr, rs, mid + 1, r));
+}
+
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    db s = 3, a = 3;
-    for (ll i = 1; i <= 100000; i++) {
-        db nx = (sqrt(s * s + 36) - s) / 2;
-        s += nx;
-        a = nx;
-        cerr<<a<<endl;
+    cin >> T;
+    for (ll _t = 1; _t <= T; _t++) {
+        cin >> n >> m;
+        for (ll i = 1; i <= m; i++) {
+            cin >> A[i] >> B[i];
+            lp[i] = rp[i] = 0;
+            last[i] = 2 * n + 1;
+        }
+        for (ll i = 1; i <= n; i++) {
+            cin >> arr[i];
+            arr[i + n] = arr[i];
+        }
+        for (ll i = n * 2; i; i--) {
+            nx[i] = last[arr[i]];
+            last[arr[i]] = i;
+        }
+        build();
+        for (ll i = 1; i <= m; i++) {
+            ++B[i];
+            for (ll j = 1; j <= A[i]; j++) jmp(lp, i);
+            for (ll j = 1; j <= B[i]; j++) jmp(rp, i);
+            mdf(lp[i], rp[i] - 1, 1);
+            if (A[i]) mdf(0, last[i] - 1, 1);
+            /* cerr<<lp[i]<<" "<<rp[i]<<nl; */
+        }
+        ll ans = 0;
+        for (ll i = 1; i <= n; i++) {
+            pi r = qry(i + 1, i + n - 1);
+            /* for (ll i = 1; i <= n * 2; i++) cout << qry(i, i).fi; */
+            /* cout << endl; */
+            if (r.fi == m) ans += r.se;
+            ll x = lp[arr[i]], y = rp[arr[i]];
+            jmp(lp, arr[i]);
+            jmp(rp, arr[i]);
+            mdf(x, lp[arr[i]] - 1, -1);
+            mdf(y, rp[arr[i]] - 1, 1);
+            if (A[arr[i]]) mdf(i, nx[i] - 1, 1);
+        }
+        cout << "Case #" << _t << ": " << ans << nl;
     }
-    cerr<<s<<endl;
     return 0;
 }

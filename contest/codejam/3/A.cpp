@@ -1,7 +1,7 @@
 // #pragma GCC optimize("O3,unroll-loops")
 // #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
 // #pragma GCC target("sse,sse2,sse3,ssse3,sse4.1,sse4.2,avx,avx2,bmi,bmi2,lzcnt,popcnt")
-#include <cmath>
+#include <algorithm>
 #ifdef LOCAL
 #define dbg(x) cerr << #x << " = " << (x) << endl
 #else
@@ -108,17 +108,38 @@ const char nl = '\n';
 const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
-ll n, m, arr[MXN];
+ll t, n, m, arr[MXN], col[MXN];
 int main() {
-    ios::sync_with_stdio(0);
-    cin.tie(0);
-    db s = 3, a = 3;
-    for (ll i = 1; i <= 100000; i++) {
-        db nx = (sqrt(s * s + 36) - s) / 2;
-        s += nx;
-        a = nx;
-        cerr<<a<<endl;
+    /* ios::sync_with_stdio(0); */
+    /* cin.tie(0); */
+    cin >> t >> n >> m;
+    while (t--) {
+        ll res;
+        do {
+            for (ll i = 1; i <= n; i++) {
+                cin >> arr[i];
+                col[i] = 0;
+            }
+            ll colc = 0;
+            for (ll i = 1; i <= n; i++)
+                if (!col[i]) {
+                    ll p = i;
+                    do {
+                        if (!col[p]) {
+                            ++colc;
+                            col[p] = colc;
+                            if (arr[p] != i) {
+                                col[arr[p]] = colc;
+                                if (arr[arr[p]] != i) col[arr[arr[p]]] = colc;
+                            }
+                        }
+                        p = arr[p];
+                    } while (p != i);
+                }
+            for (ll i = 1; i <= n; i++) cout << col[i] << " ";
+            cout << endl;
+            cin >> res;
+        } while (res == 0);
     }
-    cerr<<s<<endl;
     return 0;
 }

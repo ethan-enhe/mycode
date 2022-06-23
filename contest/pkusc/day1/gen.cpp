@@ -1,7 +1,6 @@
 // #pragma GCC optimize("O3,unroll-loops")
 // #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
 // #pragma GCC target("sse,sse2,sse3,ssse3,sse4.1,sse4.2,avx,avx2,bmi,bmi2,lzcnt,popcnt")
-#include <cmath>
 #ifdef LOCAL
 #define dbg(x) cerr << #x << " = " << (x) << endl
 #else
@@ -112,13 +111,19 @@ ll n, m, arr[MXN];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    db s = 3, a = 3;
-    for (ll i = 1; i <= 100000; i++) {
-        db nx = (sqrt(s * s + 36) - s) / 2;
-        s += nx;
-        a = nx;
-        cerr<<a<<endl;
+    /* freopen("test.in","r",stdin); */
+    freopen("test.in", "w", stdout);
+    n = ri(1, 10);
+    ll sum = 0;
+    cout << n << nl;
+    for (ll i = 1; i <= (1 << n); i++) {
+        arr[i] = ri(1, 1e7);
+        sum += arr[i];
     }
-    cerr<<s<<endl;
+    for (ll i = 1; i <= (1 << n); i++) {
+        setp(7);
+        cout << (double)arr[i] / sum << " ";
+    }
     return 0;
 }
+
