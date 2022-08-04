@@ -1,10 +1,13 @@
-// #pragma GCC optimize("Ofast", "-funroll-loops")
-// #pragma GCC target("sse4.1", "sse4.2", "ssse3", "sse3", "sse2", "sse", "avx2", "avx", "popcnt")
+// #pragma GCC optimize("O3,unroll-loops")
+// #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
+// #pragma GCC target("sse,sse2,sse3,ssse3,sse4.1,sse4.2,avx,avx2,bmi,bmi2,lzcnt,popcnt")
+#ifdef LOCAL
+#define dbg(x) cerr << #x << " = " << (x) << endl
+#else
+#define dbg(...) 42
+#define NDEBUG
+#endif
 #include <bits/stdc++.h>
-
-#include <algorithm>
-#include <numeric>
-#include <vector>
 
 using namespace std;
 //{{{ Def
@@ -13,6 +16,7 @@ using namespace std;
 #define vec vector
 #define all(x) (x).begin(), (x).end()
 #define unq(x) (x).erase(unique(all(x)), (x).end())
+#define tpl template <typename T>
 
 using ll = long long;
 using ull = unsigned long long;
@@ -21,20 +25,15 @@ using ld = long double;
 using pi = pair<ll, ll>;
 //}}}
 //{{{ Func
-template <typename T>
-pair<T, T> operator+(const pair<T, T> &x, const pair<T, T> &y) {
-    return {x.fi + y.fi, x.se + y.se};
-}
-template <typename T>
-istream &operator>>(istream &is, pair<T, T> &y) {
-    return is >> y.fi >> y.se;
-}
-template <typename T>
-ostream &operator<<(ostream &os, const pair<T, T> &y) {
-    return os << '(' << y.fi << ',' << y.se << ')';
-}
-template <typename T>
-T qpow(T x, ll y) {
+tpl pair<T, T> &operator+=(pair<T, T> &x, const pair<T, T> &y) { return x.fi += y.fi, x.se += y.se, x; }
+tpl pair<T, T> operator+(const pair<T, T> &x, const pair<T, T> &y) { return {x.fi + y.fi, x.se + y.se}; }
+tpl pair<T, T> &operator-=(pair<T, T> &x, const pair<T, T> &y) { return x.fi -= y.fi, x.se -= y.se, x; }
+tpl pair<T, T> operator-(const pair<T, T> &x, const pair<T, T> &y) { return {x.fi - y.fi, x.se - y.se}; }
+tpl pair<T, T> &operator*=(pair<T, T> &x, const ll &y) { return x.fi *= y, x.se *= y, x; }
+tpl pair<T, T> operator*(const pair<T, T> &x, const ll &y) { return {x.fi * y, x.se * y}; }
+tpl istream &operator>>(istream &is, pair<T, T> &y) { return is >> y.fi >> y.se; }
+tpl ostream &operator<<(ostream &os, const pair<T, T> &y) { return os << '(' << y.fi << ',' << y.se << ')'; }
+tpl T qpow(T x, ll y) {
     T r(1);
     while (y) {
         if (y & 1) r = r * x;
@@ -56,14 +55,8 @@ ll gcd(ll a, ll b) {
     }
     return b << U;
 }
-template <typename T>
-void umx(T &x, const T &y) {
-    x = max(x, y);
-}
-template <typename T>
-void umn(T &x, const T &y) {
-    x = min(x, y);
-}
+tpl void umx(T &x, const T &y) { x = max(x, y); }
+tpl void umn(T &x, const T &y) { x = min(x, y); }
 bool inrng(const ll &x, const ll &l, const ll &r) { return l <= x && x <= r; }
 bool insqr(const pi &x, const pi &lt, const pi &rb) {
     return lt.fi <= x.fi && x.fi <= rb.fi && lt.se <= x.se && x.se <= rb.se;
@@ -89,18 +82,17 @@ inline int incr(const int &x) { return x + ((x >> 31) & P); }
 struct mod {
     int v;
     mod() {}
-    template <typename T>
-    mod(const T &_v) : v(_v) {}
+    tpl mod(const T &_v) : v(_v) { assert(_v >= 0 && _v < P); }
     explicit operator ll() const { return v; }
     explicit operator int() const { return v; }
-    mod operator+(const mod &y) const { return mod(redu(v + y.v)); }
-    mod operator-(const mod &y) const { return mod(incr(v - y.v)); }
-    mod operator*(const mod &y) const { return mod((ll)v * y.v % P); }
-    mod operator/(const mod &y) const { return mod((ll)v * qpow(y, P - 2).v % P); }
     mod &operator+=(const mod &y) { return v = redu(v + y.v), *this; }
     mod &operator-=(const mod &y) { return v = incr(v - y.v), *this; }
     mod &operator*=(const mod &y) { return v = (ll)v * y.v % P, *this; }
     mod &operator/=(const mod &y) { return v = (ll)v * qpow(y, P - 2).v % P, *this; }
+    mod operator+(const mod &y) const { return mod(*this) += y; }
+    mod operator-(const mod &y) const { return mod(*this) -= y; }
+    mod operator*(const mod &y) const { return mod(*this) *= y; }
+    mod operator/(const mod &y) const { return mod(*this) /= y; }
     bool operator==(const mod &y) const { return v == y.v; }
     bool operator!=(const mod &y) const { return v != y.v; }
     friend istream &operator>>(istream &is, mod &y) {
@@ -113,51 +105,35 @@ struct mod {
 //}}}
 const char nl = '\n';
 const ll INF = 1e18;
+const ll MXN = 1e6 + 5;
 
-ll n, k;
-vector<ll> arr, brr;
-
-void upd(vector<vector<ll>> &x) {
-    for (ll j = 1; j <= n; j++) umn(x[0][j], x[0][j - 1]);
-    for (ll i = 1; i <= n; i++) {
-        umn(x[i][i], x[i - 1][i]);
-        for (ll j = i + 1; j <= n; j++) umn(x[i][j], min(x[i - 1][j], x[i][j - 1]));
-    }
-}
-ll force() {
-    vector<vector<ll>> cur(n + 1, vector<ll>(n + 1, INF)), nx(n + 1, vector<ll>(n + 1, INF));
-    cur[0][0] = 0;
-    for (ll l = 1; l <= k; l++) {
-        upd(cur);
-        fill(all(nx[0]), INF);
-        for (ll i = 1; i <= n; i++) {
-            nx[i][0] = INF;
-            for (ll j = i; j <= n; j++) nx[i][j] = cur[i - 1][j - 1] + arr[i] + brr[j];
-        }
-        swap(cur, nx);
-    }
-    upd(cur);
-    return cur[n][n];
-}
-ll A() {
-    for (ll i = 1; i <= n; i++) arr[i] += brr[i];
-    sort(1 + all(arr));
-    return accumulate(arr.begin() + 1, arr.begin() + 1 + k, 0);
-}
-
+ll n, m, arr[MXN], brr[MXN];
 int main() {
-    freopen("world.in", "r", stdin);
-    freopen("world.out","w",stdout);
     ios::sync_with_stdio(0);
     cin.tie(0);
-    cin >> n >> k;
-    arr.resize(n + 1);
-    brr.resize(n + 1);
-    generate(1 + all(arr), nxt<ll>);
-    generate(1 + all(brr), nxt<ll>);
-    if (n <= (ll)1e4 + 5)
-        cout << force();
-    else
-        cout << A();
+    int t;
+    cin >> t;
+    while (t--) {
+        cin >> n >> m;
+        for (ll i = 1; i <= m; i++) cin >> arr[i];
+        sort(arr + 1, arr + 1 + m);
+        arr[0] = arr[m] - n;
+        for (ll i = 1; i <= m; i++) brr[i] = arr[i] - arr[i - 1] - 1;
+        sort(brr + 1, brr + 1 + m);
+        ll curt = 0, ans = m;
+        for (ll i = m; i; i--) {
+            if (curt * 2 < brr[i]) {
+                if (curt * 2 + 1 == brr[i]) {
+                    ans += curt * 2;
+                    curt++;
+                } else {
+                    ans += curt * 2 + 1;
+                    curt += 2;
+                }
+            }
+            else ans+=brr[i];
+        }
+        cout << ans << nl;
+    }
     return 0;
 }
