@@ -1,9 +1,13 @@
+
 // File:             mcmf.cpp
 // Author:           ethan
 // Created:          01/07/22
 // Description:      mcmf
 
 #include <bits/stdc++.h>
+
+#include <limits>
+#include <vector>
 
 using namespace std;
 
@@ -22,6 +26,16 @@ struct raw_flow {
     int s, t, cure[MXN];
     bool vis[MXN];
     T dis[MXN];
+    void clear() {
+        for (int i = 0; i < MXN; i++) {
+            g[i].clear();
+            cure[i] = 0;
+            vis[i] = 0;
+            dis[i] = 0;
+        }
+        s = t = 0;
+        while (!q.empty()) q.pop();
+    }
     void addedge(int u, int v, T c, T w) {
         g[u].push_back(edge(v, c, w, g[v].size()));
         g[v].push_back(edge(u, 0, -w, g[u].size() - 1));
@@ -85,6 +99,11 @@ struct lim_flow {
     raw_flow<MXN, T> f;
     T deg[MXN];
     pair<T, T> res;
+    void clear() {
+        f.clear();
+        for (int i = 0; i < MXN; i++) deg[i] = 0;
+        res = {0, 0};
+    }
     // 加边函数 起点 终点 流量下界 流量上界 [是否有负环=false]
     void addedge(int u, int v, T l, T r, T w, bool cycle = 0) {
         if (cycle && w < 0) {
@@ -98,6 +117,7 @@ struct lim_flow {
     }
     // 加单位边的函数（只求最大流，不求费用的时候用这个加边，跑的比较快）
     void adduedge(int u, int v, T l, T r) {
+        /* cerr << u << " " << v << " " << l << " " << r << endl; */
         deg[u] -= l, deg[v] += l;
         f.adduedge(u, v, r - l);
     }
@@ -106,17 +126,16 @@ struct lim_flow {
     // 0->最小费用可行流
     // 1->最小费用最大流
     // 2->最小费用最小流
-    // 返回值 {流量，费用} 如果没有可行流返回 {-1,-1}
-    pair<T, T> run(int super_s, int super_t, int s, int t, int opt = 1) {
+    pair<T, T> run(int ss, int st, int s, int t, int opt = 1) {
         T all = 0;
         for (int i = 0; i < MXN; i++) {
             if (deg[i] > 0)
-                f.addedge(super_s, i, deg[i], 0), all += deg[i];
+                f.addedge(ss, i, deg[i], 0), all += deg[i];
             else if (deg[i] < 0)
-                f.addedge(i, super_t, -deg[i], 0);
+                f.addedge(i, st, -deg[i], 0);
         }
         f.addedge(t, s, INF, 0);
-        pair<T, T> tres = f.run(super_s, super_t);
+        pair<T, T> tres = f.run(ss, st);
         if (tres.first != all) return {-1, -1};
         res.second += tres.second;
         res.first += f.g[s].back().c;
@@ -134,6 +153,82 @@ struct lim_flow {
 };
 // }}}
 
+using ll = long long;
+const ll MXN = 150, INF = 1e18;
+lim_flow<MXN, ll> f;
+struct e {
+    ll u, v, w;
+};
+vector<e> arr;
+vector<ll> cdn;
+ll n, m, type[MXN];
+bool cdn_enable[MXN];
+
+#define node_in(x) x
+#define node_out(x) (x + n)
+#define ss n * 2 + 1
+#define tt n * 2 + 2
+bool chk(ll mn) {
+    f.clear();
+    for (ll i = 1; i <= n; i++) {
+        ll self_lower, copy_upper, stop_lower = 0;
+        if (type[i] == 0)
+            self_lower = 0, copy_upper = 0;
+        else if (type[i] == 1) {
+            if (cdn_enable[i])
+                self_lower = 1, copy_upper = INF;
+            else
+                self_lower = 0, copy_upper = 0;
+        } else
+            stop_lower = 1, self_lower = 1, copy_upper = 0;
+
+        f.adduedge(node_in(i), node_out(i), self_lower, INF);
+        f.adduedge(node_out(i), tt, stop_lower, INF);
+        if (copy_upper) f.adduedge(ss, node_out(i), 0, copy_upper);
+    }
+    f.adduedge(ss, node_in(1), 1, 1);
+    f.adduedge(tt, ss, 0, INF);
+    for (auto i : arr) f.adduedge(node_out(i.u), node_in(i.v), 0, mn ? i.w / mn : INF);
+    auto ans = f.run(MXN - 1, MXN - 2, ss, tt, 0);
+    return ans.first != -1;
+}
+bool dfs(ll ind, ll mn) {
+    if (ind == cdn.size()) return chk(mn);
+    cdn_enable[cdn[ind]] = 1;
+    if (dfs(ind + 1, mn)) return 1;
+    cdn_enable[cdn[ind]] = 0;
+    if (dfs(ind + 1, mn)) return 1;
+    return 0;
+}
+
+void solve() {
+    arr.clear();
+    cdn.clear();
+    cin >> n >> m;
+    type[1] = 1;
+    for (ll i = 2; i <= n; i++) {
+        cin >> type[i];
+        if (type[i] == 1) cdn.push_back(i);
+    }
+    while (m--) {
+        ll u, v, w;
+        cin >> u >> v >> w;
+        arr.push_back({u, v, w});
+    }
+    cdn_enable[1] = 1;
+    ll l = 0, r = 1e9;
+    while (l < r) {
+        ll mid = (l + r + 1) >> 1;
+        if (dfs(0, mid))
+            l = mid;
+        else
+            r = mid - 1;
+    }
+    cout << l << endl;
+}
 int main() {
+    int t;
+    cin >> t;
+    while (t--) solve();
     return 0;
 }

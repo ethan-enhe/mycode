@@ -1,3 +1,4 @@
+
 // File:             mcmf.cpp
 // Author:           ethan
 // Created:          01/07/22
@@ -5,8 +6,12 @@
 
 #include <bits/stdc++.h>
 
+#include <array>
+#include <limits>
+
 using namespace std;
 
+using ll = long long;
 // {{{ flow
 // 原始版费用流
 template <const int MXN, typename T = int>
@@ -77,6 +82,9 @@ struct raw_flow {
         }
         return res;
     }
+    void clear() {
+        for (ll i = 0; i < MXN; i++) g[i].clear();
+    }
 };
 // 封装的上下界网络流
 template <const int MXN, typename T = int>
@@ -106,17 +114,16 @@ struct lim_flow {
     // 0->最小费用可行流
     // 1->最小费用最大流
     // 2->最小费用最小流
-    // 返回值 {流量，费用} 如果没有可行流返回 {-1,-1}
-    pair<T, T> run(int super_s, int super_t, int s, int t, int opt = 1) {
+    pair<T, T> run(int ss, int st, int s, int t, int opt = 1) {
         T all = 0;
         for (int i = 0; i < MXN; i++) {
             if (deg[i] > 0)
-                f.addedge(super_s, i, deg[i], 0), all += deg[i];
+                f.addedge(ss, i, deg[i], 0), all += deg[i];
             else if (deg[i] < 0)
-                f.addedge(i, super_t, -deg[i], 0);
+                f.addedge(i, st, -deg[i], 0);
         }
         f.addedge(t, s, INF, 0);
-        pair<T, T> tres = f.run(super_s, super_t);
+        pair<T, T> tres = f.run(ss, st);
         if (tres.first != all) return {-1, -1};
         res.second += tres.second;
         res.first += f.g[s].back().c;
@@ -134,6 +141,57 @@ struct lim_flow {
 };
 // }}}
 
+const ll MXN = 2000;
+raw_flow<MXN> f;
+ll cnt[MXN], n, m1, m2;
+
+#define sta 1
+#define ter 2
+#define people(x) x + 2
+#define match(x) x + n + 2
 int main() {
+    int t;
+    cin >> t;
+    while (t--) {
+        cin >> n >> m1 >> m2;
+        f.clear();
+        for (ll i = 1; i <= n; i++) cnt[i] = 0;
+        for (ll i = 1; i <= m1; i++) {
+            ll x, y, z;
+            cin >> x >> y >> z;
+            if (z)
+                ++cnt[x];
+            else
+                ++cnt[y];
+        }
+        ll tot = 0;
+        for (ll i = 1; i <= m2; i++) {
+            ll x, y;
+            cin >> x >> y;
+            if (x > y) swap(x, y);
+            if (x == 1)
+                ++cnt[1];
+            else {
+                ++tot;
+                f.adduedge(sta, match(i), 1);
+                f.adduedge(match(i), people(x), 1);
+                f.adduedge(match(i), people(y), 1);
+            }
+        }
+        bool g = 1;
+        for (ll i = 1; i <= n; i++) {
+            if (cnt[i] > cnt[1]) {
+                g = 0;
+                break;
+            }
+            f.adduedge(people(i), ter, cnt[1] - cnt[i]);
+        }
+        if (!g) {
+            cout << "NO" << endl;
+            continue;
+        }
+        g &= (tot == f.run(sta, ter).first);
+        cout << (g ? "YES" : "NO") << endl;
+    }
     return 0;
 }
