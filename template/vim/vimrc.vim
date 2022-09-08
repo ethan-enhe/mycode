@@ -278,12 +278,16 @@ let g:pauser=g:iswindows?'pause':'bash -c "read -p Press\ enter\ to\ continue...
 func! CompileCode(copt)
     exec "w"
     echo "compiling... ".a:copt
-    let cpl=jobstart((g:iswindows?"g++ -Wl,-stack=536870912":"g++")."\ ".a:copt."\ ".expand("%")."\ -o\ ".expand("%:t:r"),s:callbacks)
+    if &filetype=='cpp'
+        let cpl=jobstart((g:iswindows?"g++ -Wl,-stack=536870912":"g++")."\ ".a:copt."\ ".expand("%")."\ -o\ ".expand("%:t:r"),s:callbacks)
+    else
+        let cpl=jobstart("gcc"."\ ".expand("%")."\ -o\ ".expand("%:t:r"),s:callbacks)
+    endif
 endfunction
 func! RunCode()
     exec "w"
     let s:pre=has("nvim")?"bel 10sp term://":"!"
-    if &filetype == 'cpp'
+    if &filetype == 'cpp' || &filetype=='c'
         let s:suf=g:iswindows?expand('%:t:r').'.exe':'\time -f "\n----\n\%Mkb \%Us" ./'.expand('%:t:r')
     elseif &filetype == 'python'
         let s:suf='python3 '.expand('%')

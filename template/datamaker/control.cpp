@@ -1,4 +1,5 @@
 
+
 #include <cstdio>
 #include <iostream>
 using namespace std;
@@ -12,13 +13,13 @@ int main() {
     cout << "prob name:" << endl;
     cin >> prob;
     while (1) {
-        int len;
-        cout << "case cnt:" << endl;
-        cin >> len;
+        int l, r;
+        cout << "case rng:" << endl;
+        cin >> l >> r;
         cin.getline(args, LS - 10);
         cout << "para:" << endl;
         cin.getline(args, LS - 10);
-        for (int i = 1; i <= len; i++) {
+        for (int i = l; i <= r; i++) {
             ind++;
             cout << "gen" << ind << endl;
             sprintf(gen, "./gen %s > %s%d.in", args, prob, ind);
