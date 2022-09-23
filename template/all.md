@@ -1,6 +1,196 @@
 # 模板
 
-## 流
+## rho
+
+```
+a2f9 | #include <bits/stdc++.h>
+790b | using namespace std;
+8f5d | typedef long long ll;
+c83f | typedef long double ld;
+d9e4 | inline ll qmul(ll x, ll y, ll mod) {
+942d |     ll res = x * y - mod * ll((ld)x / mod * y);
+00f3 |     if (res < 0) return res + mod;
+571b |     if (res < mod) return res;
+f26b |     return res - mod;
+d10b | }
+a02e | inline ll qpow(ll x, ll y, ll mod) {
+ebfd |     ll res = 1;
+4aed |     while (y) {
+3685 |         if (y & 1) res = qmul(res, x, mod);
+93b5 |         x = qmul(x, x, mod), y >>= 1;
+d10b |     }
+f4f0 |     return res;
+d10b | }
+70a7 | inline bool ispri(ll x) {
+6645 |     if (x < 3) return x == 2;
+a8d0 |     ll y = x - 1, h = 0;
+0745 |     while (!(y & 1)) y >>= 1, h++;
+4ea8 |     for (ll i = 0; i < 8; i++) {
+f9d5 |         ll v = qpow(rand() % (x - 2) + 2, y, x), th = h;
+6673 |         if (v == 1) continue;
+2c61 |         while (th--) {
+264a |             if (v == x - 1) break;
+c0ae |             v = qmul(v, v, x);
+d10b |         }
+ad3d |         if (th == -1) return 0;
+d10b |     }
+31a0 |     return 1;
+d10b | }
+e3b0 |
+6a7a | inline ll gcd(ll x, ll y) { return y ? gcd(y, x % y) : x; }
+6c64 | inline ll f(ll x, ll c, ll mod) {
+907f |     ll res = qmul(x, x, mod) + c;
+8daf |     return res < mod ? res : res - mod;
+d10b | }
+e49c | inline ll rho(ll x) {
+2940 |     ll c = rand() % (x - 1), s = 0;
+3eb2 |     for (ll rg = 1;; rg <<= 1) {
+df0b |         ll t = s, v = 1;
+0b97 |         for (ll j = 1; j <= rg; j++) {
+3e1a |             s = f(s, c, x);
+e364 |             v = qmul(v, abs(s - t), x);
+efe3 |             if (j % 127 == 0) {
+ccb1 |                 ll g = gcd(v, x);
+c0a0 |                 if (g > 1) return g;
+d10b |             }
+d10b |         }
+cdfc |         ll g = gcd(s, x);
+c0a0 |         if (g > 1) return g;
+d10b |     }
+d10b | }
+7154 | inline void fact(ll x) {
+206b |     if (x == 1) return;
+ebd4 |     if (ispri(x)) {
+1179 |         printf("%lld ", x);
+8bea |         return;
+d10b |     }
+f030 |     ll p;
+ac0b |     do
+7154 |         p = rho(x);
+3327 |     while (p == x);
+0841 |     fact(x / p), fact(p);
+d10b | }
+80cc | int main(int cnt, char **va) {
+e1a4 |     srand(time(0));
+9e5b |     for (int i = 1; i < cnt; i++) {
+824e |         ll x;
+9a36 |         sscanf(va[i], "%lld", &x);
+0376 |         printf("%lld:", x);
+105a |         fact(x);
+d728 |         putchar('\n');
+d10b |     }
+7145 |     return 0;
+d10b | }
+```
+
+## kd
+
+```
+e3b0 | // P4148 简单题
+a2f9 | #include <bits/stdc++.h>
+fe2f | #define sq(x) (x) * (x)
+790b | using namespace std;
+2ae2 | const double rate = 0.75;
+12cc | const int MXN = 2e5 + 5;
+2ffd | struct p {
+6764 |     int x, y, v;
+22e2 | } c[MXN];
+80d4 | typedef int arrn[MXN];
+6d44 | int rt, nodec, flatc;
+993c | int n, ql, qr, qd, qu;
+f8f8 | arrn ls, rs, L, R, D, U, dim, sz, sum, t;
+8673 | inline void upd(int x, int y) {
+1c83 |     sz[x] += sz[y], sum[x] += sum[y];
+949b |     L[x] = min(L[x], L[y]);
+d959 |     R[x] = max(R[x], R[y]);
+6e26 |     D[x] = min(D[x], D[y]);
+5624 |     U[x] = max(U[x], U[y]);
+d10b | }
+cbc7 | inline void pushu(int p) {
+2460 |     sum[p] = c[p].v, sz[p] = 1;
+e206 |     L[p] = R[p] = c[p].x;
+bf0e |     D[p] = U[p] = c[p].y;
+26b7 |     if (ls[p]) upd(p, ls[p]);
+de48 |     if (rs[p]) upd(p, rs[p]);
+d10b | }
+e3b0 |
+eb36 | inline bool cmpx(int x, int y) { return c[x].x < c[y].x; }
+9ba8 | inline bool cmpy(int x, int y) { return c[x].y < c[y].y; }
+4fe5 | inline int build(int l, int r) {
+5895 |     if (l > r) return 0;
+1326 |     double avx = 0, avy = 0, vax = 0, vay = 0;
+064c |     for (int i = l; i <= r; i++) avx += c[t[i]].x, avy += c[t[i]].y;
+47ad |     avx /= (r - l + 1), avy /= (r - l + 1);
+1954 |     for (int i = l; i <= r; i++) vax += sq(avx - c[t[i]].x), vay += sq(avy - c[t[i]].y);
+e3b0 |
+46a6 |     int mid = (l + r) >> 1;
+aaa5 |     if (vax > vay)
+b301 |         dim[t[mid]] = 1, nth_element(t + l, t + mid, t + r + 1, cmpx);
+7dd5 |     else
+cf75 |         dim[t[mid]] = 0, nth_element(t + l, t + mid, t + r + 1, cmpy);
+dcaf |     ls[t[mid]] = build(l, mid - 1), rs[t[mid]] = build(mid + 1, r);
+07d2 |     return pushu(t[mid]), t[mid];
+d10b | }
+5c22 | inline void flat(int p) {
+43d6 |     if (!p) return;
+9dea |     flat(ls[p]);
+aa5e |     t[++flatc] = p;
+539e |     flat(rs[p]);
+d10b | }
+5f6f | inline void rebuild(int &p) {
+ec7e |     flatc = 0;
+7b87 |     flat(p);
+4869 |     p = build(1, flatc);
+d10b | }
+07ad | inline bool balance(int p) { return rate * sz[p] >= max(sz[ls[p]], sz[rs[p]]); }
+5450 | inline void ins(int &p, int x) {
+1ef4 |     if (!p) {
+7af4 |         pushu(p = x);
+8bea |         return;
+d10b |     }
+3470 |     if (dim[p]) {
+ae20 |         if (c[x].x <= c[p].x)
+1b8a |             ins(ls[p], x);
+7dd5 |         else
+ea82 |             ins(rs[p], x);
+282f |     } else {
+99cb |         if (c[x].y <= c[p].y)
+1b8a |             ins(ls[p], x);
+7dd5 |         else
+ea82 |             ins(rs[p], x);
+d10b |     }
+4497 |     pushu(p);
+493d |     if (!balance(p)) rebuild(p);
+d10b | }
+e64d | inline int que(int p) {
+8296 |     if (!p || ql > R[p] || qr < L[p] || qd > U[p] || qu < D[p]) return 0;
+c9a7 |     if (ql <= L[p] && qr >= R[p] && qd <= D[p] && qu >= U[p]) return sum[p];
+7c82 |     int res = que(ls[p]) + que(rs[p]);
+22d5 |     if (ql <= c[p].x && qr >= c[p].x && qd <= c[p].y && qu >= c[p].y) res += c[p].v;
+f4f0 |     return res;
+d10b | }
+e3b0 |
+565c | int main() {
+e570 |     scanf("%*d");
+d89a |     int last = 0, op;
+cd1f |     while (scanf("%d", &op) != EOF) {
+4f83 |         if (op == 1) {
+f00b |             ++nodec;
+5b58 |             scanf("%d%d%d", &c[nodec].x, &c[nodec].y, &c[nodec].v);
+769f |             c[nodec].x ^= last, c[nodec].y ^= last, c[nodec].v ^= last;
+087b |             ins(rt, nodec);
+86e4 |         } else if (op == 2) {
+fb7e |             scanf("%d%d%d%d", &ql, &qd, &qr, &qu);
+3f8b |             ql ^= last, qr ^= last, qu ^= last, qd ^= last;
+e467 |             printf("%d\n", last = que(rt));
+7a6d |         } else
+42af |             break;
+d10b |     }
+7145 |     return 0;
+d10b | }
+```
+
+## dinic
 
 ```
 e3b0 | // File:             mcmf.cpp
@@ -144,56 +334,7 @@ e3b0 |
 d10b | }
 ```
 
-## 高斯消元
-
-```
-e3b0 | //[SDOI2006]线性方程组
-a2f9 | #include <bits/stdc++.h>
-790b | using namespace std;
-59b3 | const int MXN = 52;
-aac8 | const double eps = 1e-8;
-b081 | int n;
-d336 | double arr[MXN][MXN], tmp[MXN];
-003d | inline bool is0(double x) { return fabs(x) <= eps; }
-8861 | inline void eli(double *a, double *b, int ind) {
-7054 |     if (is0(a[ind]) || is0(b[ind])) return;
-fdaf |     double rate = a[ind] / b[ind];
-8e54 |     for (int i = ind; i <= n + 1; i++) a[i] -= rate * b[i];
-d10b | }
-e3ed | inline int insert(double *eq) {
-fd5c |     for (int i = 1; i <= n; i++)
-2161 |         if (!is0(eq[i])) {
-21e6 |             if (!is0(arr[i][i]))
-cce5 |                 eli(eq, arr[i], i);
-7a1a |             else {
-28dd |                 for (int j = i + 1; j <= n; j++) eli(eq, arr[j], j);
-71a0 |                 for (int j = 1; j < i; j++) eli(arr[j], eq, i);
-2bb6 |                 for (int j = i; j <= n + 1; j++) arr[i][j] = eq[j];
-31a0 |                 return 1;
-d10b |             }
-d10b |         }
-680a |     return is0(eq[n + 1]) ? 0 : -1;
-d10b | }
-e3b0 |
-565c | int main() {
-33c4 |     scanf("%d", &n);
-8e8c |     bool infsol = 0;
-5c1f |     for (int i = 1; i <= n; i++) {
-71db |         for (int j = 1; j <= n + 1; j++) scanf("%lf", tmp + j);
-5470 |         int tres = insert(tmp);
-7999 |         if (tres == -1) return printf("-1"), 0;
-8f32 |         infsol |= !tres;
-d10b |     }
-6c7a |     if (infsol)
-498a |         printf("0");
-7dd5 |     else
-9c8b |         for (int i = 1; i <= n; i++) printf("x%d=%.2f\n", i, arr[i][n + 1] / arr[i][i] + eps);
-e3b0 |
-7145 |     return 0;
-d10b | }
-```
-
-## SA
+## sa
 
 ```
 a2f9 | #include <bits/stdc++.h>
@@ -271,43 +412,144 @@ d10b |     }
 d10b | }
 ```
 
-## 李超树
+## 点方树
 
 ```
 a2f9 | #include <bits/stdc++.h>
-990c | #define fi first
-1eee | #define se second
-a4fb | #define mp make_pair
 790b | using namespace std;
 8f5d | typedef long long ll;
-266c | typedef pair<ll, ll> pr;
-0825 | const ll MXN = 1e5;
-0373 | const ll NR = 1e10;
-00a9 | const ll INF = 1e18;
+4f5e | const ll MXN = 3e5 + 5;
+2451 | ll n, m;
+07fb | vector<ll> g[MXN], t[MXN];
+c5bc | void ae(vector<ll> *_g, ll u, ll v) {
+2a3c |     _g[u].push_back(v);
+6205 |     _g[v].push_back(u);
+d10b | }
+ffa6 | ll dfn[MXN], low[MXN], dfnc, sqrc;
+9f8f | stack<ll> stk;
+ff72 | void tj(ll p) {
+b613 |     dfn[p] = low[p] = ++dfnc;
+99c2 |     stk.push(p);
+5cea |     for (ll nx : g[p]) {
+fc99 |         if (!dfn[nx]) {
+9d42 |             tj(nx);
+5889 |             low[p] = min(low[nx], low[p]);
+351b |             if (low[nx] == dfn[p]) {
+824e |                 ll x;
+42f1 |                 ++sqrc;
+f774 |                 do {
+1ff9 |                     x = stk.top();
+383f |                     stk.pop();
+8c49 |                     ae(t, x, sqrc);
+bc7f |                 } while (x != nx);
+6468 |                 ae(t, p, sqrc);
+d10b |             }
+7a6d |         } else
+4cff |             low[p] = min(low[p], dfn[nx]);
+d10b |     }
+d10b | }
+c1dd | bool vis[MXN];
+eaca | ll sz[MXN], ans;
+3163 | void dfssz(ll p, ll fa) {
+eedd |     sz[p] = p <= n;
+2d9b |     for (ll nx : t[p])
+cccf |         if (nx != fa) {
+0337 |             dfssz(nx, p);
+37cc |             sz[p] += sz[nx];
+d10b |         }
+d10b | }
+a8b3 | ll sqr(ll x) { return x * (x - 1); }
+fca1 | void cal(ll p, ll fa, ll tot) {
+82e7 |     vis[p] = 1;
+92f4 |     ll curw = (p <= n ? -1 : t[p].size()), cnt = sqr(tot) - sqr(tot - sz[p]);
+2d9b |     for (ll nx : t[p])
+cccf |         if (nx != fa) {
+82b3 |             cnt -= sqr(sz[nx]);
+759e |             cal(nx, p, tot);
+d10b |         }
+2369 |     ans += cnt * curw;
+d10b | }
+565c | int main() {
+2f87 |     scanf("%lld%lld", &n, &m);
+c8c0 |     sqrc = n;
+76d2 |     while (m--) {
+f6e3 |         ll u, v;
+d759 |         scanf("%lld%lld", &u, &v);
+e6c6 |         ae(g, u, v);
+d10b |     }
+029e |     for (ll i = 1; i <= n; i++)
+8944 |         if (!dfn[i]) tj(i);
+ee2c |     for (ll i = 1; i <= sqrc; i++)
+3f61 |         if (!vis[i]) {
+18f9 |             dfssz(i, 0);
+1d95 |             cal(i, 0, sz[i]);
+d10b |         }
+57e2 |     printf("%lld", ans);
 e3b0 |
-79e8 | struct node {
-f122 |     ll ls, rs;
-2226 |     pr line;
-48e7 | } t[MXN * 100];
-f10e | ll rt, nodec;
-d001 | inline ll f(pr line, ll x) { return line.fi * x + line.se; }
-f99e | inline ll nnode() { return t[++nodec].line = mp(0, -INF), nodec; }
-4390 | inline void mod(ll &p, ll l, ll r, pr ml) {
-bbce |     ll mid = (l + r) >> 1;
-fc35 |     if (!p) p = nnode();
-04d3 |     if (f(ml, mid) > f(t[p].line, mid)) swap(ml, t[p].line);
-89d6 |     if (l == r) return;
-99fd |     ml.fi < t[p].line.fi ? mod(t[p].ls, l, mid, ml) : mod(t[p].rs, mid + 1, r, ml);
+7145 |     return 0;
 d10b | }
-d52f | inline ll que(ll p, ll l, ll r, ll qx) {
-b392 |     if (!p || l == r) return f(t[p].line, qx);
-bbce |     ll mid = (l + r) >> 1;
-c9e6 |     return max(f(t[p].line, qx), qx > mid ? que(t[p].rs, mid + 1, r, qx) : que(t[p].ls, l, mid, qx));
-d10b | }
-979c | int main() { return 0; }
 ```
 
-# 重要
+## 正常 tarjan
+
+```
+e3b0 | // P3387 【模板】缩点
+a2f9 | #include <bits/stdc++.h>
+790b | using namespace std;
+0c05 | const int MXN = 1e4 + 5;
+5a2b | vector<int> e[MXN], ne[MXN];
+1328 | int n, m, arr[MXN], dp[MXN];
+6809 | int col[MXN], tot[MXN], colc;
+4b91 | int dfn[MXN], low[MXN], dfsc;
+ac7d | bool instk[MXN];
+1b0a | stack<int> st;
+3377 | inline void tj(int p) {
+1ac8 |     dfn[p] = low[p] = ++dfsc;
+80cd |     st.push(p), instk[p] = 1;
+5ea7 |     for (int nx : e[p]) {
+9c9c |         if (!dfn[nx])
+fb1e |             tj(nx), low[p] = min(low[p], low[nx]);
+11a6 |         else if (instk[nx])
+4cff |             low[p] = min(low[p], dfn[nx]);
+d10b |     }
+e3b0 |
+a001 |     if (dfn[p] == low[p]) {
+6b91 |         int x;
+a707 |         ++colc;
+f774 |         do {
+54c8 |             x = st.top();
+3438 |             st.pop();
+e635 |             col[x] = colc, instk[x] = 0;
+b0f8 |             tot[colc] += arr[x];
+cf44 |         } while (x != p);
+d10b |     }
+d10b | }
+4f94 | inline int dfs(int p) {
+b492 |     if (~dp[p]) return dp[p];
+65a9 |     dp[p] = tot[p];
+4f59 |     for (int nx : ne[p]) dp[p] = max(dp[p], dfs(nx) + tot[p]);
+e767 |     return dp[p];
+d10b | }
+e3b0 |
+565c | int main() {
+81dd |     scanf("%d%d", &n, &m);
+05f2 |     for (int i = 1; i <= n; i++) scanf("%d", arr + i);
+a6a1 |     for (int i = 1, ts, tt; i <= m; i++) {
+a58c |         scanf("%d%d", &ts, &tt);
+9446 |         e[ts].push_back(tt);
+d10b |     }
+fd5c |     for (int i = 1; i <= n; i++)
+8944 |         if (!dfn[i]) tj(i);
+fd5c |     for (int i = 1; i <= n; i++)
+fed9 |         for (int nx : e[i])
+fbba |             if (col[nx] != col[i]) ne[col[nx]].push_back(col[i]);
+55e8 |     memset(dp, -1, sizeof(dp));
+83bd |     int ans = 0;
+484b |     for (int i = 1; i <= colc; i++) ans = max(ans, dfs(i));
+35cb |     printf("%d", ans);
+7145 |     return 0;
+d10b | }
+```
 
 ## 重要公式
 
@@ -345,6 +587,8 @@ $$\operatorname{det}(A)=\sum_{排列 P} (-1)^\text{P 中逆序对数}\prod_{i=1}
 - 时光倒流（常用于从环、序列上删数，且过程与所删数当前的前驱、后继相关的时候，或者贪心的候选集合递减（蔬菜））
 - 模拟最大流转模拟最小割
 - 找不变量（交换差分，逆序对个数奇偶性....）
+- [xzh 总结的常见套路](https://www.luogu.com.cn/blog/CFA-44/yi-suo-chang-jian-tao-lu)
+- [gyh 总结的常见套路](https://www.luogu.com.cn/paste/3bjusm19)
 - 分阶段 dp（寿司晚宴&皮配）
 - prim 最小生成树/考虑kruskal过程，是否有一些边无效
 - 按余数分类（定长区间异或 1）

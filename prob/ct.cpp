@@ -102,9 +102,9 @@ void solve() {
     // code
     for (int i = 1; i <= 1000; i++) {
         system("./gen>test.in");
-        system("./std<test.in>std.out");
-        system("./wrong<test.in>wrong.out");
-        if (system("diff -Z wrong.out std.out")) {
+        system("./force<test.in>force.out");
+        system("./gym103427M<test.in>std.out");
+        if (system("diff -Z force.out std.out")) {
             break;
         }
         system("cat test.out");
