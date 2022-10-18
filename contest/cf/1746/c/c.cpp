@@ -1,6 +1,8 @@
 // #pragma GCC optimize("O3,unroll-loops")
 // #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
 // #pragma GCC target("sse,sse2,sse3,ssse3,sse4.1,sse4.2,avx,avx2,bmi,bmi2,lzcnt,popcnt")
+#include <algorithm>
+#include <vector>
 #ifdef LOCAL
 #define dbg(x) cerr << #x << " = " << (x) << endl
 #else
@@ -75,7 +77,7 @@ mt19937_64 mr(chrono::system_clock::now().time_since_epoch().count());
 ll ri(const ll &l, const ll &r) { return uniform_int_distribution<ll>(l, r)(mr); }
 ld rd(const ld &l, const ld &r) { return uniform_real_distribution<ld>(l, r)(mr); }
 //}}}
-const ll P = 29;
+const ll P = 1e9 + 7;
 //{{{ Type
 inline int redu(const int &x) { return x >= P ? x - P : x; }
 inline int incr(const int &x) { return x + ((x >> 31) & P); }
@@ -107,11 +109,25 @@ const char nl = '\n';
 const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
-ll n, m, arr[MXN];
+ll n, m, arr[MXN], ans[MXN];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    cout<<(mod)1/11;
+    int t;
+    cin >> t;
+    while (t--) {
+        cin >> n;
+        for (ll i = 1; i <= n; i++) cin >> arr[i];
+        vector<pi> delt;
+        for (ll i = 1; i < n; i++) delt.push_back({arr[i] - arr[i + 1], i + 1});
+        sort(all(delt));
+        for (ll i = 0; i < n - 1; i++) {
+            assert(i + 2 >= delt[i].first);
+            ans[i + 2] = delt[i].second;
+        }
+        ans[1] = 1;
+        for (ll i = 1; i <= n; i++) cout << ans[i] << " ";
+        cout << nl;
+    }
     return 0;
 }
-

@@ -75,7 +75,7 @@ mt19937_64 mr(chrono::system_clock::now().time_since_epoch().count());
 ll ri(const ll &l, const ll &r) { return uniform_int_distribution<ll>(l, r)(mr); }
 ld rd(const ld &l, const ld &r) { return uniform_real_distribution<ld>(l, r)(mr); }
 //}}}
-const ll P = 29;
+const ll P = 1e9 + 7;
 //{{{ Type
 inline int redu(const int &x) { return x >= P ? x - P : x; }
 inline int incr(const int &x) { return x + ((x >> 31) & P); }
@@ -107,11 +107,34 @@ const char nl = '\n';
 const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
-ll n, m, arr[MXN];
+ll n, m;
+pi arr[MXN];
+ll mx[MXN];
+void upd(ll x, ll y) {
+    for (; x < MXN; x += x & (-x)) umx(mx[x], y);
+}
+ll cal(ll x) {
+    ll r = 0;
+    for (; x; x -= x & (-x)) umx(r, mx[x]);
+    return r;
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    cout<<(mod)1/11;
+    cin >> n;
+    for (ll i = 1; i <= n; i++) {
+        cin >> arr[i].fi;
+    }
+    for (ll i = 1; i <= n; i++) {
+        cin >> arr[i].se;
+    }
+    sort(arr + 1, arr + 1 + n);
+    ll ans = 0;
+    for (ll i = 1; i <= n; i++) {
+        ll cur = cal(arr[i].se) + 1;
+        upd(arr[i].se, cur);
+        umx(ans, cur);
+    }
+    cout << ans + n;
     return 0;
 }
-

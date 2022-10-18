@@ -257,8 +257,8 @@ autocmd FileType cpp setlocal cindent
 map <F8> <cmd>call RunCode()<cr>
 map <leader>ts <cmd>call RuninFloat('cf test')<cr>
 map <leader>sm <cmd>call RuninFloat('cf submit')<cr>
-map <F9> <cmd>call CompileCode('-O2 -DLOCAL -Wall -fsanitize=address,undefined')<cr>
-map <leader><F9> <cmd>call CompileCode('-O2')<cr>
+map <F9> <cmd>call CompileCode('-lm -O2 -DLOCAL -Wall -fsanitize=address,undefined')<cr>
+map <leader><F9> <cmd>call CompileCode('-lm -O2')<cr>
 let s:res=""
 function! s:OnEvent(job_id, data, event) dict
     if a:event == 'exit'
@@ -281,7 +281,7 @@ func! CompileCode(copt)
     if &filetype=='cpp'
         let cpl=jobstart((g:iswindows?"g++ -Wl,-stack=536870912":"g++")."\ ".a:copt."\ ".expand("%")."\ -o\ ".expand("%:t:r"),s:callbacks)
     else
-        let cpl=jobstart("gcc"."\ ".expand("%")."\ -o\ ".expand("%:t:r"),s:callbacks)
+        let cpl=jobstart("gcc"."\ ".expand("%")."\ -lm -o\ ".expand("%:t:r"),s:callbacks)
     endif
 endfunction
 func! RunCode()

@@ -1,6 +1,10 @@
-// #pragma GCC optimize("O3,unroll-loops")
-// #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
-// #pragma GCC target("sse,sse2,sse3,ssse3,sse4.1,sse4.2,avx,avx2,bmi,bmi2,lzcnt,popcnt")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
+#pragma GCC target("sse,sse2,sse3,ssse3,sse4.1,sse4.2,avx,avx2,bmi,bmi2,lzcnt,popcnt")
+#include <algorithm>
+#include <numeric>
+#include <sstream>
+#include <vector>
 #ifdef LOCAL
 #define dbg(x) cerr << #x << " = " << (x) << endl
 #else
@@ -75,7 +79,7 @@ mt19937_64 mr(chrono::system_clock::now().time_since_epoch().count());
 ll ri(const ll &l, const ll &r) { return uniform_int_distribution<ll>(l, r)(mr); }
 ld rd(const ld &l, const ld &r) { return uniform_real_distribution<ld>(l, r)(mr); }
 //}}}
-const ll P = 29;
+const ll P = 1e9 + 7;
 //{{{ Type
 inline int redu(const int &x) { return x >= P ? x - P : x; }
 inline int incr(const int &x) { return x + ((x >> 31) & P); }
@@ -108,10 +112,102 @@ const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
 ll n, m, arr[MXN];
+char str[MXN];
+
+namespace SA {
+typedef int arrn[MXN];
+arrn sa, rk, tmp, ork, cnt;
+int h[MXN];
+inline bool cmp(int x, int y, int w) { return ork[x] == ork[y] && ork[x + w] == ork[y + w]; }
+template <typename T>
+inline void init(int n, int m, T *arr) {
+    for (int i = 1; i <= m; i++) cnt[i] = 0;
+    for (int i = 1; i <= n; i++) cnt[rk[i] = arr[i]]++;
+    for (int i = 1; i <= m; i++) cnt[i] += cnt[i - 1];
+    for (int i = n; i; i--) sa[cnt[rk[i]]--] = i;
+    for (int w = 1; w <= n; w <<= 1) {
+        int ind = 0;
+        for (int i = n - w + 1; i <= n; i++) tmp[++ind] = i;
+        for (int i = 1; i <= n; i++)
+            if (sa[i] > w) tmp[++ind] = sa[i] - w;
+        for (int i = 1; i <= m; i++) cnt[i] = 0;
+        for (int i = 1; i <= n; i++) cnt[rk[i]]++;
+        for (int i = 1; i <= m; i++) cnt[i] += cnt[i - 1];
+        for (int i = n; i; i--) sa[cnt[rk[tmp[i]]]--] = tmp[i], ork[i] = rk[i];
+        m = 0;
+        for (int i = 1; i <= n; i++) rk[sa[i]] = cmp(sa[i], sa[i - 1], w) ? m : ++m;
+        if (m == n) break;
+    }
+
+    arr[n + 1] = -1;
+    for (int i = 1, lcp = 0; i <= n; i++) {
+        lcp -= !!lcp;
+        while (arr[i + lcp] == arr[sa[rk[i] - 1] + lcp]) ++lcp;
+        h[rk[i]] = lcp;
+    }
+}
+} // namespace SA
+
+struct node {
+    ll fa, lastl;
+    //维护后缀最大值
+    set<pi> stk;
+} p[MXN];
+
+void ins(set<pi> &x, pi v) {
+    auto l = x.upper_bound({v.fi, 0});
+    if (l != x.end() && l->second >= v.se) return;
+    auto r = l;
+    while (l != x.begin()) {
+        --l;
+        if (l->se > v.se) break;
+    }
+    if (l->se > v.se) ++l;
+    x.erase(l, r);
+    x.insert(v);
+}
+
+void upd(set<pi> &x, set<pi> &y) {
+    for (auto &v : y) ins(x, v);
+    y.clear();
+}
+ll find(ll x) { return x == p[x].fa ? x : p[x].fa = find(p[x].fa); }
+
+ll ans[MXN];
+void add(ll l, ll r, ll k) {
+    ans[l] += k;
+    ans[r + 1] -= k;
+}
+void mrg(ll x, ll y, ll curl) {
+    x = find(x), y = find(y);
+    add(curl + 1, p[x].lastl, p[x].stk.size());
+    add(curl + 1, p[y].lastl, p[y].stk.size());
+    if (p[y].stk.size() > p[x].stk.size()) swap(p[y].stk, p[x].stk);
+    upd(p[x].stk, p[y].stk);
+    p[x].lastl = curl;
+    p[y].fa = x;
+}
+
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    cout<<(mod)1/11;
+    cin >> (str + 1);
+    n = strlen(str + 1);
+    reverse(str + 1, str + 1 + n);
+    for (ll i = 1; i <= n; i++) cin >> arr[n - i + 1];
+
+    SA::init(n, 200, str);
+    for (ll i = 1; i <= n; i++) {
+        p[i].fa = i;
+        p[i].lastl = n - SA::sa[i] + 1;
+        p[i].stk.insert({SA::sa[i], arr[SA::sa[i]]});
+    }
+    vector<ll> ord(n);
+    iota(all(ord), 1);
+    sort(all(ord), [](ll x, ll y) { return SA::h[x] > SA::h[y]; });
+    for (ll i : ord) mrg(i, i - 1, SA::h[i]);
+    partial_sum(ans + 1, ans + 1 + n, ans + 1);
+    for (ll i = 1; i <= n; i++) cout << ans[i] << " ";
+
     return 0;
 }
-

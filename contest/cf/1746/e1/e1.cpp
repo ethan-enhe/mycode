@@ -1,6 +1,8 @@
 // #pragma GCC optimize("O3,unroll-loops")
 // #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
 // #pragma GCC target("sse,sse2,sse3,ssse3,sse4.1,sse4.2,avx,avx2,bmi,bmi2,lzcnt,popcnt")
+#include <numeric>
+#include <vector>
 #ifdef LOCAL
 #define dbg(x) cerr << #x << " = " << (x) << endl
 #else
@@ -75,7 +77,7 @@ mt19937_64 mr(chrono::system_clock::now().time_since_epoch().count());
 ll ri(const ll &l, const ll &r) { return uniform_int_distribution<ll>(l, r)(mr); }
 ld rd(const ld &l, const ld &r) { return uniform_real_distribution<ld>(l, r)(mr); }
 //}}}
-const ll P = 29;
+const ll P = 1e9 + 7;
 //{{{ Type
 inline int redu(const int &x) { return x >= P ? x - P : x; }
 inline int incr(const int &x) { return x + ((x >> 31) & P); }
@@ -106,12 +108,56 @@ struct mod {
 const char nl = '\n';
 const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
+const ll LG = 17;
+const ll NR = 34;
 
-ll n, m, arr[MXN];
+ll tot = NR;
+ll n, m, fa[MXN];
+ll id(ll dig, ll tp) { return 1 + dig + tp * 17; }
+bool chk(ll x, ll id) { return ((x >> ((id - 1) % 17)) & 1) == (id - 1) / 17; }
+ll find(ll x) { return fa[x] == x ? x : fa[x] = find(fa[x]); }
+void mrg(ll x, ll y) {
+    --tot;
+    fa[find(x)] = find(y);
+}
+
+bool ask(ll id) {
+    vector<ll> tmp;
+    for (ll i = 1; i <= n; i++) {
+        bool f = 1;
+        for (ll j = 1; j <= NR; j++)
+            if (find(j) == find(id)) f &= chk(i, j);
+        if (f) tmp.push_back(i);
+    }
+    cout << "? " << tmp.size() << " ";
+    for (ll i : tmp) cout << i << " ";
+    cout << endl;
+    cout.flush();
+    char ans[10];
+    cin >> ans;
+    return ans[0] == 'Y';
+}
+
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    cout<<(mod)1/11;
+    iota(fa, fa + MXN, 0);
+    cin >> n;
+    while (tot > 3) {
+        ll last = -1;
+        bool lastr;
+        for (ll i = 1; i <= LG; i++)
+            if (find(i) != find(0) && find(i + LG) != find(0)) {
+                bool x = ask(i), y = ask(i);
+                if (x == y) {
+                    if (x == 0)
+                        mrg(i + LG, 0);
+                    else
+                        mrg(i, 0);
+                } else {
+                    last = i;
+                }
+            }
+    }
     return 0;
 }
-

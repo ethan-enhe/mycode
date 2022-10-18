@@ -75,7 +75,7 @@ mt19937_64 mr(chrono::system_clock::now().time_since_epoch().count());
 ll ri(const ll &l, const ll &r) { return uniform_int_distribution<ll>(l, r)(mr); }
 ld rd(const ld &l, const ld &r) { return uniform_real_distribution<ld>(l, r)(mr); }
 //}}}
-const ll P = 29;
+const ll P = 1e9 + 7;
 //{{{ Type
 inline int redu(const int &x) { return x >= P ? x - P : x; }
 inline int incr(const int &x) { return x + ((x >> 31) & P); }
@@ -107,11 +107,35 @@ const char nl = '\n';
 const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
-ll n, m, arr[MXN];
+ll n, m, arr[MXN], sum[MXN];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    cout<<(mod)1/11;
+    int t;
+    cin >> t;
+    while (t--) {
+        cin >> n;
+        ll ans = INF;
+        bool f = 1;
+        for (ll i = 1; i <= n; i++) {
+            cin >> arr[i];
+            f &= arr[i] >= arr[i - 1];
+            sum[i] = arr[i] + sum[i - 1];
+        }
+        ll curz = 0, totz = 0;
+        for (ll i = n; i; i--) {
+            if (arr[i] == 0)
+                ++curz;
+            else {
+                umn(ans, max(sum[i], totz));
+                totz += curz;
+                curz = 0;
+            }
+        }
+        if (f) {
+            ans = 0;
+        }
+        cout << ans << nl;
+    }
     return 0;
 }
-

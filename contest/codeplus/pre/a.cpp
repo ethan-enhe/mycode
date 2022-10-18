@@ -75,7 +75,7 @@ mt19937_64 mr(chrono::system_clock::now().time_since_epoch().count());
 ll ri(const ll &l, const ll &r) { return uniform_int_distribution<ll>(l, r)(mr); }
 ld rd(const ld &l, const ld &r) { return uniform_real_distribution<ld>(l, r)(mr); }
 //}}}
-const ll P = 29;
+const ll P = 1e9 + 7;
 //{{{ Type
 inline int redu(const int &x) { return x >= P ? x - P : x; }
 inline int incr(const int &x) { return x + ((x >> 31) & P); }
@@ -107,11 +107,74 @@ const char nl = '\n';
 const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
-ll n, m, arr[MXN];
+ll n, m, arr[MXN], ord[MXN];
+char ans[MXN];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    cout<<(mod)1/11;
+    /* cin >> n; */
+    for (ll i = 1; i <= 100; i++) {
+        ll sum = 0;
+        n = ri(1, 1e6);
+        for (ll i = 1; i <= n; i++) {
+            arr[i] = ri(1, 1e9);
+            /* cin >> arr[i]; */
+            ord[i] = i;
+            sum += arr[i];
+            ans[i] = 'Z';
+        }
+        sort(ord + 1, ord + 1 + n, [](ll x, ll y) { return arr[x] > arr[y]; });
+        ll s1 = 0, last = 0;
+        for (ll i = 1; i <= n; i++) {
+            if ((s1 + arr[ord[i]]) * 2 < sum) {
+                s1 += arr[ord[i]];
+                ans[ord[i]] = 'B';
+                last = i;
+            } else
+                break;
+        }
+        if (!last)
+            cout << "Internationale!" << nl;
+        else {
+            ll s2 = 0, _last;
+            for (_last = last + 1; _last <= n; _last++) {
+                ll cur = arr[ord[_last]];
+                if ((s2 + cur) * 2 > (sum - s1)) break;
+                s2 += arr[ord[_last]];
+                ans[ord[_last]] = 'Y';
+            }
+            ll s3 = sum - s2 - s1;
+            if (s3 - s2 < s1) {
+            } else {
+                assert(s3 - s2 >= s1 && s3 - s2 < s1 * 2);
+                if (s3 - s2 > s1) {
+                    ans[ord[_last]] = 'Y';
+                } else {
+                    if (arr[ord[n]] < arr[ord[1]])
+                        ans[ord[n]] = 'Y';
+                    else {
+                        ll tmp = n / 3;
+                        for (ll i = 1; i <= tmp; i++) ans[i] = 'B';
+                        for (ll i = tmp + 1; i <= tmp * 2; i++) ans[i] = 'Y';
+                        for (ll i = tmp * 2 + 1; i <= n; i++) ans[i] = 'Z';
+                    }
+                }
+            }
+            s1 = s2 = s3 = 0;
+            for (ll i = 1; i <= n; i++) {
+                if (ans[i] == 'B')
+                    s1 += arr[i];
+                else if (ans[i] == 'Y')
+                    s2 += arr[i];
+                else
+                    s3 += arr[i];
+            }
+            if (s1 + s2 > s3 && s2 + s3 > s1 && s1 + s3 > s2)
+                cerr << "OK" << endl;
+            else
+                assert(0);
+            /* cout << ans + 1; */
+        }
+    }
     return 0;
 }
-

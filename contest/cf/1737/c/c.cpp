@@ -75,7 +75,7 @@ mt19937_64 mr(chrono::system_clock::now().time_since_epoch().count());
 ll ri(const ll &l, const ll &r) { return uniform_int_distribution<ll>(l, r)(mr); }
 ld rd(const ld &l, const ld &r) { return uniform_real_distribution<ld>(l, r)(mr); }
 //}}}
-const ll P = 29;
+const ll P = 1e9 + 7;
 //{{{ Type
 inline int redu(const int &x) { return x >= P ? x - P : x; }
 inline int incr(const int &x) { return x + ((x >> 31) & P); }
@@ -108,10 +108,42 @@ const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
 ll n, m, arr[MXN];
+bool f[4];
+ll tp(ll x, ll y) { return ((x & 1) << 1) | (y & 1); }
+ll x[4], y[4];
+ll isedge(ll x) { return x == 1 || x == n; }
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    cout<<(mod)1/11;
+    int t;
+    cin >> t;
+    while (t--) {
+        cin >> n;
+        memset(f, 0, sizeof(f));
+        for (ll i = 0; i < 3; i++) {
+            cin >> x[i] >> y[i];
+            f[tp(x[i], y[i])] = 1;
+        }
+        cin >> x[3] >> y[3];
+        if (!f[tp(x[3], y[3])])
+            cout << "NO\n";
+        else {
+            if (x[0] == x[1] && x[0] == x[2] && x[0] != x[3])
+                cout << "NO\n";
+            else if (y[0] == y[1] && y[0] == y[2] && y[0] != y[3])
+                cout << "NO\n";
+            else if (isedge(x[0]) + isedge(x[1]) + isedge(x[2]) + isedge(y[0]) + isedge(y[1]) + isedge(y[2]) >= 4) {
+                bool f = 0;
+                for (ll i = 0; i < 3; i++)
+                    if (x[i] == x[3] || y[i] == y[3]) f = 1;
+                if (!f)
+                    cout << "NO\n";
+                else
+                    cout << "YES\n";
+
+            } else
+                cout << "YES\n";
+        }
+    }
     return 0;
 }
-

@@ -1,6 +1,7 @@
 // #pragma GCC optimize("O3,unroll-loops")
 // #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
 // #pragma GCC target("sse,sse2,sse3,ssse3,sse4.1,sse4.2,avx,avx2,bmi,bmi2,lzcnt,popcnt")
+#include <cstdio>
 #ifdef LOCAL
 #define dbg(x) cerr << #x << " = " << (x) << endl
 #else
@@ -75,7 +76,7 @@ mt19937_64 mr(chrono::system_clock::now().time_since_epoch().count());
 ll ri(const ll &l, const ll &r) { return uniform_int_distribution<ll>(l, r)(mr); }
 ld rd(const ld &l, const ld &r) { return uniform_real_distribution<ld>(l, r)(mr); }
 //}}}
-const ll P = 29;
+const ll P = 1e9 + 7;
 //{{{ Type
 inline int redu(const int &x) { return x >= P ? x - P : x; }
 inline int incr(const int &x) { return x + ((x >> 31) & P); }
@@ -108,10 +109,30 @@ const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
 ll n, m, arr[MXN];
+char str[MXN];
+ll cnt[30];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    cout<<(mod)1/11;
+    int t;
+    cin >> t;
+    while (t--) {
+        cin >> n >> m;
+        cin >> (str + 1);
+        memset(cnt, 0, sizeof(cnt));
+        for (ll i = 1; i <= n; i++) ++cnt[str[i] - 'a'];
+        for (ll i = 1; i <= m; i++) {
+            ll tmp = n / m;
+            for (ll j = 0; j < min(n / m, 26ll); j++) {
+                if (!cnt[j]) {
+                    tmp = j;
+                    break;
+                } else
+                    --cnt[j];
+            }
+            putchar('a' + tmp);
+        }
+        putchar('\n');
+    }
     return 0;
 }
-

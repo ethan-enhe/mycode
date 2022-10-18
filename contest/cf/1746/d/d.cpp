@@ -1,6 +1,8 @@
 // #pragma GCC optimize("O3,unroll-loops")
 // #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
 // #pragma GCC target("sse,sse2,sse3,ssse3,sse4.1,sse4.2,avx,avx2,bmi,bmi2,lzcnt,popcnt")
+#include <unordered_map>
+#include <vector>
 #ifdef LOCAL
 #define dbg(x) cerr << #x << " = " << (x) << endl
 #else
@@ -75,7 +77,7 @@ mt19937_64 mr(chrono::system_clock::now().time_since_epoch().count());
 ll ri(const ll &l, const ll &r) { return uniform_int_distribution<ll>(l, r)(mr); }
 ld rd(const ld &l, const ld &r) { return uniform_real_distribution<ld>(l, r)(mr); }
 //}}}
-const ll P = 29;
+const ll P = 1e9 + 7;
 //{{{ Type
 inline int redu(const int &x) { return x >= P ? x - P : x; }
 inline int incr(const int &x) { return x + ((x >> 31) & P); }
@@ -108,10 +110,48 @@ const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
 ll n, m, arr[MXN];
+map<ll, ll> dp[MXN];
+vector<ll> g[MXN];
+ll dfs(ll p, ll k) {
+    if (!k) return 0;
+    auto it = dp[p].find(k);
+    if (it != dp[p].end()) return it->second;
+    ll ans = arr[p] * k;
+    if (!g[p].empty()) {
+        ll r = k / g[p].size(), mod = k % g[p].size();
+        vector<ll> tmp;
+        for (ll nx : g[p]) {
+            /* cerr << nx << endl; */
+            ll r0 = dfs(nx, r);
+            ans += r0;
+            if (mod) tmp.push_back(dfs(nx, r + 1) - r0);
+        }
+        if (mod) {
+            sort(all(tmp), [](ll x, ll y) { return x > y ;});
+            for (ll i = 0; i < mod; i++) ans += tmp[i];
+        }
+    }
+    /* cerr << p << " " << k << " " << ans << endl; */
+    return dp[p][k] = ans;
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    cout<<(mod)1/11;
+    int t;
+    cin >> t;
+    while (t--) {
+        cin >> n >> m;
+        for (ll i = 1; i <= n; i++) {
+            g[i].clear();
+            dp[i].clear();
+        }
+        for (ll i = 2; i <= n; i++) {
+            ll x;
+            cin >> x;
+            g[x].push_back(i);
+        }
+        for (ll i = 1; i <= n; i++) cin >> arr[i];
+        cout << dfs(1, m) << nl;
+    }
     return 0;
 }
-

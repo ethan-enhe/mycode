@@ -75,7 +75,7 @@ mt19937_64 mr(chrono::system_clock::now().time_since_epoch().count());
 ll ri(const ll &l, const ll &r) { return uniform_int_distribution<ll>(l, r)(mr); }
 ld rd(const ld &l, const ld &r) { return uniform_real_distribution<ld>(l, r)(mr); }
 //}}}
-const ll P = 29;
+const ll P = 1e9 + 7;
 //{{{ Type
 inline int redu(const int &x) { return x >= P ? x - P : x; }
 inline int incr(const int &x) { return x + ((x >> 31) & P); }
@@ -105,13 +105,51 @@ struct mod {
 //}}}
 const char nl = '\n';
 const ll INF = 1e18;
-const ll MXN = 1e6 + 5;
+const ll MXN = 505 + 5;
+const ll MXM = 250005;
 
-ll n, m, arr[MXN];
+struct e {
+    ll u, v, w;
+    bool operator<(const e &b) const { return w > b.w; }
+} arr[MXM];
+ll d[MXN][MXN], _d[MXN], sh[MXN];
+ll n, m;
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    cout<<(mod)1/11;
+    int t;
+    cin >> t;
+    while (t--) {
+        cin >> n >> m;
+        memset(d, 0x3f, sizeof(d));
+        memset(_d, 0x3f, sizeof(_d));
+        _d[n] = 0;
+
+        for (ll i = 1; i <= n; i++) d[i][i] = 0;
+        for (ll i = 1; i <= m; i++) {
+            cin >> arr[i].u >> arr[i].v >> arr[i].w;
+            d[arr[i].u][arr[i].v] = d[arr[i].v][arr[i].u] = 1;
+        }
+
+        for (ll i = 1; i <= n; i++)
+            for (ll j = 1; j <= n; j++)
+                for (ll k = 1; k <= n; k++) umn(d[j][k], d[j][i] + d[i][k]);
+
+        sort(arr + 1, arr + 1 + m);
+        for (ll i = 1; i <= m; i++) {
+            //缩起来
+            //分开走
+            ll tv = INF, tu = INF;
+            for (ll j = 1; j <= n; j++) {
+                umn(tu, arr[i].w * (d[arr[i].v][j] + 1) + _d[j]);
+                umn(tu, arr[i].w * (d[arr[i].u][j] + 1) + _d[j]);
+            }
+            for (ll j = 1; j <= n; j++) {
+                umn(_d[j], arr[i].w * d[arr[i].v][j] + tv);
+                umn(_d[j], arr[i].w * d[arr[i].u][j] + tu);
+            }
+        }
+        cout << _d[1] << nl;
+    }
     return 0;
 }
-

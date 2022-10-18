@@ -1,6 +1,8 @@
-// #pragma GCC optimize("O3,unroll-loops")
-// #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
-// #pragma GCC target("sse,sse2,sse3,ssse3,sse4.1,sse4.2,avx,avx2,bmi,bmi2,lzcnt,popcnt")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
+#pragma GCC target("sse,sse2,sse3,ssse3,sse4.1,sse4.2,avx,avx2,bmi,bmi2,lzcnt,popcnt")
+#include <map>
+#include <vector>
 #ifdef LOCAL
 #define dbg(x) cerr << #x << " = " << (x) << endl
 #else
@@ -75,7 +77,7 @@ mt19937_64 mr(chrono::system_clock::now().time_since_epoch().count());
 ll ri(const ll &l, const ll &r) { return uniform_int_distribution<ll>(l, r)(mr); }
 ld rd(const ld &l, const ld &r) { return uniform_real_distribution<ld>(l, r)(mr); }
 //}}}
-const ll P = 29;
+const ll P = 1e9 + 7;
 //{{{ Type
 inline int redu(const int &x) { return x >= P ? x - P : x; }
 inline int incr(const int &x) { return x + ((x >> 31) & P); }
@@ -105,13 +107,74 @@ struct mod {
 //}}}
 const char nl = '\n';
 const ll INF = 1e18;
-const ll MXN = 1e6 + 5;
+const ll MXN = 3e5 + 5;
+const ll LG = 40;
 
-ll n, m, arr[MXN];
+ll n, m;
+ll arr[MXN];
+vector<ll> sum[MXN];
+
+vector<ll> &operator+=(vector<ll> &x, const vector<ll> &y) {
+    for (ll i = 0; i < LG; i++) x[i] += y[i];
+    return x;
+}
+vector<ll> operator-(const vector<ll> &x, const vector<ll> &y) {
+    vector<ll> res(LG);
+    for (ll i = 0; i < LG; i++) res[i] = x[i] - y[i];
+    return res;
+}
+
+map<ll, vector<int>> hsh;
+
+vector<int> gethsh(ll x) {
+    auto it = hsh.find(x);
+    if (it != hsh.end()) return it->second;
+    vector<int> res(LG);
+    for (int &i : res) i = ri(0, n - 1);
+    return hsh[x] = res;
+}
+void add(ll x, const vector<ll> &y) {
+    for (; x <= n; x += x & (-x)) sum[x] += y;
+}
+vector<ll> pre(ll x) {
+    vector<ll> res = vector<ll>(LG, 0);
+    for (; x; x -= x & (-x)) res += sum[x];
+    return res;
+}
+
+void mod(ll i, ll v) {
+    auto a = gethsh(v), b = gethsh(arr[i]);
+    vector<ll> tmp(LG);
+    for (ll i = 0; i < LG; i++) tmp[i] = a[i] - b[i];
+    add(i, tmp);
+    arr[i] = v;
+}
+
+bool chk(ll l, ll r, ll k) {
+    auto res = pre(r) - pre(l - 1);
+    for (auto &i : res)
+        if (i % k) return 0;
+    return 1;
+}
+
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    cout<<(mod)1/11;
+    cin >> n >> m;
+    for (ll i = 0; i <= n; i++) sum[i] = vector<ll>(LG, 0);
+    for (ll i = 1, x; i <= n; i++) {
+        cin >> x;
+        mod(i, x);
+    }
+    while (m--) {
+        ll tp, a, b, c;
+        cin >> tp >> a >> b;
+        if (tp == 1) {
+            mod(a, b);
+        } else {
+            cin >> c;
+            cout << (chk(a, b, c) ? "YES" : "NO") << nl;
+        }
+    }
     return 0;
 }
-
