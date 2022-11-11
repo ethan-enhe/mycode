@@ -51,7 +51,7 @@ let g:iswindows = 0
 if(has("win32") || has("win64") || has("win95") || has("win16"))
     let g:iswindows = 1
 endif
-let g:usecoc = 1
+let g:usecoc = 0
 let g:usefont = 1
 
 set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
@@ -76,7 +76,7 @@ set autowrite
 set autoread
 " au FocusGained,BufEnter * checktime
 
-map <leader>cd <cmd>cd %:p:h<cr>:pwd<cr>
+map <leader>c <cmd>cd %:p:h<cr>:pwd<cr>
 nmap <leader>w <cmd>w!<cr>
 "}}}
 "{{{ BACKUP
@@ -160,8 +160,8 @@ map <leader>h <cmd>bprevious<cr>
 map <leader>tn <cmd>tabnew<cr>
 map <leader>to <cmd>tabonly<cr>
 map <leader>tc <cmd>tabclose<cr>
-map <leader>tm <cmd>tabmove
-map <leader>t<leader> <cmd>tabnext
+map <leader>tm :tabmove
+map <leader>t<leader> :tabnext
 " Let 'tl' toggle between this and the last accessed tab
 let g:lasttab = 1
 nmap <Leader>tl <cmd>exe "tabn ".g:lasttab<cr>
@@ -258,7 +258,7 @@ map <F8> <cmd>call RunCode()<cr>
 map <leader>ts <cmd>call RuninFloat('cf test')<cr>
 map <leader>sm <cmd>call RuninFloat('cf submit')<cr>
 map <F9> <cmd>call CompileCode('-lm -O2 -DLOCAL -Wall -fsanitize=address,undefined')<cr>
-map <leader><F9> <cmd>call CompileCode('-lm -O2')<cr>
+map <leader><F9> <cmd>call CompileCode('-lm -Wall -O3  -fopenmp -lpthread')<cr>
 let s:res=""
 function! s:OnEvent(job_id, data, event) dict
     if a:event == 'exit'
@@ -361,19 +361,8 @@ Plug 'voldikss/vim-floaterm'
 if g:usecoc
     Plug 'ethan-enhe/vim-snippets/'
     Plug 'neoclide/coc.nvim', {'branch': 'release'}
-    " Plug 'jackguo380/vim-lsp-cxx-highlight'
+    Plug 'jackguo380/vim-lsp-cxx-highlight'
 else
-    Plug 'github/copilot.vim'
-    " Plug 'w0rp/ale'
-    " Plug 'neovim/nvim-lspconfig'
-    " Plug 'hrsh7th/cmp-nvim-lsp'
-    " Plug 'hrsh7th/cmp-buffer'
-    " Plug 'hrsh7th/cmp-path'
-    " Plug 'hrsh7th/cmp-cmdline'
-    " Plug 'hrsh7th/nvim-cmp'
-
-    " Plug 'SirVer/ultisnips'
-    " Plug 'quangnguyen30192/cmp-nvim-ultisnips'
 endif
 call plug#end()
 "}}}
@@ -397,7 +386,7 @@ let g:onedark_terminal_italics=1
 let g:edge_transparent_background = 1
 " let g:edge_diagnostic_text_highlight = 1
 
-colorscheme onedark
+colorscheme gruvbox-material
 " autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
 let g:indent_guides_enable_on_vim_startup = 1
 let g:indentLine_char = '|'
@@ -439,7 +428,6 @@ au VimEnter * FloatermNew --silent
 "}}}
 if g:usecoc
     "{{{ COC_CONFIG
-
     let g:buffersource=1
     command! CocBufSourceToggle call ToggleBufferSource()
     function ToggleBufferSource()
@@ -454,8 +442,10 @@ if g:usecoc
     call coc#config("diagnostic.virtualTextPrefix", " ❯❯❯ ")
     call coc#config("suggest.labelMaxLength", 50)
     " call coc#config("suggest.enablePreview", v:true)
-    call coc#config("semanticTokens.filetypes", ["*"])
+    " call coc#config("semanticTokens.enable",v:true)
+    " call coc#config("coc.semanticHighlighting", v:true)
     " call coc#config("coc.preferences.semanticTokensHighlights", v:false)
+    
     call coc#config("diagnostic.errorSign", "✘")
     call coc#config("diagnostic.warningSign", "")
     call coc#config("diagnostic.infoSign", "")
@@ -490,11 +480,12 @@ if g:usecoc
                 \   })
     "}}}
     "{{{ COC
-    let g:coc_global_extensions = ['coc-clangd','coc-markdownlint','coc-vimlsp', 'coc-json','coc-snippets','coc-lists','coc-explorer','coc-floaterm']
+    " let g:coc_global_extensions = ['coc-clangd','coc-markdownlint','coc-vimlsp', 'coc-json','coc-snippets','coc-lists','coc-explorer','coc-floaterm']
+    let g:coc_global_extensions = ['coc-clangd','coc-markdownlint','coc-vimlsp', 'coc-json','coc-snippets','coc-lists','coc-floaterm']
     autocmd FileType * let b:coc_pairs_disabled = ['<']
     " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
     " delays and poor user experience.
-    " set updatetime=300
+    set updatetime=300
 
     " Don't pass messages to |ins-completion-menu|.
     set shortmess+=c
@@ -507,16 +498,18 @@ if g:usecoc
     " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
     " other plugin before putting this into your config.
     inoremap <silent><expr> <TAB>
-                \ pumvisible() ? "\<C-n>" :
-                \ <SID>check_back_space() ? "\<TAB>" :
+                \ coc#pum#visible() ? coc#pum#next(1) :
+                \ CheckBackspace() ? "\<Tab>" :
                 \ coc#refresh()
 
-    inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+    inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
 
-    function! s:check_back_space() abort
+
+    function! CheckBackspace() abort
         let col = col('.') - 1
-        return !col || getline('.')[col - 1]    =~# '\s'
+        return !col || getline('.')[col - 1]  =~# '\s'
     endfunction
+
     " Use <c-space> to trigger completion.
     if has('nvim')
         inoremap <silent><expr> <c-space> coc#refresh()
@@ -524,7 +517,9 @@ if g:usecoc
         inoremap <silent><expr> <c-@> coc#refresh()
     endif
 
-    inoremap <silent><expr> <cr> pumvisible() ? "\<C-y>" : "\<cr>"
+    " inoremap <silent><expr> <cr> pumvisible() ? "\<C-y>" : "\<cr>"
+    inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+                                  \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
     " let g:coc_default_semantic_highlight_groups = 1
     " Use `[g` and `]g` to navigate diagnostics
     " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
@@ -541,16 +536,14 @@ if g:usecoc
     map <leader>bs <cmd>CocBufSourceToggle<cr>
 
     " Use K to show documentation in preview window.
-    nnoremap <silent> K :call <SID>show_documentation()<cr>
+    nnoremap <silent> K :call ShowDocumentation()<CR>
     nnoremap <silent> H :h <c-r>=expand('<cword>')<cr><cr>
 
-    function! s:show_documentation()
-        " if (index(['vim','help'], &filetype) >= 0)
-        "   execute 'h '.expand('<cword>')
-        if (coc#rpc#ready())
+    function! ShowDocumentation()
+        if CocAction('hasProvider', 'hover')
             call CocActionAsync('doHover')
         else
-            execute '!' . &keywordprg . " " . expand('<cword>')
+            call feedkeys('K', 'in')
         endif
     endfunction
 
@@ -661,264 +654,133 @@ if g:usecoc
     xmap <leader>x  <Plug>(coc-convert-snippet)
     "}}}
     " {{{ COC-EXP
-    nnoremap <silent><nowait> <space>e  <Cmd>CocCommand explorer<cr>
-    " nmap <space>el <Cmd>CocList explPresets<cr>
-    augroup vime_coc_explorer_group
-        autocmd!
-        " autocmd WinEnter * if &filetype == 'coc-explorer' && winnr('$') == 1 | q | endif
-        autocmd TabLeave * if &filetype == 'coc-explorer' | wincmd w | endif
-    augroup END
-    let g:coc_explorer_global_presets = {
-    \   '.vim': {
-    \     'root-uri': '~/.vim',
-    \   },
-    \   'cocConfig': {
-    \      'root-uri': '~/.config/coc',
-    \   },
-    \   'tab': {
-    \     'position': 'tab',
-    \     'quit-on-open': v:true,
-    \   },
-    \   'tab:$': {
-    \     'position': 'tab:$',
-    \     'quit-on-open': v:true,
-    \   },
-    \   'floating': {
-    \     'position': 'floating',
-    \     'open-action-strategy': 'sourceWindow',
-    \   },
-    \   'floatingTop': {
-    \     'position': 'floating',
-    \     'floating-position': 'center-top',
-    \     'open-action-strategy': 'sourceWindow',
-    \   },
-    \   'floatingLeftside': {
-    \     'position': 'floating',
-    \     'floating-position': 'left-center',
-    \     'floating-width': 50,
-    \     'open-action-strategy': 'sourceWindow',
-    \   },
-    \   'floatingRightside': {
-    \     'position': 'floating',
-    \     'floating-position': 'right-center',
-    \     'floating-width': 50,
-    \     'open-action-strategy': 'sourceWindow',
-    \   },
-    \   'simplify': {
-    \     'file-child-template': '[selection | clip | 1] [indent][icon | 1] [filename omitCenter 1]'
-    \   },
-    \   'buffer': {
-    \     'sources': [{'name': 'buffer', 'expand': v:true}]
-    \   },
-    \ }
-    call coc#config("explorer.icon.enableNerdfont", g:usefont)
-    call coc#config("explorer.contentWidthType", "win-width")
-    call coc#config("explorer.bookmark.child.template", "[selection | 1] [filename] [position] - [annotation]")
-    call coc#config("explorer.file.column.icon.modified", "•")
-    call coc#config("explorer.file.column.icon.deleted", "✗")
-    call coc#config("explorer.file.column.icon.untracked", "★")
-    call coc#config("explorer.file.column.icon.renamed", "➜")
-    call coc#config("explorer.file.column.icon.unmerged", "")
-    call coc#config("explorer.file.column.icon.ignored", "ⁱ")
-    call coc#config("explorer.keyMappings.global", {
-                \ 's': v:false,
-                \ 't': v:false,
-                \ 'E': v:false,
-                \ 'e': v:false,
-                \ 'zh': v:false,
-                \ 'g.': v:false,
-                \ 'p': v:false,
-                \ })
-    call coc#config("explorer.keyMappings.global", {
-                \ 'k': 'nodePrev',
-                \ 'j': 'nodeNext',
-                \ 'h': ["wait", 'collapse'],
-                \ 'l': ["wait", 'expandable?', 'expand', 'open'],
-                \ 'L': ["wait", 'expand:recursive'],
-                \ 'H': ["wait", 'collapse:recursive'],
-                \ 'K': ["wait", 'expandablePrev'],
-                \ 'J': ["wait", 'expandableNext'],
-                \ 'o': ["wait", 'expanded?', 'collapse', 'expand'],
-                \ '<cr>': ["wait", 'expandable?', 'cd', 'open'],
-                \ '<bs>': ["wait", 'gotoParent'],
-                \ 'r': 'refresh',
-                \
-                \ 's': ["wait", 'toggleSelection', 'normal:j'],
-                \ 'S': ["wait", 'toggleSelection', 'normal:k'],
-                \ '*': ["wait", 'toggleSelection'],
-                \ 'gs': ["wait", "reveal:select"],
-                \ '<dot>': 'toggleHidden',
-                \
-                \ '<c-s>': 'open:split',
-                \ '<c-v>': 'open:vsplit',
-                \ '<c-t>': 'open:tab',
-                \
-                \ 'dd': 'cutFile',
-                \ 'Y': 'copyFile',
-                \ 'D': 'delete',
-                \ 'P': 'pasteFile',
-                \ 'R': 'rename',
-                \ 'N': 'addFile',
-                \ 'yp': 'copyFilepath',
-                \ 'yn': 'copyFilename',
-                \
-                \ 'pl': 'previewOnHover:toggle:labeling',
-                \ 'pc': 'previewOnHover:toggle:content',
-                \
-                \ '<M-x>': 'systemExecute',
-                \ 'f': 'search',
-                \ 'F': 'searchRecursive',
-                \
-                \ '<tab>': 'actionMenu',
-                \ '?': 'help',
-                \ 'q': 'quit',
-                \ '<esc>': 'esc',
-                \
-                \ 'gf': 'gotoSource:file',
-                \ 'gb': 'gotoSource:buffer',
-                \ '[[': ["wait", 'indentPrev'],
-                \ ']]': ["wait", 'indentNext'],
-                \
-                \ '<M-k>': ["wait", 'markPrev:diagnosticError'],
-                \ '<M-j>': ["wait", 'markNext:diagnosticError'],
-                \
-                \ '<leader>gk': ["wait", 'markPrev:git'],
-                \ '<leader>gj': ["wait", 'markNext:git'],
-                \ '<leader>gh': 'gitStage',
-                \ '<leader>gu': 'gitUnstage'
-                \ })
+    " nnoremap <silent><nowait> <space>e  <Cmd>CocCommand explorer<cr>
+    " " nmap <space>el <Cmd>CocList explPresets<cr>
+    " augroup vime_coc_explorer_group
+    "     autocmd!
+    "     " autocmd WinEnter * if &filetype == 'coc-explorer' && winnr('$') == 1 | q | endif
+    "     autocmd TabLeave * if &filetype == 'coc-explorer' | wincmd w | endif
+    " augroup END
+    " let g:coc_explorer_global_presets = {
+    " \   '.vim': {
+    " \     'root-uri': '~/.vim',
+    " \   },
+    " \   'cocConfig': {
+    " \      'root-uri': '~/.config/coc',
+    " \   },
+    " \   'tab': {
+    " \     'position': 'tab',
+    " \     'quit-on-open': v:true,
+    " \   },
+    " \   'tab:$': {
+    " \     'position': 'tab:$',
+    " \     'quit-on-open': v:true,
+    " \   },
+    " \   'floating': {
+    " \     'position': 'floating',
+    " \     'open-action-strategy': 'sourceWindow',
+    " \   },
+    " \   'floatingTop': {
+    " \     'position': 'floating',
+    " \     'floating-position': 'center-top',
+    " \     'open-action-strategy': 'sourceWindow',
+    " \   },
+    " \   'floatingLeftside': {
+    " \     'position': 'floating',
+    " \     'floating-position': 'left-center',
+    " \     'floating-width': 50,
+    " \     'open-action-strategy': 'sourceWindow',
+    " \   },
+    " \   'floatingRightside': {
+    " \     'position': 'floating',
+    " \     'floating-position': 'right-center',
+    " \     'floating-width': 50,
+    " \     'open-action-strategy': 'sourceWindow',
+    " \   },
+    " \   'simplify': {
+    " \     'file-child-template': '[selection | clip | 1] [indent][icon | 1] [filename omitCenter 1]'
+    " \   },
+    " \   'buffer': {
+    " \     'sources': [{'name': 'buffer', 'expand': v:true}]
+    " \   },
+    " \ }
+    " call coc#config("explorer.icon.enableNerdfont", g:usefont)
+    " call coc#config("explorer.contentWidthType", "win-width")
+    " call coc#config("explorer.bookmark.child.template", "[selection | 1] [filename] [position] - [annotation]")
+    " call coc#config("explorer.file.column.icon.modified", "•")
+    " call coc#config("explorer.file.column.icon.deleted", "✗")
+    " call coc#config("explorer.file.column.icon.untracked", "★")
+    " call coc#config("explorer.file.column.icon.renamed", "➜")
+    " call coc#config("explorer.file.column.icon.unmerged", "")
+    " call coc#config("explorer.file.column.icon.ignored", "ⁱ")
+    " call coc#config("explorer.keyMappings.global", {
+    "             \ 's': v:false,
+    "             \ 't': v:false,
+    "             \ 'E': v:false,
+    "             \ 'e': v:false,
+    "             \ 'zh': v:false,
+    "             \ 'g.': v:false,
+    "             \ 'p': v:false,
+    "             \ })
+    " call coc#config("explorer.keyMappings.global", {
+    "             \ 'k': 'nodePrev',
+    "             \ 'j': 'nodeNext',
+    "             \ 'h': ["wait", 'collapse'],
+    "             \ 'l': ["wait", 'expandable?', 'expand', 'open'],
+    "             \ 'L': ["wait", 'expand:recursive'],
+    "             \ 'H': ["wait", 'collapse:recursive'],
+    "             \ 'K': ["wait", 'expandablePrev'],
+    "             \ 'J': ["wait", 'expandableNext'],
+    "             \ 'o': ["wait", 'expanded?', 'collapse', 'expand'],
+    "             \ '<cr>': ["wait", 'expandable?', 'cd', 'open'],
+    "             \ '<bs>': ["wait", 'gotoParent'],
+    "             \ 'r': 'refresh',
+    "             \
+    "             \ 's': ["wait", 'toggleSelection', 'normal:j'],
+    "             \ 'S': ["wait", 'toggleSelection', 'normal:k'],
+    "             \ '*': ["wait", 'toggleSelection'],
+    "             \ 'gs': ["wait", "reveal:select"],
+    "             \ '<dot>': 'toggleHidden',
+    "             \
+    "             \ '<c-s>': 'open:split',
+    "             \ '<c-v>': 'open:vsplit',
+    "             \ '<c-t>': 'open:tab',
+    "             \
+    "             \ 'dd': 'cutFile',
+    "             \ 'Y': 'copyFile',
+    "             \ 'D': 'delete',
+    "             \ 'P': 'pasteFile',
+    "             \ 'R': 'rename',
+    "             \ 'N': 'addFile',
+    "             \ 'yp': 'copyFilepath',
+    "             \ 'yn': 'copyFilename',
+    "             \
+    "             \ 'pl': 'previewOnHover:toggle:labeling',
+    "             \ 'pc': 'previewOnHover:toggle:content',
+    "             \
+    "             \ '<M-x>': 'systemExecute',
+    "             \ 'f': 'search',
+    "             \ 'F': 'searchRecursive',
+    "             \
+    "             \ '<tab>': 'actionMenu',
+    "             \ '?': 'help',
+    "             \ 'q': 'quit',
+    "             \ '<esc>': 'esc',
+    "             \
+    "             \ 'gf': 'gotoSource:file',
+    "             \ 'gb': 'gotoSource:buffer',
+    "             \ '[[': ["wait", 'indentPrev'],
+    "             \ ']]': ["wait", 'indentNext'],
+    "             \
+    "             \ '<M-k>': ["wait", 'markPrev:diagnosticError'],
+    "             \ '<M-j>': ["wait", 'markNext:diagnosticError'],
+    "             \
+    "             \ '<leader>gk': ["wait", 'markPrev:git'],
+    "             \ '<leader>gj': ["wait", 'markNext:git'],
+    "             \ '<leader>gh': 'gitStage',
+    "             \ '<leader>gu': 'gitUnstage'
+    "             \ })
     " }}}
 else
-    "" {{{ ALE
-    ""let g:ale_set_highlights = 0
-    ""let g:ale_completion_autoimport = 1
-    ""let g:ale_echo_msg_error_str = 'E'
-    ""let g:ale_echo_msg_warning_str = 'W'
-    ""let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
-
-    """普通模式下，sp前往上一个错误或警告，sn前往下一个错误或警告
-    ""nmap sp <Plug>(ale_previous_wrap)
-    ""nmap sn <Plug>(ale_next_wrap)
-
-    ""let g:ale_completion_enabled = 1
-    """<Leader>s触发/关闭语法检查
-    ""nmap <Leader>s <cmd>ALEToggle<cr>
-    """<Leader>d查看错误或警告的详细信息
-    ""nmap <Leader>d <cmd>ALEDetail<cr>
-    """使用clang对c和c++进行语法检查，对python使用pylint进行语法检查
-    ""let g:ale_linters = {
-    ""\   'c++': ['clang'],
-    ""\   'c': ['clang'],
-    ""\}
-    "" }}}
-    "" {{{ cmp
-"lua <<EOF
-"-- Setup nvim-cmp.
-"local cmp = require'cmp'
-
-"cmp.setup({
-"snippet = {
-    "-- REQUIRED - you must specify a snippet engine
-    "expand = function(args)
-    "    --vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-    "    -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
-    "    -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
-    "    vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
-    "end,
-"},
-"mapping = {
-    "["<Tab>"] = cmp.mapping({
-    "    c = function()
-    "        if cmp.visible() then
-    "            cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
-    "        else
-    "            cmp.complete()
-    "        end
-    "    end,
-    "    i = function(fallback)
-    "        if cmp.visible() then
-    "            cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
-    "        elseif vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
-    "            vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_forward)"), 'm', true)
-    "        else
-    "            fallback()
-    "        end
-    "    end,
-    "    s = function(fallback)
-    "        if vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
-    "            vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_forward)"), 'm', true)
-    "        else
-    "            fallback()
-    "        end
-    "    end
-    "}),
-    "["<S-Tab>"] = cmp.mapping({
-    "    c = function()
-    "        if cmp.visible() then
-    "            cmp.select_prev_item({ behavior = cmp.SelectBehavior.Insert })
-    "        else
-    "            cmp.complete()
-    "        end
-    "    end,
-    "    i = function(fallback)
-    "        if cmp.visible() then
-    "            cmp.select_prev_item({ behavior = cmp.SelectBehavior.Insert })
-    "        elseif vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
-    "            return vim.api.nvim_feedkeys( t("<Plug>(ultisnips_jump_backward)"), 'm', true)
-    "        else
-    "            fallback()
-    "        end
-    "    end,
-    "    s = function(fallback)
-    "        if vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
-    "            return vim.api.nvim_feedkeys( t("<Plug>(ultisnips_jump_backward)"), 'm', true)
-    "        else
-    "            fallback()
-    "        end
-    "    end
-    "}),
-    "['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
-    "['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
-    "['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
-    "--['<C-y>'] = cmp.config.disable, -- Specify `cmp.config.disable` if you want to remove the default `<C-y>` mapping.
-    "['<C-e>'] = cmp.mapping({
-    "i = cmp.mapping.abort(),
-    "c = cmp.mapping.close(),
-    "}),
-    "['<cr>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-"},
-    "sources = cmp.config.sources({
-    "{ name = 'nvim_lsp' },
-    "--{ name = 'vsnip' }, -- For vsnip users.
-    "-- { name = 'luasnip' }, -- For luasnip users.
-    "{ name = 'ultisnips' }, -- For ultisnips users.
-    "-- { name = 'snippy' }, -- For snippy users.
-    "}, {
-    "{ name = 'buffer' },
-    "})
-"})
-
-"-- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
-"cmp.setup.cmdline('/', {
-    "sources = {
-    "    { name = 'buffer' }
-    "    }
-    "})
-
-"-- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
-"cmp.setup.cmdline(':', {
-    "sources = cmp.config.sources({
-    "{ name = 'path' }
-    "}, {
-    "{ name = 'cmdline' }
-    "})
-"})
-
-"-- Setup lspconfig.
-"local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
-"-- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
-"require('lspconfig')['clangd'].setup {}
-"EOF
-
-    "" }}}
 endif
+
