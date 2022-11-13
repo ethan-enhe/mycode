@@ -75,7 +75,7 @@ mt19937_64 mr(chrono::system_clock::now().time_since_epoch().count());
 ll ri(const ll &l, const ll &r) { return uniform_int_distribution<ll>(l, r)(mr); }
 ld rd(const ld &l, const ld &r) { return uniform_real_distribution<ld>(l, r)(mr); }
 //}}}
-const ll P = 29;
+const ll P = 79;
 //{{{ Type
 inline int redu(const int &x) { return x >= P ? x - P : x; }
 inline int incr(const int &x) { return x + ((x >> 31) & P); }
@@ -111,7 +111,12 @@ ll n, m, arr[MXN];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    cout<<(mod)1/11;
+    mod a=4,b=7,c=12;
+    b/=a;
+    c/=a;
+    a/=a;
+    cout<<a<<" "<<b<<" "<<c<<endl;
+    cout<<(b/2)*(b/2)+c;
     return 0;
 }
 
