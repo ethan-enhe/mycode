@@ -1,7 +1,6 @@
 // #pragma GCC optimize("O3,unroll-loops")
 // #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
 // #pragma GCC target("sse,sse2,sse3,ssse3,sse4.1,sse4.2,avx,avx2,bmi,bmi2,lzcnt,popcnt")
-#include <cstdio>
 #ifdef LOCAL
 #define dbg(x) cerr << #x << " = " << (x) << endl
 #else
@@ -108,102 +107,81 @@ const char nl = '\n';
 const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
-ll n, m, a, b;
-ll l[MXN];
-vector<ll> g[MXN];
-ll dis[MXN];
-queue<ll> q;
-ll solve_negative() {
-    for (ll i = 1; i <= n; i++) dis[i] = INF;
-    dis[1] = 0;
-    q.push(1);
-    while (!q.empty()) {
-        ll p = q.front();
-        q.pop();
-        ll nd = dis[p] + 1;
-        for (ll &nx : g[p])
-            if (nd < dis[nx] && a * dis[p] > l[nx]) {
-                dis[nx] = nd;
-                q.push(nx);
-            }
+ll n, m, q;
+ll arr[MXN];
+
+struct mat {
+    mod v[4][4];
+    mat(bool f = 0) {
+        memset(v, 0, sizeof(v));
+        if (f)
+            for (int i = 0; i < 4; i++) v[i][i] = 1;
     }
-    return dis[n] == INF ? -1 : dis[n];
-}
-priority_queue<pi> pq;
-bool chk() {
-    for (ll i = 1; i <= n; i++) dis[i] = 0;
-    ll cnt = 0;
-    while (!pq.empty()) pq.pop();
-    pq.push({0, 1});
-    while (!pq.empty()) {
-        ll p = pq.top().second;
-        pq.pop();
-        if (cnt * a <= l[p] && p != 1) return 0;
-        if (p == n) return 1;
-        if (p != 1) ++cnt;
-        for (ll &nx : g[p])
-            if (!dis[nx]) {
-                dis[nx] = 1;
-                pq.push({-l[nx], nx});
-            }
+    mat operator*(const mat &y) const {
+        mat res;
+        for (int i = 0; i < 4; i++)
+            for (int j = 0; j < 4; j++)
+                for (int k = 0; k < 4; k++) res.v[i][k] += v[i][j] * y.v[j][k];
+        return res;
     }
-    return 0;
-}
-bool vis[MXN];
-ll solve_positive() {
-    if (!chk()) return -1;
-    for (ll i = 1; i <= n; i++) dis[i] = INF, vis[i] = 0;
-    while (!pq.empty()) pq.pop();
-    pq.push({-(dis[1] = 0), 1});
-    while (!pq.empty()) {
-        ll p = pq.top().second;
-        pq.pop();
-        if (vis[p]) continue;
-        vis[p] = 1;
-        for (ll &nx : g[p]) {
-            ll nd = max(dis[p], l[nx] / a + 1) + 1;
-            if (nd < dis[nx]) pq.push({-(dis[nx] = nd), nx});
-        }
+    mat operator+(const mat &y) const {
+        mat res;
+        for (int i = 0; i < 4; i++)
+            for (int j = 0; j < 4; j++) res.v[i][j] = v[i][j] + y.v[i][j];
+        return res;
     }
-    return dis[n];
+    void prt() {
+        for (int i = 0; i < 4; i++, cout << endl)
+            for (int j = 0; j < 4; j++) cout << v[i][j] << " ";
+    }
+};
+
+// sum a,sum a^2,hsum a^2
+// +=t:
+// suma=suma+t*len
+// suma^2=suma^2+t*t*len+2*suma*t
+// hsuma^2=hsuma^2+suma^2+t*t*len+2*suma*t
+// vec={len,sum a,sum a^2,hsum a^2}
+// trans={
+// {1,t,t*t,t*t*len},
+// {0,1,2*t,2*t}
+// {0,0,1,1}
+// {0,0,0,1}
+// }
+#define ls p << 1
+#define rs p << 1 | 1
+struct node {
+    mat sum, tag;
+} t[MXN << 2];
+void pull(ll p) { t[p].sum = t[ls].sum + t[rs].sum; }
+void addt(ll p, const mat &k) {
+    t[p].sum = t[p].sum * k;
+    t[p].tag = t[p].tag * k;
 }
+void push(ll p) {
+    addt(ls, t[p].tag);
+    addt(rs, t[p].tag);
+    t[p].tag = mat(1);
+}
+void build(ll p,ll l,ll r){
+    t[p].tag=mat(1);
+    if(l==r){
+        t[p].sum.v[0][0]=1;
+        t[p].sum.v[0][1]=arr[l];
+        t[p].sum.v[0][1]=arr[l];
+
+    }
+
+}
+
 int main() {
-    freopen("test.in", "r", stdin);
-    freopen("force.out", "w", stdout);
     ios::sync_with_stdio(0);
     cin.tie(0);
-    ll task;
-    cin >> task;
-    while (task--) {
-        cin >> n >> m >> a >> b;
-        for (ll i = 1; i <= n; i++) g[i].clear(), dis[i] = i, vis[i] = 0;
-        for (ll i = 1; i <= m; i++) {
-            ll u, v;
-            cin >> u >> v;
-            g[u].push_back(v);
-            g[v].push_back(u);
-        }
-        for(ll i=1;i<=n;i++)
-            cin>>l[i];
-        ll ans = INF;
-        for (ll i = 1; i <= 10000; i++) {
-            shuffle(dis + 2, dis + 1 + n, mr);
-            for (int i = 1; i <= n; i++) vis[i] = 0;
-            vis[1] = 1;
-            for (int i = 2; i <= n; i++) {
-                ll cur = dis[i];
-                if (l[cur] + b * (i - 1) < l[1] + a * (i - 2))
-                    for (ll j : g[cur]) vis[cur] |= vis[j];
-                // if (dis[5] == 5) {
-                //     cout << cur << " " << g[cur][0] << " " << (l[cur] + b * (i - 1) )<<( l[1] + a * (i - 2));
-                //     for (int i = 1; i <= n; i++) cout << vis[i];
-                //     return 0;
-                // }
-                if (!vis[cur]) break;
-                if (cur == n) ans = min(ans, (ll)i - 1);
-            }
-        }
-        cout << ans==INF?-1:ans << endl;
+    cin >> n >> m >> q;
+    for(ll i=1;i<=n;i++){
+        cin>>arr[i];
+        arr[i]=incr(arr[i]%P);
+
     }
     return 0;
 }

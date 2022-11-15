@@ -101,9 +101,9 @@ struct myvec {
 void solve() {
     // code
     for (int i = 1; i <= 1000; i++) {
-        system("./gen>test.in");
-        system("./force<test.in>force.out");
-        system("./gym103427M<test.in>std.out");
+        system("./gen");
+        system("./force");
+        system("./gym103861j");
         if (system("diff -Z force.out std.out")) {
             break;
         }

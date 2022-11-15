@@ -161,49 +161,34 @@ ll solve_positive() {
         if (vis[p]) continue;
         vis[p] = 1;
         for (ll &nx : g[p]) {
-            ll nd = max(dis[p], l[nx] / a + 1) + 1;
+            ll nd = max(dis[p], max(0ll, (l[nx] + a) / a)) + 1;
             if (nd < dis[nx]) pq.push({-(dis[nx] = nd), nx});
         }
     }
     return dis[n];
 }
 int main() {
-    freopen("test.in", "r", stdin);
-    freopen("force.out", "w", stdout);
+    // freopen("test.in", "r", stdin);
+    // freopen("std.out", "w", stdout);
     ios::sync_with_stdio(0);
     cin.tie(0);
     ll task;
     cin >> task;
     while (task--) {
         cin >> n >> m >> a >> b;
-        for (ll i = 1; i <= n; i++) g[i].clear(), dis[i] = i, vis[i] = 0;
+        a -= b;
+        for (ll i = 1; i <= n; i++) g[i].clear();
         for (ll i = 1; i <= m; i++) {
             ll u, v;
             cin >> u >> v;
             g[u].push_back(v);
             g[v].push_back(u);
         }
-        for(ll i=1;i<=n;i++)
-            cin>>l[i];
-        ll ans = INF;
-        for (ll i = 1; i <= 10000; i++) {
-            shuffle(dis + 2, dis + 1 + n, mr);
-            for (int i = 1; i <= n; i++) vis[i] = 0;
-            vis[1] = 1;
-            for (int i = 2; i <= n; i++) {
-                ll cur = dis[i];
-                if (l[cur] + b * (i - 1) < l[1] + a * (i - 2))
-                    for (ll j : g[cur]) vis[cur] |= vis[j];
-                // if (dis[5] == 5) {
-                //     cout << cur << " " << g[cur][0] << " " << (l[cur] + b * (i - 1) )<<( l[1] + a * (i - 2));
-                //     for (int i = 1; i <= n; i++) cout << vis[i];
-                //     return 0;
-                // }
-                if (!vis[cur]) break;
-                if (cur == n) ans = min(ans, (ll)i - 1);
-            }
+        for (ll i = 1; i <= n; i++) {
+            cin >> l[i];
+            if (i > 1) l[i] += b - l[1];
         }
-        cout << ans==INF?-1:ans << endl;
+        cout << (a <= 0 ? solve_negative() : solve_positive()) << nl;
     }
     return 0;
 }
