@@ -107,81 +107,20 @@ const char nl = '\n';
 const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
-ll n, m, q;
-ll arr[MXN];
-
-struct mat {
-    mod v[4][4];
-    mat(bool f = 0) {
-        memset(v, 0, sizeof(v));
-        if (f)
-            for (int i = 0; i < 4; i++) v[i][i] = 1;
-    }
-    mat operator*(const mat &y) const {
-        mat res;
-        for (int i = 0; i < 4; i++)
-            for (int j = 0; j < 4; j++)
-                for (int k = 0; k < 4; k++) res.v[i][k] += v[i][j] * y.v[j][k];
-        return res;
-    }
-    mat operator+(const mat &y) const {
-        mat res;
-        for (int i = 0; i < 4; i++)
-            for (int j = 0; j < 4; j++) res.v[i][j] = v[i][j] + y.v[i][j];
-        return res;
-    }
-    void prt() {
-        for (int i = 0; i < 4; i++, cout << endl)
-            for (int j = 0; j < 4; j++) cout << v[i][j] << " ";
-    }
-};
-
-// sum a,sum a^2,hsum a^2
-// +=t:
-// suma=suma+t*len
-// suma^2=suma^2+t*t*len+2*suma*t
-// hsuma^2=hsuma^2+suma^2+t*t*len+2*suma*t
-// vec={len,sum a,sum a^2,hsum a^2}
-// trans={
-// {1,t,t*t,t*t*len},
-// {0,1,2*t,2*t}
-// {0,0,1,1}
-// {0,0,0,1}
-// }
-#define ls p << 1
-#define rs p << 1 | 1
-struct node {
-    mat sum, tag;
-} t[MXN << 2];
-void pull(ll p) { t[p].sum = t[ls].sum + t[rs].sum; }
-void addt(ll p, const mat &k) {
-    t[p].sum = t[p].sum * k;
-    t[p].tag = t[p].tag * k;
-}
-void push(ll p) {
-    addt(ls, t[p].tag);
-    addt(rs, t[p].tag);
-    t[p].tag = mat(1);
-}
-void build(ll p,ll l,ll r){
-    t[p].tag=mat(1);
-    if(l==r){
-        t[p].sum.v[0][0]=1;
-        t[p].sum.v[0][1]=arr[l];
-        t[p].sum.v[0][1]=arr[l];
-
-    }
-
-}
-
+ll n, m, arr[MXN];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    cin >> n >> m >> q;
-    for(ll i=1;i<=n;i++){
-        cin>>arr[i];
-        arr[i]=incr(arr[i]%P);
-
+    ll t;
+    cin >> t;
+    while (t--) {
+        ll k;
+        cin >> n >> m >> k;
+        if (m == n && k == n)
+            cout << "Yes" << nl;
+        else {
+            cout << ((m + k + 1 < n) ? "Yes" : "No") << nl;
+        }
     }
     return 0;
 }
