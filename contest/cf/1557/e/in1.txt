@@ -1,4 +1,0 @@
-1
-Left
-Right
-Done
