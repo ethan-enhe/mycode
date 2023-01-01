@@ -6,6 +6,7 @@
 !*.vim
 !*.py
 !*.cpp
+!*.c
 !*.h
 !*.txt
 !*.png
