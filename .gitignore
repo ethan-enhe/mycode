@@ -1,14 +1,15 @@
-*
-!.gitignore
-!*.md
-!*.sh
-!*.json
-!*.vim
-!*.py
-!*.cpp
-!*.c
-!*.h
-!*.txt
-!*.png
-!*.zip
-!*/
+# *
+# !.gitignore
+# !*.md
+# !*.sh
+# !*.json
+# !*.vim
+# !*.py
+# !*.cpp
+# !*.c
+# !*.h
+# !*.txt
+# !*.png
+# !*.zip
+# !*/
+*.exe
