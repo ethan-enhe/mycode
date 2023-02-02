@@ -1,6 +1,5 @@
 #! /bin/bash -i
 config add ~/.p10k.zsh
-config add ~/.zimrc
 config add ~/.zshrc
 config add ~/.bashrc
 config add ~/.bash_profile
