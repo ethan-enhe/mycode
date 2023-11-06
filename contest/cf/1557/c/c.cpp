@@ -1,0 +1,44 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define fi first
+#define se second
+#define pb push_back
+#define mp make_pair
+typedef long long ll;
+typedef unsigned long long ull;
+typedef pair<ll,ll> pi;
+
+const ll INF=1e18;
+const ll P=1e9+7;
+
+inline ll mod(ll x){return x>=P?x-P:x;}
+inline ll mul(ll x,ll y){if(x<y)swap(x,y);ll res=0;while(y){if(y&1)res=mod(res+x);x=mod(x<<1);y>>=1;}return res;}
+inline ll qpow(ll x,ll y){ll res=1;while(y){if(y&1)res=res*x%P;x=x*x%P;y>>=1;}return res;}
+inline ll gcd(ll x,ll y){return !y?x:gcd(y,x%y);}
+inline void pbin(ll x,ll y){for(;~y;y--)cerr<<char('0'+((x>>y)&1));cerr<<endl;}
+
+
+const ll MXN=1e6+5;
+
+ll n,m,k;
+ll fac[MXN],ifac[MXN];
+ll c0,ans;
+inline void solve(){
+	scanf("%lld%lld",&n,&k);
+	ans=0;
+	c0=qpow(2,n-1);
+	if(n&1)c0++;
+	else c0--;
+	if(!(n&1))
+		for(ll i=1;i<=k;i++)
+			ans=(ans+qpow(c0,i-1)*qpow(2,n*(k-i)))%P;
+	ans=(ans+qpow(c0,k))%P;
+	printf("%lld\n",ans);
+}
+int main(){
+	//freopen(".in","r",stdin);
+	//freopen(".out","w",stdout);
+	ll tq;scanf("%lld",&tq);while(tq--)
+	solve();
+	return 0;
+}

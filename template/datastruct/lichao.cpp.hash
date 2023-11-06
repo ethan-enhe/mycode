@@ -1,0 +1,42 @@
+a2f9 | #include <bits/stdc++.h>
+990c | #define fi first
+1eee | #define se second
+a4fb | #define mp make_pair
+790b | using namespace std;
+8f5d | typedef long long ll;
+c38c | typedef pair<ll, ll> pi;
+00a9 | const ll INF = 1e18;
+4f5e | const ll MXN = 3e5 + 5;
+e3b0 | 
+890a | inline long double inter(const pi &x, const pi &y) {
+50b0 |     return x.fi == y.fi ? (x.se > y.se ? -INF : INF) : (long double)(y.se - x.se) / (x.fi - y.fi);
+d10b | }
+e3b0 | 
+db9e | ll n, s, sc[MXN], st[MXN], dp[MXN];
+5633 | pi q[MXN];
+25b9 | ll ql = 1, qr;
+565c | int main() {
+94a1 |     scanf("%lld%lld", &n, &s);
+5c1f |     for (int i = 1; i <= n; i++) {
+d822 |         scanf("%lld%lld", st + i, sc + i);
+51a2 |         st[i] += st[i - 1], sc[i] += sc[i - 1];
+d10b |     }
+6566 |     q[++qr] = mp(0, s * sc[n]);
+5c1f |     for (int i = 1; i <= n; i++) {
+b8a0 |         ll l = ql, r = qr;
+1cb8 |         while (l < r) {
+bbce |             ll mid = (l + r) >> 1;
+7fe1 |             if (inter(q[mid], q[mid + 1]) >= st[i])
+5300 |                 r = mid;
+7dd5 |             else
+8091 |                 l = mid + 1;
+d10b |         }
+d70c |         dp[i] = q[l].fi * st[i] + q[l].se + st[i] * sc[i];
+6ab6 |         pi curseg = mp(-sc[i], dp[i] + s * (sc[n] - sc[i]));
+2645 |         while (ql < qr && inter(q[qr - 1], q[qr]) >= inter(q[qr], curseg)) qr--;
+a4bc |         q[++qr] = curseg;
+d10b |     }
+9089 |     printf("%lld", dp[n]);
+e3b0 | 
+7145 |     return 0;
+d10b | }
