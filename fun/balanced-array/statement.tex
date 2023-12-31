@@ -1,0 +1,57 @@
+\documentclass[UTF8]{ctexart}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{cancel} 
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage[dvipsnames]{xcolor}
+% 在导言区进行样式设置
+\lstset{
+        language=C++, % 设置语言
+        basicstyle=\ttfamily, % 设置字体族
+        breaklines=true, % 自动换行
+        keywordstyle=\bfseries\color{NavyBlue}, % 设置关键字为粗体，颜色为 NavyBlue
+        morekeywords={}, % 设置更多的关键字，用逗号分隔
+        emph={self}, % 指定强调词，如果有多个，用逗号隔开
+        emphstyle=\bfseries\color{Rhodamine}, % 强调词样式设置
+        commentstyle=\itshape\color{black!50!white}, % 设置注释样式，斜体，浅灰色
+        stringstyle=\bfseries\color{PineGreen!90!black}, % 设置字符串样式
+        columns=flexible,
+        numbers=left, % 显示行号在左边
+        numbersep=2em, % 设置行号的具体位置
+        numberstyle=\footnotesize, % 缩小行号
+        frame=single, % 边框
+        framesep=1em % 设置代码与边框的距离
+}
+\title{}
+\author{周翟恩和 PB22000008}
+\date{\today}
+\begin{document}
+\maketitle
+\section{Balanced array}
+
+\subsection{legend}
+A \textit{balanced array} is defined as an integer array $ a_1,a_2,\ldots a_l $ that satisfies the following condition:
+\begin{itemize}
+        \item There exists an integer $k$, such that $ 1\le k\le \frac {l-1} 2$
+        \item $ a_i+a_{i+2k}=2a_{i+k} $ for each $ i $ in $ 1,2,\ldots l-2k $ 
+\end{itemize}
+
+Given an array $ A_1,A_2,\ldots A_n $, the task is to determine whether $ A_{1\ldots i} $ is a balanced array for each $ i $ in $ 1,2,\ldots n $.
+
+To minimize the size of the input file,\textbf{ \( A_i \) was encoded in base-62}, where the characters \( 0\ldots 9 \textit{a}\ldots \textit{z} \textit{A}\ldots \textit{Z} \) correspond to the numerical values \( 1\ldots 62 \) for each digit.
+
+\subsection{input}
+
+The first line contains an integer $ n $ ($ 1\le n\le 10^7 $), denoting the length of array $ A $.
+
+The second line contains $ n $ integers $ A_1,A_{2}\ldots A_{n} $ ($ 1\le A_i\le 10^9 $).
+
+\subsection{output}
+
+Output a 0/1 string $ s_{1\ldots n} $, such that $ s_i=\texttt{'1'} $ if $ A_{1\ldots i} $ is balanced, $ s_i=\texttt{'0'} $ otherwise.
+
+
+
+\end{document}
