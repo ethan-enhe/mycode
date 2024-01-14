@@ -42,7 +42,7 @@ string i2s(ll x) {
     for (int i = tt.size() - 1; i >= 0; i--) res += tt[i];
     return res;
 }
-int MX = 1e9;
+int MX = 2e8;
 bool inrng(int x) { return x <= MX && x >= 1; }
 const int MXN = 1e7 + 5;
 int a[MXN];
