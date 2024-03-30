@@ -137,7 +137,7 @@ inline void eli(double *x,double *y,int ind){
 ## 总是忘记的
 
 - sa 中求 h 数组时：`h[rk[i]]>=h[rk[i-1]]-1`
-- 2-SAT 中最终应该选择编号小的强连通分量
+- 2-SAT 中最终应该选择编号大的强连通分量
 
 # 模板
 
@@ -565,7 +565,7 @@ d10b |     }
 d10b | }
 ```
 
-## 圆方树
+## 点方树
 
 ```
 a2f9 | #include <bits/stdc++.h>
