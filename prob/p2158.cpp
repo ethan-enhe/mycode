@@ -108,16 +108,43 @@ const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
 ll n, m, arr[MXN];
+ll pri[MXN], idx;
+bool isc[MXN];
+ll phi[MXN];
+void sieve() {
+    isc[0] = isc[1] = 1;
+    phi[0] = 0;
+    phi[1] = 1;
+    for (ll i = 2; i < MXN; i++) {
+        if (!isc[i]) {
+            pri[++idx] = i;
+            phi[i] = i - 1;
+        }
+        for (ll j = 1; pri[j] * i < MXN && j <= idx; j++) {
+            if (i % pri[j] != 0) {
+                phi[i * pri[j]] = phi[i] * phi[pri[j]];
+            } else {
+                phi[i * pri[j]] = phi[i] * pri[j];
+            }
+            isc[pri[j] * i] = 1;
+            if (i % pri[j] == 0) break;
+        }
+    }
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    for (ll i = 1; i <= 1000; i++) {
-        system("./gen.exe>test.in");
-        system("./test.exe<test.in>1");
-        system("./p9148.exe<test.in>2");
-        if (system("diff 1 2")) break;
-        cout << i << endl;
+    cin >> n;
+    if (n == 1) {
+        cout << "0";
+        return 0;
     }
+    n--;
+    sieve();
+    ll sum = 0;
+    for (ll i = 1; i <= n; i++) {
+        sum += phi[i];
+    }
+    cout << sum * 2 + 1;
     return 0;
 }
-

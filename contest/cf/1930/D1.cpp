@@ -107,17 +107,44 @@ const char nl = '\n';
 const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
-ll n, m, arr[MXN];
+ll n, m;
+char str[MXN];
+ll solve(ll l, ll r) {
+    ll cnt = 0, ans = 0;
+    for (ll i = l; i <= r; i++) {
+        if (str[i] == '1') {
+            if (cnt <= 0) cnt = 3, ++ans;
+        }
+        --cnt;
+    }
+    return ans;
+}
+ll sum[MXN][4];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    for (ll i = 1; i <= 1000; i++) {
-        system("./gen.exe>test.in");
-        system("./test.exe<test.in>1");
-        system("./p9148.exe<test.in>2");
-        if (system("diff 1 2")) break;
-        cout << i << endl;
+    ll t;
+    cin >> t;
+    while (t--) {
+        cin >> n;
+        cin >> (str + 1);
+        ll ans = 0;
+        sum[n + 1][0] = sum[n + 1][1] = sum[n + 1][2] = sum[n + 1][3] = 0;
+        for (ll i = n; i; i--) {
+            if (str[i] == '0') {
+                sum[i][0] = sum[i + 1][0];
+                sum[i][1] = sum[i + 1][0];
+                sum[i][2] = sum[i + 1][1];
+                sum[i][3] = sum[i + 1][2];
+            } else {
+                sum[i][0] = sum[i + 1][2] + n - i + 1;
+                sum[i][1] = sum[i + 1][0];
+                sum[i][2] = sum[i + 1][1];
+                sum[i][3] = sum[i + 1][2];
+            }
+            ans += sum[i][0];
+        }
+        cout << ans << nl;
     }
     return 0;
 }
-

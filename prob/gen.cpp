@@ -1,7 +1,9 @@
 // #pragma GCC optimize("O3,unroll-loops")
 // #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
 // #pragma GCC target("sse,sse2,sse3,ssse3,sse4.1,sse4.2,avx,avx2,bmi,bmi2,lzcnt,popcnt")
+#include <algorithm>
 #include <cstdio>
+#include <vector>
 #ifdef LOCAL
 #define dbg(x) cerr << #x << " = " << (x) << endl
 #else
@@ -112,20 +114,15 @@ ll n, m, a, b, arr[MXN];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    freopen("test.in", "w", stdout);
-    ll t = 10;
-    cout << t << endl;
-    ll mxr = 10;
-    while (t--) {
-        n = ri(2, 5);
-        m = ri(n, n * 2);
-        a = ri(1, mxr);
-        b = ri(1, mxr);
-        cout << n << ' ' << m << " " << a << " " << b << endl;
-        while (m--) cout << ri(1, n) << " " << ri(1, n) << endl;
-        for (ll i = 1; i <= n; i++) cout << ri(1, mxr) << " ";
-        cout << endl;
+    ll n = 4;
+    vector<ll> res;
+    for (ll i = 1; i <= n; i++) {
+        res.push_back(ri(1, 5000));
     }
+    sort(all(res));
+    res.erase(unique(all(res)), res.end());
+    shuffle(all(res), mr);
+    cout << res.size() << endl;
+    for (ll i : res) cout << i << " ";
     return 0;
 }
-

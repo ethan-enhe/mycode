@@ -1,6 +1,7 @@
 // #pragma GCC optimize("O3,unroll-loops")
 // #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
 // #pragma GCC target("sse,sse2,sse3,ssse3,sse4.1,sse4.2,avx,avx2,bmi,bmi2,lzcnt,popcnt")
+#include <vector>
 #ifdef LOCAL
 #define dbg(x) cerr << #x << " = " << (x) << endl
 #else
@@ -108,16 +109,21 @@ const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
 ll n, m, arr[MXN];
+vector<pair<int, int>> fact(int a) {
+    vector<pair<int, int>> res;
+    for (int i = 2; i * i <= a; i++) // 为什么只需要循环到 sqrt(a)?
+        if (a % i == 0) {
+            int cnt = 0;
+            do a /= i, ++cnt;
+            while (a % i == 0);
+            res.push_back({i, cnt});
+        }
+    if (a != 1) res.push_back({a, 1}); // 记得处理大于 sqrt(a) 的因数
+    return res;
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    for (ll i = 1; i <= 1000; i++) {
-        system("./gen.exe>test.in");
-        system("./test.exe<test.in>1");
-        system("./p9148.exe<test.in>2");
-        if (system("diff 1 2")) break;
-        cout << i << endl;
-    }
+    cin >> n >> m;
     return 0;
 }
-

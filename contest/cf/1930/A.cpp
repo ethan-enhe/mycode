@@ -111,13 +111,20 @@ ll n, m, arr[MXN];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    for (ll i = 1; i <= 1000; i++) {
-        system("./gen.exe>test.in");
-        system("./test.exe<test.in>1");
-        system("./p9148.exe<test.in>2");
-        if (system("diff 1 2")) break;
-        cout << i << endl;
+    ll t;
+    cin >> t;
+    while (t--) {
+        cin >> n;
+        n *= 2;
+        for (ll i = 1; i <= n; i++) {
+            cin >> arr[i];
+        }
+        sort(arr + 1, arr + 1 + n);
+        ll ans = 0;
+        for (ll i = 1; i*2 <= n; i++) {
+            ans += min(arr[i * 2], arr[i * 2 - 1]);
+        }
+        cout << ans << nl;
     }
     return 0;
 }
-

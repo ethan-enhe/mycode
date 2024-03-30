@@ -1,6 +1,7 @@
 // #pragma GCC optimize("O3,unroll-loops")
 // #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
 // #pragma GCC target("sse,sse2,sse3,ssse3,sse4.1,sse4.2,avx,avx2,bmi,bmi2,lzcnt,popcnt")
+#include <vector>
 #ifdef LOCAL
 #define dbg(x) cerr << #x << " = " << (x) << endl
 #else
@@ -105,19 +106,55 @@ struct mod {
 //}}}
 const char nl = '\n';
 const ll INF = 1e18;
-const ll MXN = 1e6 + 5;
+const ll MXN = 4000 + 5;
 
-ll n, m, arr[MXN];
+ll n, m, arr[MXN], brr[MXN];
+char str[MXN][MXN];
+bool ans[MXN][MXN];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    for (ll i = 1; i <= 1000; i++) {
-        system("./gen.exe>test.in");
-        system("./test.exe<test.in>1");
-        system("./p9148.exe<test.in>2");
-        if (system("diff 1 2")) break;
-        cout << i << endl;
+    cin >> n;
+    for (ll i = 1; i <= n; i++) {
+        cin >> (str[i] + 1);
+        for (ll j = 1; j <= n; j++) {
+            ans[i][j] = 0;
+            if (str[i][j] == '-') {
+                ++arr[i], ++brr[j];
+                ans[i][j] = 1;
+            }
+        }
+    }
+    vector<ll> r, c;
+    for (ll i = 1; i <= n; i++) {
+        c.push_back(i);
+        ll x;
+        cin >> x;
+        arr[i] += x;
+    }
+    for (ll i = 1; i <= n; i++) {
+        ll x;
+        cin >> x;
+        brr[i] += x;
+    }
+    for (ll i = 1; i <= n; i++) {
+        sort(all(c), [](ll x, ll y) { return brr[x] > brr[y]; });
+        for (ll j : c) {
+            if (arr[i] > 0 && brr[j] > 0) ans[i][j] ^= 1, --arr[i], --brr[j];
+        }
+    }
+    bool f = 1;
+    for (ll i = 1; i <= n; i++) {
+        // cout << arr[i] << " " << brr[i] << endl;
+        f &= arr[i] == 0;
+        f &= brr[i] == 0;
+    }
+    cout << (f ? "Yes\n" : "No\n");
+    if(f)
+    for (ll i = 1; i <= n; i++, cout << '\n') {
+        for (ll j = 1; j <= n; j++) {
+            cout << ans[i][j];
+        }
     }
     return 0;
 }
-

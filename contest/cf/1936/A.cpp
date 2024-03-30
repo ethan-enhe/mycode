@@ -108,16 +108,47 @@ const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
 ll n, m, arr[MXN];
+ll ask(ll a, ll b, ll c, ll d) {
+    cout << "? " << a << " " << b << " " << c << " " << d << endl;
+    cout.flush();
+    char x;
+    cin >> x;
+    if (x == '<')
+        return -1;
+    else if (x == '=')
+        return 0;
+    else
+        return 1;
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    for (ll i = 1; i <= 1000; i++) {
-        system("./gen.exe>test.in");
-        system("./test.exe<test.in>1");
-        system("./p9148.exe<test.in>2");
-        if (system("diff 1 2")) break;
-        cout << i << endl;
+    ll t;
+    cin >> t;
+    while (t--) {
+        cin >> n;
+        ll mxi = 0;
+        for (ll i = 1; i < n; i++) {
+            if (ask(i, i, mxi, mxi) == 1) {
+                mxi = i;
+            }
+        }
+        vector<ll> mxidx = {0};
+        for (ll i = 1; i < n; i++) {
+            ll res = ask(i, mxi, mxidx[0], mxi);
+            if (res == 1) {
+                mxidx = {i};
+            } else if (res == 0)
+                mxidx.push_back(i);
+        }
+        ll mni = mxidx[0];
+        for (ll i : mxidx) {
+            if (ask(i, i, mni, mni) == -1) {
+                mni = i;
+            }
+        }
+        cout << "! " << mni << " " << mxi << endl;
+        cout.flush();
     }
     return 0;
 }
-

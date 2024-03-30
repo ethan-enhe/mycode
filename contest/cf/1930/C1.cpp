@@ -108,16 +108,57 @@ const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
 ll n, m, arr[MXN];
+set<pi> v;
+void mrg_prev(set<pi>::iterator &it) {
+    if (it != v.begin()) {
+        auto p = prev(it);
+        if (p->second + 1 == it->first) {
+            pi a = *p, b = *it;
+            v.erase(p);
+            v.erase(b);
+            it = v.insert({a.fi, b.se}).fi;
+        }
+    }
+}
+void ins(ll x, ll y) {
+    auto it = v.upper_bound({x, INF});
+    if (it != v.begin()) {
+        --it;
+        if (it->se >= x) {
+            if (x - y < it->fi) {
+                pi tmp = *it;
+                v.erase(it);
+                --tmp.first;
+                it = v.insert(tmp).first;
+            }
+        } else {
+            it = v.insert({x, x}).first;
+        }
+    } else {
+        it = v.insert({x, x}).first;
+    }
+    mrg_prev(it);
+    ++it;
+    if (it != v.end()) mrg_prev(it);
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    for (ll i = 1; i <= 1000; i++) {
-        system("./gen.exe>test.in");
-        system("./test.exe<test.in>1");
-        system("./p9148.exe<test.in>2");
-        if (system("diff 1 2")) break;
-        cout << i << endl;
+    ll t;
+    cin >> t;
+    while (t--) {
+        ll n;
+        v.clear();
+        cin >> n;
+        for (ll i = 1; i <= n; i++) {
+            ll x;
+            cin >> x;
+            ins(x + i, i);
+        }
+        for (auto i = v.rbegin(); i != v.rend(); i++) {
+            for (ll j = i->second; j >= i->first; j--) cout << j << " ";
+        }
+        cout << nl;
     }
     return 0;
 }
-

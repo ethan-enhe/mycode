@@ -1,6 +1,8 @@
 // #pragma GCC optimize("O3,unroll-loops")
 // #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
 // #pragma GCC target("sse,sse2,sse3,ssse3,sse4.1,sse4.2,avx,avx2,bmi,bmi2,lzcnt,popcnt")
+#include <queue>
+#include <vector>
 #ifdef LOCAL
 #define dbg(x) cerr << #x << " = " << (x) << endl
 #else
@@ -107,17 +109,82 @@ const char nl = '\n';
 const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
-ll n, m, arr[MXN];
+ll n, m;
+ll a[MXN], b[MXN], c[MXN];
+ll putin[MXN], ans[MXN];
+vector<ll> ab, ba;
+priority_queue<pi> q;
+bool chk(ll lim) {
+    ll sum = 0, idx = 0;
+    for (ll i = 1; i <= n; i++) {
+        sum += b[i];
+        putin[i] = lim / c[i] - a[i];
+    }
+    sort(all(ab), [&](ll x, ll y) { return putin[x] > putin[y]; });
+    for (ll i = 1; i <= ab.size(); i++) {
+        while (idx < ab.size() && putin[ab[idx]] >= sum) {
+            q.push({b[ab[idx]] - a[ab[idx]], ab[idx]});
+            ++idx;
+        }
+        if (q.empty()) return 0;
+        auto p = q.top();
+        q.pop();
+        ans[i] = p.second;
+        sum -= p.first;
+    }
+
+    // cerr << sum << endl;
+    sum = 0, idx = 0;
+    for (ll i = 1; i <= n; i++) {
+        sum += a[i];
+        putin[i] = lim / c[i] - b[i];
+        // cerr << putin[i] << " ";
+    }
+    sort(all(ba), [&](ll x, ll y) { return putin[x] > putin[y]; });
+    for (ll i = n; i + ba.size() > n; i--) {
+        while (idx < ba.size() && putin[ba[idx]] >= sum) {
+            q.push({a[ba[idx]] - b[ba[idx]], ba[idx]});
+            ++idx;
+        }
+        // cerr << "!!!" << q.size();
+        if (q.empty()) return 0;
+        auto p = q.top();
+        q.pop();
+        ans[i] = p.second;
+        sum -= p.first;
+    }
+    return 1;
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    for (ll i = 1; i <= 1000; i++) {
-        system("./gen.exe>test.in");
-        system("./test.exe<test.in>1");
-        system("./p9148.exe<test.in>2");
-        if (system("diff 1 2")) break;
-        cout << i << endl;
+    ll t;
+    cin >> t;
+    while (t--) {
+        ab.clear();
+        ba.clear();
+        cin >> n;
+        for (ll i = 1; i <= n; i++) {
+            cin >> a[i] >> b[i] >> c[i];
+            if (a[i] < b[i])
+                ab.push_back(i);
+            else
+                ba.push_back(i);
+        }
+        ll l = 0, r = INF;
+
+        // chk(1000);
+        while (l < r) {
+            ll mid = (l + r) >> 1;
+            if (chk(mid))
+                r = mid;
+            else
+                l = mid + 1;
+        }
+        chk(l);
+        // cerr<<l<<endl;
+        for (ll i = 1; i <= n; i++) cout << ans[i] << " ";
+        cout << nl;
     }
     return 0;
 }
-

@@ -107,17 +107,64 @@ const char nl = '\n';
 const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
-ll n, m, arr[MXN];
+ll n, m, sum[MXN];
+ll lsum[MXN], rsum[MXN], lt, rt;
+char str[MXN];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    for (ll i = 1; i <= 1000; i++) {
-        system("./gen.exe>test.in");
-        system("./test.exe<test.in>1");
-        system("./p9148.exe<test.in>2");
-        if (system("diff 1 2")) break;
-        cout << i << endl;
+    ll t;
+    cin >> t;
+    while (t--) {
+        cin >> n;
+        cin >> (str + 1);
+        lt = 0;
+        rt = 0;
+        for (ll i = 1; i <= n; i++) {
+            sum[i] = sum[i - 1] + (str[i] == '>');
+            if (str[i] == '>') {
+                ++lt;
+                lsum[lt] = lsum[lt - 1] + i;
+            }
+        }
+        for (ll i = n; i; i--) {
+            if (str[i] == '<') {
+                ++rt;
+                rsum[rt] = rsum[rt - 1] + i;
+            }
+        }
+#define sl (lsum[lbar] - lsum[lbar - lcnt])
+#define sr (rsum[rbar] - rsum[rbar - rcnt])
+        for (ll i = 1; i <= n; i++) {
+            ll lbar = sum[i - 1];                // 左侧的>
+            ll rbar = n - i - (sum[n] - sum[i]); // 右侧的<
+            // cerr << rbar << " ";
+            ll lcnt, rcnt;
+            ll ans = 0;
+            if (str[i] == '<') {
+                if (lbar <= rbar) {
+                    lcnt = lbar;
+                    rcnt = lbar;
+                    ans = sr * 2 - sl * 2 + i;
+                } else {
+                    lcnt = rbar + 1;
+                    rcnt = rbar;
+                    ans = sr * 2 - sl * 2 + i + n + 1;
+                }
+            } else {
+                if (rbar <= lbar) {
+                    rcnt = rbar;
+                    lcnt = rbar;
+                    ans = sr * 2 - sl * 2 - i + n + 1;
+                } else {
+                    rcnt = lbar + 1;
+                    lcnt = lbar;
+                    ans = sr * 2 - sl * 2 - i;
+                }
+            }
+            cout << ans << " ";
+        }
+        cout << endl;
     }
     return 0;
 }
-

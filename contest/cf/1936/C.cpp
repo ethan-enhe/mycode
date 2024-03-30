@@ -1,6 +1,9 @@
 // #pragma GCC optimize("O3,unroll-loops")
 // #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
 // #pragma GCC target("sse,sse2,sse3,ssse3,sse4.1,sse4.2,avx,avx2,bmi,bmi2,lzcnt,popcnt")
+#include <algorithm>
+#include <queue>
+#include <vector>
 #ifdef LOCAL
 #define dbg(x) cerr << #x << " = " << (x) << endl
 #else
@@ -107,17 +110,86 @@ const char nl = '\n';
 const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
-ll n, m, arr[MXN];
+ll n, m;
+ll cost[MXN];
+vector<ll> arr[MXN];
+vector<ll> pool[MXN];
+vector<pi> edge[MXN];
+
+#define id(i, j) ((i) * n + (j))
+
+void ae(ll u, ll v, ll w) {
+    // cerr<<u<<" "<<v<<" "<<w<<endl;
+    edge[u].push_back({v, w});
+}
+
+bool vis[MXN];
+ll dis[MXN];
+priority_queue<pi> q;
+ll dij() {
+    q.push({-(dis[1] = 0), 1});
+    while (!q.empty()) {
+        ll p = q.top().second;
+        q.pop();
+        // cerr << p << " " << dis[p] << endl;
+        if (vis[p]) continue;
+        vis[p] = 1;
+        for (auto [v, w] : edge[p]) {
+            ll nd = dis[p] + w;
+            // if(v==6 && nd==0){
+            //     cout<<p<<endl;
+            //
+            // }
+            if (nd < dis[v]) q.push({-(dis[v] = nd), v});
+        }
+    }
+    return dis[n];
+}
+
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    for (ll i = 1; i <= 1000; i++) {
-        system("./gen.exe>test.in");
-        system("./test.exe<test.in>1");
-        system("./p9148.exe<test.in>2");
-        if (system("diff 1 2")) break;
-        cout << i << endl;
+    ll t;
+    cin >> t;
+    while (t--) {
+        cin >> n >> m;
+        for (ll i = 1; i <= id(m, n); i++) {
+            edge[i].clear();
+            dis[i] = INF;
+            vis[i] = 0;
+        }
+
+        for (ll i = 1; i <= m; i++) {
+            pool[i].clear();
+            pool[i].resize(n + 1);
+        }
+
+        for (ll i = 1; i <= n; i++) {
+            cin >> cost[i];
+        }
+        for (ll i = 1; i <= n; i++) {
+            arr[i].resize(m + 1);
+            for (ll j = 1; j <= m; j++) {
+                cin >> arr[i][j];
+                pool[j][i] = arr[i][j];
+            }
+        }
+        for (ll j = 1; j <= m; j++) {
+            sort(all(pool[j]));
+            for (ll i = 1; i <= n; i++) {
+                if (i < n) ae(id(j, i), id(j, i + 1), 0);
+                if (i > 1) ae(id(j, i), id(j, i - 1), pool[j][i] - pool[j][i - 1]);
+
+                arr[i][j] = lower_bound(all(pool[j]), arr[i][j]) - pool[j].begin();
+                ae(id(j, arr[i][j]), i, cost[i]);
+                ae(i, id(j, arr[i][j]), 0);
+            }
+        }
+        // for (ll i = 1; i <= n; i++, cerr << endl)
+        //     for (ll j = 1; j <= m; j++) {
+        //         cerr << arr[i][j] << " ";
+        //     }
+        cout << dij() << nl;
     }
     return 0;
 }
-

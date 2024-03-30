@@ -1,6 +1,7 @@
 // #pragma GCC optimize("O3,unroll-loops")
 // #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
 // #pragma GCC target("sse,sse2,sse3,ssse3,sse4.1,sse4.2,avx,avx2,bmi,bmi2,lzcnt,popcnt")
+#include <cstdlib>
 #ifdef LOCAL
 #define dbg(x) cerr << #x << " = " << (x) << endl
 #else
@@ -111,12 +112,14 @@ ll n, m, arr[MXN];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    for (ll i = 1; i <= 1000; i++) {
-        system("./gen.exe>test.in");
-        system("./test.exe<test.in>1");
-        system("./p9148.exe<test.in>2");
-        if (system("diff 1 2")) break;
-        cout << i << endl;
+    for(ll i=1;i<=100;i++){
+        system("./gen.exe > 1");
+        system("./I.exe < 1 > 2");
+        system("./If.exe < 1 > 3");
+        if(system("diff 2 3")){
+            break;
+        }
+        cout<<i<<endl;
     }
     return 0;
 }

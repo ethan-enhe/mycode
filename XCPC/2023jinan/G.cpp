@@ -105,19 +105,93 @@ struct mod {
 //}}}
 const char nl = '\n';
 const ll INF = 1e18;
-const ll MXN = 1e6 + 5;
+const ll MXN = 2e6 + 5;
 
-ll n, m, arr[MXN];
+ll n, m;
+string arr[MXN];
+#define id(x, y) ((x) + y * n)
+ll fa[MXN];
+ll tot, ans;
+ll find(ll x) {
+    while (fa[x] != x) x = fa[x] = fa[fa[x]];
+    return x;
+}
+void mrg(ll x, ll y) {
+    x = find(x), y = find(y);
+    if (x != y) fa[x] = y, --tot;
+}
+void same(ll x, ll y) {
+    mrg(id(x, 0), id(y, 0));
+    mrg(id(x, 1), id(y, 1));
+}
+void diff(ll x, ll y) {
+    mrg(id(x, 1), id(y, 0));
+    mrg(id(x, 0), id(y, 1));
+}
+void solve(ll j) { // j列
+    ll _j = m - j - 1;
+    if (j == _j) {
+        ll cnt = 0;
+        for (ll i = 1; i <= n; i++) cnt += arr[i][j] - '0';
+        if (cnt > 1) ans = 0;
+        return;
+    }
+    ll cnt = 0;
+    ll lasti = 0, lastj;
+    for (ll i = 1; i <= n; i++) {
+        cnt += arr[i][j] - '0' + arr[i][_j] - '0';
+    }
+    if (cnt > 2) {
+        ans = 0;
+        return;
+    };
+    if (cnt == 1) return;
+    for (ll i = 1; i <= n; i++) {
+        if (arr[i][j] == '1') {
+            if (!lasti) {
+                lasti = i, lastj = j;
+            } else {
+                if (lastj == j)
+                    diff(i, lasti);
+                else
+                    same(i, lasti);
+            }
+        }
+        if (arr[i][_j] == '1') {
+            if (!lasti) {
+                lasti = i, lastj = _j;
+            } else {
+                if (lastj == _j)
+                    diff(i, lasti);
+                else
+                    same(i, lasti);
+            }
+        }
+    }
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    for (ll i = 1; i <= 1000; i++) {
-        system("./gen.exe>test.in");
-        system("./test.exe<test.in>1");
-        system("./p9148.exe<test.in>2");
-        if (system("diff 1 2")) break;
-        cout << i << endl;
+    ll t;
+    cin >> t;
+    while (t--) {
+        cin >> n >> m;
+        tot = n * 2;
+        ans = 1;
+        for (int i = 1; i <= n; i++) {
+            cin >> arr[i];
+            fa[id(i, 0)] = id(i, 0);
+            fa[id(i, 1)] = id(i, 1);
+        }
+        for (ll i = 0; m - i - 1 >= i; i++) solve(i);
+        for (int i = 1; i <= n; i++) {
+            if (find(id(i, 0)) == find(id(i, 1))) ans = 0;
+        }
+        tot /= 2;
+        while (tot--) {
+            ans = ans * 2 % P;
+        }
+        cout << ans << nl;
     }
     return 0;
 }
-

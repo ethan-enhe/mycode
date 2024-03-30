@@ -1,72 +1,47 @@
-#include <bits/stdc++.h>
-
+#include<bits/stdc++.h>
+#define up(l, r, i) for(int i = l, END##i = r;i <= END##i;++ i)
+#define dn(r, l, i) for(int i = r, END##i = l;i >= END##i;-- i)
 using namespace std;
-using pi = pair<int, int>;
-const char nl = '\n';
-const int MXN = 10000 + 5;
-const int INF = 1e9;
-
-int n, m, k, arr[MXN], brr[MXN];
-
-int dp[MXN];
-int nx[MXN];
-int mxb[MXN];
-int q[MXN];
-int ql, qr;
-
-int main() {
-    freopen("test.in", "r", stdin);
-    ios::sync_with_stdio(0);
-    cin.tie(0);
-    int t;
-    cin >> t;
-    while (t--) {
-        cin >> n >> m >> k;
-        dp[0] = 0;
-        for (int i = 1; i <= n; i++) {
-            cin >> arr[i];
-            dp[i] = 0;
+typedef long long i64;
+const int INF = 2147483647;
+const int MAXN= 5000 + 3;
+int n, m = 5000, A[MAXN]; bool C[MAXN];
+unsigned ans = 0, D[MAXN][MAXN];
+int qread(){
+    int w=1,c,ret;
+    while((c = getchar()) >  '9' || c <  '0') w = (c == '-' ? -1 : 1); ret = c - '0';
+    while((c = getchar()) >= '0' && c <= '9') ret = ret * 10 + c - '0';
+    return ret * w;
+}
+int main(){
+    n = qread();
+    up(1, n, i) A[i] = qread(), C[A[i]] = true;
+    up(1, m, c) if(C[c]){
+        up(1, m, i){
+            int a1 = c * i, a2 = min(c * (i + 1) - 1, m);
+            if(a1 > a2) break;
+            up(1, m, j){
+                int b1 = c * j, b2 = min(c * (j + 1) - 1, m);
+                if(b1 > b2) break;
+                a1 = max(a1, c + 1);
+                b1 = max(b1, c + 1);
+                D[    a1][    b1] += i * j;
+                D[    a1][b2 + 1] -= i * j;
+                D[a2 + 1][    b1] -= i * j;
+                D[a2 + 1][b2 + 1] += i * j;
+            }
         }
-        for (int i = 1; i <= m; i++) cin >> brr[i];
-        // dp[i]递减
-        for (int _k = 1; _k <= k; _k++) {
-            int mx = 0;
-            ql = 1, qr = 0;
-            for (int i = n; i; i--) {
-                // 枚举最后一次选的a
-                while (ql <= qr && arr[q[qr]] <= arr[i]) --qr;
-                q[++qr] = i;
-                while (ql <= qr && _k + n + m - q[ql] - dp[i - 1] < k) ++ql;
-                if (ql <= qr) mx = max(mx, arr[q[ql]]);
-            }
-            ql = 1, qr = 0;
-            for (int i = 0; i <= n; i++) {
-                int up_bound = (i == 0 ? m : min(dp[i - 1], m));
-                for (int j = up_bound; j > dp[i]; j--) {
-                    while (ql <= qr && brr[q[qr]] <= brr[j]) --qr;
-                    q[++qr] = j;
-                }
-                while (ql <= qr && _k + n + m - q[ql] - i < k) ++ql;
-                if (ql <= qr)
-                    mx = max(mx, brr[mxb[i] = q[ql]]);
-                else
-                    mxb[i] = INF;
-            }
-            int mn = INF;
-            nx[0] = INF;
-            // cerr << _k << " ";
-            for (int i = 0; i <= n; i++) {
-                // cerr << dp[i] << " ";
-                if (i) mn = min(mn, dp[i - 1]), nx[i] = nx[i - 1];
-                if (arr[i] == mx) nx[i] = min(nx[i], mn);
-                if (mxb[i] != INF && brr[mxb[i]] == mx) nx[i] = min(nx[i], mxb[i]);
-            }
-            // cerr << nl;
-            for (int i = 0; i <= n; i++) dp[i] = nx[i];
-            cout << mx;
-        }
-        cout << nl;
     }
+    up(1, m, i) up(1, m, j){
+        D[i][j] += D[i][j - 1];
+    }
+    up(1, m, i) up(1, m, j){
+        D[i][j] += D[i - 1][j];
+    }
+    up(1, m, a) up(1, m, b) if(a > b){
+        if(C[a] && C[b])
+            ans += (a / b) * D[a][b];
+    }
+    printf("%u\n", ans);
     return 0;
 }
-

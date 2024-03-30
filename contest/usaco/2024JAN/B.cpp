@@ -1,6 +1,7 @@
 // #pragma GCC optimize("O3,unroll-loops")
 // #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
 // #pragma GCC target("sse,sse2,sse3,ssse3,sse4.1,sse4.2,avx,avx2,bmi,bmi2,lzcnt,popcnt")
+#include <vector>
 #ifdef LOCAL
 #define dbg(x) cerr << #x << " = " << (x) << endl
 #else
@@ -105,19 +106,60 @@ struct mod {
 //}}}
 const char nl = '\n';
 const ll INF = 1e18;
-const ll MXN = 1e6 + 5;
+const ll MXN = 5005;
 
 ll n, m, arr[MXN];
+mod dp[MXN][MXN], lsum[MXN][MXN], csum[MXN][MXN];
+mod fac[MXN];
+mod ifac[MXN];
+mod mrgset(vector<ll> sz) {
+    ll sum = 0;
+    mod res = 1;
+    for (auto i : sz) {
+        res *= fac[i];
+        sum += i;
+    }
+    return res * ifac[sum];
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    for (ll i = 1; i <= 1000; i++) {
-        system("./gen.exe>test.in");
-        system("./test.exe<test.in>1");
-        system("./p9148.exe<test.in>2");
-        if (system("diff 1 2")) break;
-        cout << i << endl;
+    fac[0] = ifac[0] = 1;
+    for (ll i = 1; i < MXN; i++) {
+        fac[i] = fac[i - 1] * i;
+        ifac[i] = (mod)1 / fac[i];
+    }
+    cin >> n;
+    for (ll i = 1; i <= n; i++) {
+        cin >> arr[i];
+        arr[i] += arr[i - 1];
+    }
+    dp[1][n] = 1;
+    for (ll i = 1; i <= n; i++) {
+        ll mid = n; // mid左边，都是左边大
+        for (ll j = n; j >= i; j--) {
+            lsum[i + 1][j] += lsum[i][j];
+            csum[i][j - 1] += csum[i][j];
+            while (arr[mid] - arr[i - 1] > arr[j] - arr[mid]) --mid;
+            dp[i][j] += lsum[i][j] + csum[i][j];
+            mod delt = mrgset({j - i - 1, 1}) * dp[i][j];
+            // dp[i+1~mid+1][j]+=delt;
+            lsum[i + 1][j] += delt;
+            lsum[mid + 2][j] -= delt;
+            // dp[i][mid+1~j]+=delt
+            csum[i][j - 1] += delt;
+            csum[i][mid] -= delt;
+            // cerr << i << " " << j << " " << mid << " " << dp[i][j] << " " << delt << " " << lsum[2][3] << endl;
+
+            // for (ll mid = i; mid < j; mid++) {
+            //     bool choose = ();
+            //     dp[i][mid] += prob * dp[i][j] * (!choose);
+            //     dp[mid + 1][j] += prob * dp[i][j] * choose;
+            // }
+        }
+    }
+    for (ll i = 1; i <= n; i++) {
+        cout << dp[i][i] << nl;
     }
     return 0;
 }
-

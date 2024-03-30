@@ -75,7 +75,7 @@ mt19937_64 mr(chrono::system_clock::now().time_since_epoch().count());
 ll ri(const ll &l, const ll &r) { return uniform_int_distribution<ll>(l, r)(mr); }
 ld rd(const ld &l, const ld &r) { return uniform_real_distribution<ld>(l, r)(mr); }
 //}}}
-const ll P = 1e9 + 7;
+const ll P = 998244353;
 //{{{ Type
 inline int redu(const int &x) { return x >= P ? x - P : x; }
 inline int incr(const int &x) { return x + ((x >> 31) & P); }
@@ -108,16 +108,40 @@ const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
 ll n, m, arr[MXN];
+mod fac[MXN], ifac[MXN];
+mod c(ll x, ll y) {
+    if (y > x || y < 0) return 0;
+    return fac[x] * ifac[y] * ifac[x - y];
+}
+mod solve(ll k, ll t) {
+    // if (t == 1) {
+    //     return c(n, 2 * k) - c(n - 1, 2 * k - 1);
+    // } else {
+        ll cont = (t - 1) * 2 * k + 1;
+        return c(n, 2 * k * t) - c(n - cont, 2 * k * t - cont);
+    // }
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    for (ll i = 1; i <= 1000; i++) {
-        system("./gen.exe>test.in");
-        system("./test.exe<test.in>1");
-        system("./p9148.exe<test.in>2");
-        if (system("diff 1 2")) break;
-        cout << i << endl;
+    fac[0] = ifac[0] = 1;
+    for (ll i = 1; i < MXN; i++) {
+        fac[i] = fac[i - 1] * i;
+        ifac[i] = (mod)1 / fac[i];
+    }
+    ll t;
+    cin >> t;
+    while (t--) {
+        cin >> n;
+        for (ll k = 1; k * 2 + 1 <= n; k++) {
+            mod ans = 1;
+            for (ll j = 1; 2 * k * j <= n; j++) {
+                ans += solve(k, j);
+                // cerr<<k<<" "<<j<<" "<<solve(k,j)<<nl;
+            }
+            cout << ans << " ";
+        }
+        cout << nl;
     }
     return 0;
 }
-

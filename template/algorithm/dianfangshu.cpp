@@ -31,27 +31,6 @@ void tj(ll p) {
             low[p] = min(low[p], dfn[nx]);
     }
 }
-bool vis[MXN];
-ll sz[MXN], ans;
-void dfssz(ll p, ll fa) {
-    sz[p] = p <= n;
-    for (ll nx : t[p])
-        if (nx != fa) {
-            dfssz(nx, p);
-            sz[p] += sz[nx];
-        }
-}
-ll sqr(ll x) { return x * (x - 1); }
-void cal(ll p, ll fa, ll tot) {
-    vis[p] = 1;
-    ll curw = (p <= n ? -1 : t[p].size()), cnt = sqr(tot) - sqr(tot - sz[p]);
-    for (ll nx : t[p])
-        if (nx != fa) {
-            cnt -= sqr(sz[nx]);
-            cal(nx, p, tot);
-        }
-    ans += cnt * curw;
-}
 int main() {
     scanf("%lld%lld", &n, &m);
     sqrc = n;
@@ -62,12 +41,6 @@ int main() {
     }
     for (ll i = 1; i <= n; i++)
         if (!dfn[i]) tj(i);
-    for (ll i = 1; i <= sqrc; i++)
-        if (!vis[i]) {
-            dfssz(i, 0);
-            cal(i, 0, sz[i]);
-        }
-    printf("%lld", ans);
 
     return 0;
 }

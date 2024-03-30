@@ -107,17 +107,16 @@ const char nl = '\n';
 const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
-ll n, m, arr[MXN];
+ll n, m, k, arr[MXN];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    for (ll i = 1; i <= 1000; i++) {
-        system("./gen.exe>test.in");
-        system("./test.exe<test.in>1");
-        system("./p9148.exe<test.in>2");
-        if (system("diff 1 2")) break;
-        cout << i << endl;
+    n = ri(1, 20), m = ri(1, 500), k = ri(1, 500);
+    cout << n << " " << m << " " << k << nl;
+    for(ll i=1;i<=n;i++) cout << ri(1, 10) << " ";
+    cout << nl;
+    for (ll i = 1; i <= m; i++) {
+        cout << "AC"[ri(0, 1)] << " " << ri(1, n) << endl;
     }
     return 0;
 }
-

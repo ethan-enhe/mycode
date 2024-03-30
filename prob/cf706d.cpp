@@ -105,19 +105,67 @@ struct mod {
 //}}}
 const char nl = '\n';
 const ll INF = 1e18;
-const ll MXN = 1e6 + 5;
+const ll MXN = 2e5 + 5;
+const ll LG = 31;
 
 ll n, m, arr[MXN];
+ll rt;
+ll son[MXN * LG][2], cnt[MXN * LG];
+ll nodecnt;
+
+void ins(ll x) {
+    ll p = rt;
+    ++cnt[rt];
+    for (ll i = LG - 1; ~i; i--) {
+        bool f = (x >> i) & 1;
+        if (!son[p][f]) son[p][f] = ++nodecnt;
+        p = son[p][f];
+        ++cnt[p];
+    }
+}
+void del(ll x) {
+    ll p = rt;
+    --cnt[rt];
+    for (ll i = LG - 1; ~i; i--) {
+        bool f = (x >> i) & 1;
+        // if (!son[p][f]) son[p][f] = ++nodecnt;
+        p = son[p][f];
+        --cnt[p];
+    }
+}
+ll mxxor(ll x) {
+    // if (!sz[rt]) return x;
+    ll p = rt, ans = 0;
+    for (ll i = LG - 1; ~i; i--) {
+        bool f = (x >> i) & 1;
+        if (cnt[son[p][!f]]) {
+            p = son[p][!f];
+            ans ^= (1ll << i);
+        } else {
+            p = son[p][f];
+        }
+    }
+    return ans;
+}
+
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    for (ll i = 1; i <= 1000; i++) {
-        system("./gen.exe>test.in");
-        system("./test.exe<test.in>1");
-        system("./p9148.exe<test.in>2");
-        if (system("diff 1 2")) break;
-        cout << i << endl;
+    rt = 1;
+    nodecnt = 1;
+    ins(0);
+    ll t;
+    cin >> t;
+    while (t--) {
+        char x;
+        ll y;
+        cin >> x >> y;
+        if (x == '+') {
+            ins(y);
+        } else if (x == '-') {
+            del(y);
+        } else
+            cout << mxxor(y) << nl;
     }
     return 0;
 }
-

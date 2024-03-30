@@ -106,17 +106,74 @@ struct mod {
 const char nl = '\n';
 const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
-
 ll n, m, arr[MXN];
+
+struct node {
+    pi mx;
+    ll t;
+} t[MXN << 2];
+void addt(ll p, ll k) {
+    t[p].t += k;
+    t[p].mx.fi += k;
+}
+#define ls p << 1
+#define rs p << 1 | 1
+void push(ll p) {
+    if (t[p].t) {
+        addt(ls, t[p].t);
+        addt(rs, t[p].t);
+        t[p].t = 0;
+    }
+}
+pi mrg(pi x, pi y) {
+    if (x.fi > y.fi)
+        return x;
+    else if (y.fi > x.fi)
+        return y;
+
+    return x.se < y.se ? x : y;
+}
+void pull(ll p) { t[p].mx = mrg(t[ls].mx, t[rs].mx); }
+void mdf(ll p, ll l, ll r, ll ql, ll qr, ll k) {
+    if (ql <= l && r <= qr) {
+        addt(p, k);
+        return;
+    }
+    if (ql > r || qr < l) return;
+    ll mid = (l + r) >> 1;
+    push(p);
+    mdf(ls, l, mid, ql, qr, k);
+    mdf(rs, mid + 1, r, ql, qr, k);
+    pull(p);
+}
+void build(ll p, ll l, ll r) {
+    if (l == r) {
+        t[p].mx = {arr[l] + l, l};
+        return;
+    }
+    ll mid = (l + r) >> 1;
+    build(ls, l, mid);
+    build(rs, mid + 1, r);
+    pull(p);
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    for (ll i = 1; i <= 1000; i++) {
-        system("./gen.exe>test.in");
-        system("./test.exe<test.in>1");
-        system("./p9148.exe<test.in>2");
-        if (system("diff 1 2")) break;
-        cout << i << endl;
+    ll task;
+    cin >> task;
+    while (task--) {
+        cin >> n;
+        for (ll i = 1; i <= n; i++) {
+            cin >> arr[i];
+        }
+        build(1, 1, n);
+        for (ll i = 1; i <= n; i++) {
+            pi p = t[1].mx;
+            cout << p.fi << " ";
+            mdf(1, 1, n, p.se, n, -1);
+            mdf(1, 1, n, p.se, p.se, -INF);
+        }
+        cout << nl;
     }
     return 0;
 }

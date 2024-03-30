@@ -1,12 +1,3 @@
-// #pragma GCC optimize("O3,unroll-loops")
-// #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
-// #pragma GCC target("sse,sse2,sse3,ssse3,sse4.1,sse4.2,avx,avx2,bmi,bmi2,lzcnt,popcnt")
-#ifdef LOCAL
-#define dbg(x) cerr << #x << " = " << (x) << endl
-#else
-#define dbg(...) 42
-#define NDEBUG
-#endif
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -106,18 +97,78 @@ struct mod {
 const char nl = '\n';
 const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
+const ll MXW = 15;
 
-ll n, m, arr[MXN];
+ll t, n, m;
+ll w[MXN];
+ll pri[MXN], pcnt;
+
+ll fa[MXN], tot;
+ll find(ll x) {
+    while (x != fa[x]) x = fa[x] = fa[fa[x]];
+    return x;
+}
+void mrg(ll x, ll y) {
+    // cerr << x << " " << y << endl;
+    x = find(x), y = find(y);
+    if (x != y) {
+        --tot;
+        fa[x] = y;
+    }
+}
+
+ll last[MXW];
+ll solve(ll l, ll r) {
+    for (ll i = l; i <= r; i++) fa[i] = i;
+    ll ans = 0;
+    ll lasttot = tot = r - l + 1;
+    for (ll x = 0; x < MXW; x++) {
+        for (ll g = 1; g <= r; g++) {
+            memset(last, 0, sizeof(last));
+            ll wg = w[g];
+            ll st = l % g;
+            st = st ? l + (g - st) : l;
+            for (ll k = st; k <= r; k += g) last[w[k]] = k;
+            for (ll k = st; k <= r; k += g) {
+                ll wk = w[k];
+                ll opp = x - wk + wg;
+                // cerr << k << " " << opp << endl;
+                if (opp >= 0 && opp < MXW && last[opp]) {
+                    mrg(last[min(opp, wk)], k);
+                }
+            }
+        }
+        // cerr << x << " " << tot << /*   */ endl;
+        ans += (lasttot - tot) * x;
+        lasttot = tot;
+        if (tot == 1) break;
+    }
+    return ans;
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    for (ll i = 1; i <= 1000; i++) {
-        system("./gen.exe>test.in");
-        system("./test.exe<test.in>1");
-        system("./p9148.exe<test.in>2");
-        if (system("diff 1 2")) break;
-        cout << i << endl;
+    ll mxw = 0;
+    for (ll i = 2; i < MXN; i++) {
+        umx(mxw, w[i]);
+        if (w[i] == 0) {
+            w[i] = 1;
+            pri[++pcnt] = i;
+        }
+        for (ll j = 1; pri[j] * i < MXN; j++) {
+            if (i % pri[j] == 0) {
+                w[i * pri[j]] = w[i];
+                break;
+            } else
+                w[i * pri[j]] = w[i] + 1;
+        }
+    }
+    ll t;
+    cin >> t;
+    while (t--) {
+        ll l, r;
+        cin >> l >> r;
+        cout << solve(l, r) << nl;
     }
     return 0;
 }
-

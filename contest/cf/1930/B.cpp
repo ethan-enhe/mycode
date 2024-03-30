@@ -111,13 +111,17 @@ ll n, m, arr[MXN];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    for (ll i = 1; i <= 1000; i++) {
-        system("./gen.exe>test.in");
-        system("./test.exe<test.in>1");
-        system("./p9148.exe<test.in>2");
-        if (system("diff 1 2")) break;
-        cout << i << endl;
+    ll t;
+    cin >> t;
+    while (t--) {
+        cin >> n;
+        ll l = 1, r = n;
+        for (ll i = 1; i <= n; i++) {
+            if (i & 1)
+                cout << (l++) << " ";
+            else
+                cout << (r--) << " ";
+        }
     }
     return 0;
 }
-

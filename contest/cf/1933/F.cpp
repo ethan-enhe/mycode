@@ -107,17 +107,52 @@ const char nl = '\n';
 const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
-ll n, m, arr[MXN];
+ll n, m, q, arr[MXN];
+bool f[2][2][2];
+bool mp[4][2] = {
+    {1, 0},
+    {1, 0},
+    {0, 1},
+    {0, 1},
+};
+bool v(ll x, ll y, ll ox, ll oy) {
+    x += ox, y += oy;
+    x %= 4;
+    y %= 2;
+    return mp[x][y];
+}
+ll c() {
+    ll ans = 0;
+    for (ll i = 0; i < 2; i++)
+        for (ll j = 0; j < 2; j++)
+            for (ll k = 0; k < 2; k++) ans += f[i][j][k];
+    return ans;
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    for (ll i = 1; i <= 1000; i++) {
-        system("./gen.exe>test.in");
-        system("./test.exe<test.in>1");
-        system("./p9148.exe<test.in>2");
-        if (system("diff 1 2")) break;
-        cout << i << endl;
+    ll t;
+    cin>>t;
+    while (t--) {
+        cin >> n >> m >> q;
+        memset(f, 1, sizeof(f));
+        cout << c() << nl;
+        while (q--) {
+            string s;
+            ll x, y, t;
+            cin >> x >> y >> s;
+            t=(s[0]=='c');
+            for (ll i = 0; i < 2; i++)
+                for (ll j = 0; j < 2; j++)
+                    for (ll k = 0; k < 2; k++) {
+                        ll tx = x, ty = y;
+                        if (i) swap(tx, ty);
+                        if (t != v(tx, ty, j, k)) {
+                            f[i][j][k]=0;
+                        }
+                    }
+        cout << c() << nl;
+        }
     }
     return 0;
 }
-

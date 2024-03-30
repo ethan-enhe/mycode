@@ -1,6 +1,7 @@
 // #pragma GCC optimize("O3,unroll-loops")
 // #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
 // #pragma GCC target("sse,sse2,sse3,ssse3,sse4.1,sse4.2,avx,avx2,bmi,bmi2,lzcnt,popcnt")
+#include <algorithm>
 #ifdef LOCAL
 #define dbg(x) cerr << #x << " = " << (x) << endl
 #else
@@ -106,18 +107,107 @@ struct mod {
 const char nl = '\n';
 const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
+const ll LG = 19;
 
-ll n, m, arr[MXN];
+ll n, m, k, arr[MXN], _div[MXN];
+ll mod[MXN], pool[MXN];
+
+ll pre[MXN];
+void mdf(ll x, ll y) {
+    for (; x <= m; x += x & (-x)) pre[x] += y;
+}
+ll sum(ll x) {
+    ll r = 0;
+    for (; x; x -= x & (-x)) r += pre[x];
+    return r;
+}
+ll kth(ll k) {
+    ll x = 0;
+    for (ll i = (1 << LG); i; i >>= 1) {
+        if (x + i <= m && k > pre[x + i]) {
+            k -= pre[x + i];
+            x += i;
+        }
+    }
+    return x + 1;
+}
+ll divk, cnt, tot; // 当前维护的区间除k,有多少个数要+k，总共多少个数；
+void ins(ll i) {
+    mdf(mod[i], 1);
+    ++tot;
+}
+void solve(ll t) {
+    ll _t = t;
+    while (t) {
+        ll nx = arr[n - tot];
+        ll nxdiv = nx / k;
+        ll nxmod = mod[n - tot];
+        if (nxdiv < divk && cnt <= t) {
+            --divk;
+            t -= cnt;
+            cnt = tot;
+        }
+        ll delt = min(t / tot, divk - nxdiv); // 整体-k 次数
+        t -= delt * tot;
+        divk -= delt;
+
+        if (divk == nxdiv) {
+            delt = cnt - sum(nxmod);
+            if (t >= delt) {
+                cnt -= delt;
+                t -= delt;
+                ins(n - tot);
+            } else {
+                cnt -= t;
+                t = 0;
+            }
+        } else {
+            cnt -= t;
+            t = 0;
+        }
+        // cerr << "solve" << _t << " " << t <<" "<<divk<< " " << cnt << " " << tot << endl;
+    }
+}
+ll qry(ll x) {
+    if (x <= tot) {
+        if (x <= cnt) {
+            return (divk + 1) * k + pool[kth(cnt - x + 1)];
+        } else {
+            // cerr << "!" <<" "<<sum(1,m)<< endl;
+            return divk * k + pool[kth(tot - x + cnt + 1)];
+        }
+    } else
+        return arr[n - x + 1];
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    for (ll i = 1; i <= 1000; i++) {
-        system("./gen.exe>test.in");
-        system("./test.exe<test.in>1");
-        system("./p9148.exe<test.in>2");
-        if (system("diff 1 2")) break;
-        cout << i << endl;
+    ll q;
+    cin >> n >> q >> k;
+    for (ll i = 1; i <= n; i++) {
+        cin >> arr[i];
+        pool[i] = arr[i] % k;
     }
+    sort(arr + 1, arr + 1 + n);
+    sort(pool + 1, pool + 1 + n);
+    m = unique(pool + 1, pool + 1 + n) - pool - 1;
+    for (ll i = 1; i <= n; i++) {
+        mod[i] = lower_bound(pool + 1, pool + 1 + m, arr[i] % k) - pool;
+    }
+    arr[0] = -INF;
+
+    divk = arr[n] / k;
+    cnt = 0;
+    ins(n);
+    while (q--) {
+        char x;
+        ll y;
+        cin >> x >> y;
+        if (x == 'C')
+            solve(y);
+        else
+            cout << qry(y) << nl;
+    }
+
     return 0;
 }
-

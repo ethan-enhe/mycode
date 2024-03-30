@@ -103,21 +103,107 @@ struct mod {
     friend ostream &operator<<(ostream &os, const mod &y) { return os << y.v; }
 };
 //}}}
+const mod INV2 = 500000004;
 const char nl = '\n';
 const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
-ll n, m, arr[MXN];
+ll n, m;
+pi arr[MXN];
+#define ls p << 1
+#define rs p << 1 | 1
+struct node {
+    mod s, v, t;
+    node() {
+        v = t = 1;
+        s = 0;
+    }
+} t[MXN];
+void pull(ll p) { t[p].s = t[ls].s + t[rs].s; }
+void addt(ll p, mod m) {
+    t[p].t *= m;
+    t[p].s *= m;
+    t[p].v *= m;
+}
+void push(ll p) {
+    if (t[p].t != 1) {
+        addt(ls, t[p].t);
+        addt(rs, t[p].t);
+        t[p].t = 1;
+    }
+}
+mod toggle(ll p, ll l, ll r, ll mi) {
+    if (l == r) {
+        if (t[p].s.v)
+            t[p].s = 0;
+        else
+            t[p].s = t[p].v;
+        return t[p].v;
+    }
+    ll mid = (l + r) >> 1;
+    mod tmp;
+    push(p);
+    if (mi <= mid)
+        tmp = toggle(ls, l, mid, mi);
+    else
+        tmp = toggle(rs, mid + 1, r, mi);
+    pull(p);
+    return tmp;
+}
+void mult(ll p, ll l, ll r, ll ml, ll mr, mod mv) {
+    if (ml > r || mr < l) return;
+    if (ml <= l && r <= mr) {
+        addt(p, mv);
+        return;
+    }
+    ll mid = (l + r) >> 1;
+    push(p);
+    mult(ls, l, mid, ml, mr, mv);
+    mult(rs, mid + 1, r, ml, mr, mv);
+    pull(p);
+}
+mod sum(ll p, ll l, ll r, ll ml, ll mr) {
+    if (ml > r || mr < l) return 0;
+    if (ml <= l && r <= mr) {
+        return t[p].s;
+    }
+    ll mid = (l + r) >> 1;
+    push(p);
+    return sum(ls, l, mid, ml, mr) + sum(rs, mid + 1, r, ml, mr);
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    for (ll i = 1; i <= 1000; i++) {
-        system("./gen.exe>test.in");
-        system("./test.exe<test.in>1");
-        system("./p9148.exe<test.in>2");
-        if (system("diff 1 2")) break;
-        cout << i << endl;
+    cin >> n;
+    for (ll i = 1; i <= n; i++) {
+        cin >> arr[i];
     }
+    sort(arr + 1, arr + 1 + n);
+    mod ans = qpow((mod)2, n) * n;
+    for (ll i = 1; i <= n; i++) {
+        mult(1, 1, n, 1, i - 1, 2);
+    }
+    for (ll i = 1; i <= n; i++) {
+        mult(1, 1, n, 1, arr[i].se - 1, INV2);
+        mod res = toggle(1, 1, n, arr[i].se);
+        ans -= res + sum(1, 1, n, arr[i].se + 1, n);
+        mult(1, 1, n, arr[i].se + 1, n, 2);
+        // cerr << ans << endl;
+    }
+    for (int i = 1; i < MXN; i++) t[i] = node();
+    for (ll i = 1; i <= n; i++) arr[i].se = n + 1 - arr[i].se;
+    for (ll i = 1; i <= n; i++) {
+        mult(1, 1, n, 1, i - 1, 2);
+    }
+
+    for (ll i = 1; i <= n; i++) {
+        mult(1, 1, n, 1, arr[i].se - 1, INV2);
+        mod res = toggle(1, 1, n, arr[i].se);
+        ans -= res + sum(1, 1, n, arr[i].se + 1, n);
+        mult(1, 1, n, arr[i].se + 1, n, 2);
+        // cout << ans << endl;
+    }
+    // cout << ans << endl;
+    cout << (ans) * 2 << nl;
     return 0;
 }
-
