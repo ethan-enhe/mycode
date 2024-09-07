@@ -105,80 +105,92 @@ struct mod {
 //}}}
 const char nl = '\n';
 const ll INF = 1e18;
-const ll MXN = 1e5 + 5;
-const ll LG = 31;
+const ll MXN = 1e6 + 5;
 
 ll n, m, arr[MXN];
 
-// 01trie
-struct node {
-    int mxidx;
-    int nx[2];
-} t[MXN * (LG + 3)];
-ll nodecnt;
-ll newnode(ll x = 0) {
-    nodecnt++;
-    t[nodecnt].mxidx = x;
-    t[nodecnt].nx[0] = t[nodecnt].nx[1] = 0;
-    return nodecnt;
-}
-void clr() {
-    nodecnt = 0;
-    newnode();
-}
-void add(int x, int idx) {
-    ll p = 1;
-    t[p].mxidx = max(t[p].mxidx, idx);
-    for (int i = LG; i >= 0; i--) {
-        bool b = x >> i & 1;
-        if (!t[p].nx[b]) t[p].nx[b] = newnode();
-        p = t[p].nx[b];
-        t[p].mxidx = max(t[p].mxidx, idx);
-    }
-}
-int query(int x, int y) { // find max idx that <= y when xoring with x
-    int p = 1, ret = 0;
-    for (int i = LG; i >= 0; i--) {
-        bool b = x >> i & 1;
-        bool by = y >> i & 1;
-        if (by == 1) umx(ret, t[t[p].nx[b]].mxidx);
-        p = t[p].nx[b ^ by];
-        if (!p) break;
-    }
-    umx(ret, t[p].mxidx);
-    return ret;
-}
+int low[MXN], dfn[MXN], dfs_clock;
+bool isbridge[MXN];
+vector<int> G[MXN];
+ll edge[MXN][3];
+int cnt_bridge;
+int father[MXN];
 
-bool chk(ll v) {
-    clr();
-    ll ans = 0;
-    int mx = 0;
-    for (ll i = 1; i <= n; i++) {
-        umx(mx, query(arr[i], v));
-        ans += mx;
-        // cout << ans << nl;
-        if (ans >= m) return 1;
-        add(arr[i], i);
+void tarjan(int u, int fa) {
+    father[u] = fa;
+    low[u] = dfn[u] = ++dfs_clock;
+    for (int i = 0; i < G[u].size(); i++) {
+        int v = G[u][i];
+        if (!dfn[v]) {
+            tarjan(v, u);
+            low[u] = min(low[u], low[v]);
+            if (low[v] > dfn[u]) {
+                isbridge[v] = true;
+                ++cnt_bridge;
+            }
+        } else if (dfn[v] < dfn[u] && v != fa) {
+            low[u] = min(low[u], dfn[v]);
+        }
     }
-    return 0;
 }
-
+ll color[MXN];
+void dfs_color(ll u, ll color_id) {
+    if (color[u]) return;
+    color[u] = color_id;
+    for (int i = 0; i < G[u].size(); i++) {
+        int v = G[u][i];
+        if (v == father[u] && isbridge[u]) continue;
+        if (u == father[v] && isbridge[v]) continue;
+        if (!color[v]) dfs_color(v, color_id);
+    }
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    // cerr << (1 << 30) << nl;
-    ll t = nxt();
+    ll t;
+    cin >> t;
     while (t--) {
-        n = nxt(), m = nxt();
-        for (int i = 1; i <= n; i++) arr[i] = nxt();
-        // chk(3);
-        ll l = 0, r = 1 << 30;
-        while (l < r) {
-            ll mid = (l + r) >> 1;
-            if(chk(mid)) r = mid;
-            else l = mid + 1;
+        cin >> n >> m;
+        for (int i = 1; i <= n; i++) {
+            G[i].clear();
+            color[i] = 0;
+            dfn[i] = low[i] = father[i] = 0;
+            isbridge[i] = false;
         }
-        cout<<l<<nl;
+        dfs_clock = 0;
+        cnt_bridge = 0;
+        for (int i = 1; i <= m; i++) {
+            int a, b, c;
+            cin >> a >> b >> c;
+            G[a].push_back(b);
+            G[b].push_back(a);
+            edge[i][0] = a;
+            edge[i][1] = b;
+            edge[i][2] = c;
+        }
+        tarjan(1, 0);
+        for (ll i = 1; i <= n; i++) dfs_color(i, i);
+        ll last = -1;
+        auto chkdiff = [&](ll x) -> bool {
+            if (last == -1) {
+                last = x;
+                return 0;
+            } else
+                return x != last;
+        };
+        bool f = 1;
+        for (ll i = 1; i <= m; i++)
+            if (edge[i][2] == 1) {
+                if (chkdiff(color[edge[i][0]])) {
+                    f = 0;
+                    break;
+                }
+                if (chkdiff(color[edge[i][1]])) {
+                    f = 0;
+                    break;
+                }
+            }
+        cout<<f
     }
     return 0;
 }

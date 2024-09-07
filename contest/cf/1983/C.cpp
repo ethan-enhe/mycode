@@ -107,35 +107,54 @@ const char nl = '\n';
 const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
-ll n, m, arr[MXN], cnt[MXN];
+ll n, m, arr[4][MXN];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     ll t;
     cin >> t;
     while (t--) {
-        cin >> n >> m;
-        for (ll i = 1; i <= n; i++) {
-            cin >> arr[i];
-        }
-        ll r = n;
-        ll sum = 0;
-        cnt[n + 1] = 0;
-        ll ans = 0;
-        for (ll i = n; i; i--) {
-            sum += arr[i];
-            while (sum - arr[r] > m) {
-                sum -= arr[r];
-                --r;
+        cin >> n;
+        ll tot = 0;
+        for (ll i = 1; i <= 3; i++)
+            for (ll j = 1; j <= n; j++) {
+                cin >> arr[i][j];
+                tot += arr[i][j];
             }
-            if (sum > m) {
-                cnt[i] = cnt[r + 1] + 1;
-            } else
-                cnt[i] = cnt[r + 1];
-            ans += (n - i + 1) - cnt[i];
-            // cerr << cnt[i] << " ";
-        }
-        cout << ans << nl;
+        tot /= 3;
+        tot = (tot + 2) / 3;
+        ll p[4] = {0, 1, 2, 3};
+        bool f = 0;
+        ll ans[4][2];
+        do {
+            ll sm = 0, idx = 0;
+            ans[p[1]][0] = 1;
+            while (sm < tot && idx < n) {
+                sm += arr[p[1]][++idx];
+            }
+            ans[p[1]][1] = idx;
+            ans[p[2]][0] = idx + 1;
+            if (sm < tot) continue;
+            sm = 0;
+            while (sm < tot && idx < n) {
+                sm += arr[p[2]][++idx];
+            }
+            ans[p[2]][1] = idx;
+            ans[p[3]][0] = idx + 1;
+            if (sm < tot) continue;
+            sm = 0;
+            while (sm < tot && idx < n) {
+                sm += arr[p[3]][++idx];
+            }
+            ans[p[3]][1] = idx;
+            if (sm < tot) continue;
+            f = 1;
+            for (ll i = 1; i <= 3; i++) cout << ans[i][0] << " " << ans[i][1] << " ";
+            cout << nl;
+            break;
+
+        } while (next_permutation(p + 1, p + 4));
+        if (!f) cout << -1 << nl;
     }
     return 0;
 }

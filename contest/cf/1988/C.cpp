@@ -5,7 +5,6 @@
 #define dbg(x) cerr << #x << " = " << (x) << endl
 #else
 #define dbg(...) 42
-#define NDEBUG
 #endif
 #include <bits/stdc++.h>
 
@@ -107,35 +106,39 @@ const char nl = '\n';
 const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
-ll n, m, arr[MXN], cnt[MXN];
+ll n, m, arr[MXN];
+vector<ll> res;
+void solve(ll n) {
+    ll s=0;
+    while(n){
+        ll high_bit = 63 - __builtin_clzll(n);
+        ll v = 1ll << high_bit;
+        res.push_back(n - v+s);
+        s+=v;
+        n-=v;
+
+    }
+    res.push_back(s);
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     ll t;
     cin >> t;
     while (t--) {
-        cin >> n >> m;
-        for (ll i = 1; i <= n; i++) {
-            cin >> arr[i];
-        }
-        ll r = n;
-        ll sum = 0;
-        cnt[n + 1] = 0;
-        ll ans = 0;
-        for (ll i = n; i; i--) {
-            sum += arr[i];
-            while (sum - arr[r] > m) {
-                sum -= arr[r];
-                --r;
+        cin >> n;
+        if ((n & (-n)) == n) {
+            cout << 1 << nl;
+            cout << n << nl;
+        } else {
+            res.clear();
+            solve(n);
+            cout << res.size() << nl;
+            for (auto &i : res) {
+                cout << i << " ";
             }
-            if (sum > m) {
-                cnt[i] = cnt[r + 1] + 1;
-            } else
-                cnt[i] = cnt[r + 1];
-            ans += (n - i + 1) - cnt[i];
-            // cerr << cnt[i] << " ";
+            cout << nl;
         }
-        cout << ans << nl;
     }
     return 0;
 }

@@ -107,35 +107,54 @@ const char nl = '\n';
 const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
-ll n, m, arr[MXN], cnt[MXN];
+ll n, m, arr[MXN], brr[MXN], ans[MXN];
+bool solve(ll bit) {
+    for (ll i = 1; i <= n; i++) {
+        brr[i] = 0;
+    }
+    for (ll i = 1; i < n; i++) {
+        if ((arr[i] >> bit) & 1) {
+            brr[i] = brr[i + 1] = 1;
+        }
+    }
+    for (ll i = 1; i < n; i++) {
+        if (((arr[i] >> bit) & 1) == 0) {
+            if (brr[i] && brr[i + 1]) return 0;
+        }
+    }
+    for (ll i = 1; i <= n; i++) {
+        ans[i] |= brr[i] << bit;
+    }
+    return 1;
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     ll t;
     cin >> t;
     while (t--) {
-        cin >> n >> m;
-        for (ll i = 1; i <= n; i++) {
+        cin >> n;
+        bool f = 1;
+        // arr[1] = (1ll << 31) - 1;
+        for (ll i = 1; i < n; i++) {
             cin >> arr[i];
+            ans[i] = 0;
         }
-        ll r = n;
-        ll sum = 0;
-        cnt[n + 1] = 0;
-        ll ans = 0;
-        for (ll i = n; i; i--) {
-            sum += arr[i];
-            while (sum - arr[r] > m) {
-                sum -= arr[r];
-                --r;
+        ans[n] = 0;
+        for (ll i = 29; i >= 0; i--) {
+            if (!solve(i)) {
+                f = 0;
+                break;
             }
-            if (sum > m) {
-                cnt[i] = cnt[r + 1] + 1;
-            } else
-                cnt[i] = cnt[r + 1];
-            ans += (n - i + 1) - cnt[i];
-            // cerr << cnt[i] << " ";
         }
-        cout << ans << nl;
+        if (f) {
+            for (ll i = 1; i <= n; i++) {
+                cout << ans[i] << " ";
+            }
+            cout << nl;
+        } else {
+            cout << -1 << nl;
+        }
     }
     return 0;
 }

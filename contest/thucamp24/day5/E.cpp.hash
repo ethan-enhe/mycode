@@ -1,0 +1,56 @@
+a2f9 | #include <bits/stdc++.h>
+790b | using namespace std;
+ba76 | const int MAXN = 4e5 + 5;
+d385 | const int LG = 21;
+d815 | int t, n, len;
+1b52 | char s[MAXN];
+c4f5 | int sa[MAXN], sa1[MAXN], rk[MAXN << 1], rk1[MAXN << 1], cnt[MAXN], hgt[MAXN];
+1a50 | int st[LG][MAXN];
+d17d | int getrk(int w) {
+f284 |     rk1[sa[1]] = 1;
+9d27 |     for (int i = 2; i <= len; i++) rk1[sa[i]] = rk1[sa[i - 1]] + (rk[sa[i]] != rk[sa[i - 1]] || rk[sa[i] + w] != rk[sa[i - 1] + w]);
+7131 |     memcpy(rk + 1, rk1 + 1, sizeof(int) * len);
+685f |     return rk[sa[len]];
+d10b | }
+9dd5 | void getsa() {
+ac07 |     int mxr = 30;
+b884 |     memset(cnt, 0, sizeof(int) * (mxr + 1));
+d89a |     memset(rk, 0, sizeof(int) * (2 * len + 2));
+3a1f |     for (int i = 1; i <= len; i++) cnt[rk[i] = s[i] - 'a']++;
+f634 |     for (int i = 1; i <= mxr; i++) cnt[i] += cnt[i - 1];
+bc88 |     for (int i = 1; i <= len; i++) sa[cnt[rk[i]]--] = i;
+7499 |     getrk(0);
+4cf2 |     for (int w = 1; w <= len; w <<= 1) {
+179b |         int tmp = 0;
+8d5b |         for (int i = 1; i <= len; i++) if (sa[i] > w) sa1[++tmp] = sa[i] - w;
+3589 |         for (int i = len - w + 1; i <= len; i++) sa1[++tmp] = i;
+b884 |         memset(cnt, 0, sizeof(int) * (mxr + 1));
+ef4a |         for (int i = 1; i <= len; i++) cnt[rk[sa1[i]]]++;
+f634 |         for (int i = 1; i <= mxr; i++) cnt[i] += cnt[i - 1];
+e019 |         for (int i = len; i >= 1; i--) sa[cnt[rk[sa1[i]]]--] = sa1[i];
+1104 |         if ((mxr = getrk(w)) == len) break;
+d10b |     }
+f4fe |     int p = 0;
+4808 |     for (int i = 1; i <= len; i++) {
+8539 |         p = max(p - 1, 0);
+b462 |         if (rk[i] == 1) continue;
+217f |         int pr = sa[rk[i] - 1];
+f7dd |         while (i + p <= len && pr + p <= len && s[i + p] == s[pr + p]) p++;
+73a1 |         hgt[rk[i]] = p;
+d10b |     }
+4088 |     for (int i = 1; i <= len; i++) st[0][i] = hgt[i];
+a427 |     for (int j = 1; j < LG; j++) {
+dc46 |         for (int i = 1; i + (1 << j) - 1 <= len; i++) {
+2140 |             st[j][i] = min(st[j - 1][i], st[j - 1][i + (1 << (j - 1))]);
+d10b |         }
+d10b |     }
+d10b | }
+303d | int getlcp(int u, int v) {
+551c |     if (u == v) return 1e9;
+c9ee |     u = rk[u], v = rk[v];
+19c3 |     if (u > v) swap(u, v);
+4e48 |     int lg = 31 - __builtin_clz(v - u);
+1484 |     return min(st[lg][u + 1], st[lg][v - (1 << lg) + 1]);
+d10b | }
+bcad | char str[MAXN];
+2a65 | int main() { cin >> n; }

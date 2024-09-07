@@ -107,35 +107,47 @@ const char nl = '\n';
 const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
-ll n, m, arr[MXN], cnt[MXN];
+ll n, m, arr[MXN], brr[MXN];
+// find inverse pairs
+ll tmp[MXN];
+ll inverse_pairs(ll l, ll r, ll *arr) {
+    if (l == r) return 0;
+    ll mid = (l + r) >> 1;
+    ll ans = inverse_pairs(l, mid, arr) + inverse_pairs(mid + 1, r, arr);
+    ll i = l, j = mid + 1, k = 0;
+    while (i <= mid && j <= r) {
+        if (arr[i] <= arr[j])
+            tmp[k++] = arr[i++];
+        else {
+            tmp[k++] = arr[j++];
+            ans += mid - i + 1;
+        }
+    }
+    while (i <= mid) tmp[k++] = arr[i++];
+    while (j <= r) tmp[k++] = arr[j++];
+    for (ll k = l; k <= r; k++) arr[k] = tmp[k - l];
+    return ans;
+}
+
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     ll t;
     cin >> t;
     while (t--) {
-        cin >> n >> m;
-        for (ll i = 1; i <= n; i++) {
-            cin >> arr[i];
-        }
-        ll r = n;
-        ll sum = 0;
-        cnt[n + 1] = 0;
-        ll ans = 0;
-        for (ll i = n; i; i--) {
-            sum += arr[i];
-            while (sum - arr[r] > m) {
-                sum -= arr[r];
-                --r;
+        ll n;
+        cin >> n;
+        for (ll i = 1; i <= n; i++) cin >> arr[i];
+        for (ll i = 1; i <= n; i++) cin >> brr[i];
+        ll c1 = inverse_pairs(1, n, arr);
+        ll c2 = inverse_pairs(1, n, brr);
+        bool f = 1;
+        for (ll i = 1; i <= n; i++)
+            if (arr[i] != brr[i]) {
+                f = 0;
             }
-            if (sum > m) {
-                cnt[i] = cnt[r + 1] + 1;
-            } else
-                cnt[i] = cnt[r + 1];
-            ans += (n - i + 1) - cnt[i];
-            // cerr << cnt[i] << " ";
-        }
-        cout << ans << nl;
+        f&=(c1-c2)%2==0;
+        cout<<(f ? "YES" : "NO")<<nl;
     }
     return 0;
 }

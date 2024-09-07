@@ -1,143 +1,59 @@
-// #pragma GCC optimize("O3,unroll-loops")
-// #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
-// #pragma GCC target("sse,sse2,sse3,ssse3,sse4.1,sse4.2,avx,avx2,bmi,bmi2,lzcnt,popcnt")
-#ifdef LOCAL
-#define dbg(x) cerr << #x << " = " << (x) << endl
-#else
-#define dbg(...) 42
-#define NDEBUG
-#endif
+#pragma GCC optimize("O3")
+#pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
+#pragma GCC target("sse,sse2,sse3,ssse3,sse4.1,sse4.2,avx,avx2,bmi,bmi2,lzcnt,popcnt")
 #include <bits/stdc++.h>
 
 using namespace std;
-//{{{ Def
-#define fi first
-#define se second
-#define vec vector
-#define all(x) (x).begin(), (x).end()
-#define unq(x) (x).erase(unique(all(x)), (x).end())
-#define tpl template <typename T>
 
-using ll = long long;
-using ull = unsigned long long;
-using db = double;
-using ld = long double;
-using pi = pair<ll, ll>;
-//}}}
-//{{{ Func
-tpl pair<T, T> &operator+=(pair<T, T> &x, const pair<T, T> &y) { return x.fi += y.fi, x.se += y.se, x; }
-tpl pair<T, T> operator+(const pair<T, T> &x, const pair<T, T> &y) { return {x.fi + y.fi, x.se + y.se}; }
-tpl pair<T, T> &operator-=(pair<T, T> &x, const pair<T, T> &y) { return x.fi -= y.fi, x.se -= y.se, x; }
-tpl pair<T, T> operator-(const pair<T, T> &x, const pair<T, T> &y) { return {x.fi - y.fi, x.se - y.se}; }
-tpl pair<T, T> &operator*=(pair<T, T> &x, const ll &y) { return x.fi *= y, x.se *= y, x; }
-tpl pair<T, T> operator*(const pair<T, T> &x, const ll &y) { return {x.fi * y, x.se * y}; }
-tpl istream &operator>>(istream &is, pair<T, T> &y) { return is >> y.fi >> y.se; }
-tpl ostream &operator<<(ostream &os, const pair<T, T> &y) { return os << '(' << y.fi << ',' << y.se << ')'; }
-tpl T qpow(T x, ll y) {
-    T r(1);
-    while (y) {
-        if (y & 1) r = r * x;
-        x = x * x, y >>= 1;
-    }
-    return r;
-}
-ll gcd(ll a, ll b) {
-    if (a < 0) a = -a;
-    if (b < 0) b = -b;
-    if (!a || !b) return a | b;
-    ll U = __builtin_ctzll(a), V = __builtin_ctzll(b);
-    a >>= U, b >>= V;
-    if (U > V) U = V;
-    while (a) {
-        if (a < b) swap(a, b);
-        a -= b;
-        a >>= __builtin_ctzll(a);
-    }
-    return b << U;
-}
-tpl void umx(T &x, const T &y) { x = max(x, y); }
-tpl void umn(T &x, const T &y) { x = min(x, y); }
-bool inrng(const ll &x, const ll &l, const ll &r) { return l <= x && x <= r; }
-bool insqr(const pi &x, const pi &lt, const pi &rb) {
-    return lt.fi <= x.fi && x.fi <= rb.fi && lt.se <= x.se && x.se <= rb.se;
-}
-void setp(const ll &x) {
-    cout.flags(ios::fixed);
-    cout.precision(x);
-}
-template <typename T = ll>
-T nxt() {
-    T x;
-    cin >> x;
-    return x;
-}
-mt19937_64 mr(chrono::system_clock::now().time_since_epoch().count());
-ll ri(const ll &l, const ll &r) { return uniform_int_distribution<ll>(l, r)(mr); }
-ld rd(const ld &l, const ld &r) { return uniform_real_distribution<ld>(l, r)(mr); }
-//}}}
-const ll P = 1e9 + 7;
-//{{{ Type
-inline int redu(const int &x) { return x >= P ? x - P : x; }
-inline int incr(const int &x) { return x + ((x >> 31) & P); }
-struct mod {
-    int v;
-    mod() {}
-    tpl mod(const T &_v) : v(_v) { assert(_v >= 0 && _v < P); }
-    explicit operator ll() const { return v; }
-    explicit operator int() const { return v; }
-    mod &operator+=(const mod &y) { return v = redu(v + y.v), *this; }
-    mod &operator-=(const mod &y) { return v = incr(v - y.v), *this; }
-    mod &operator*=(const mod &y) { return v = (ll)v * y.v % P, *this; }
-    mod &operator/=(const mod &y) { return v = (ll)v * qpow(y, P - 2).v % P, *this; }
-    mod operator+(const mod &y) const { return mod(*this) += y; }
-    mod operator-(const mod &y) const { return mod(*this) -= y; }
-    mod operator*(const mod &y) const { return mod(*this) *= y; }
-    mod operator/(const mod &y) const { return mod(*this) /= y; }
-    bool operator==(const mod &y) const { return v == y.v; }
-    bool operator!=(const mod &y) const { return v != y.v; }
-    friend istream &operator>>(istream &is, mod &y) {
-        ll x;
-        is >> x;
-        return y.v = incr(x % P), is;
-    }
-    friend ostream &operator<<(ostream &os, const mod &y) { return os << y.v; }
-};
-//}}}
-const char nl = '\n';
-const ll INF = 1e18;
-const ll MXN = 1e6 + 5;
+const int MXN = 1e6 + 5;
 
-ll n, m, arr[MXN];
+int k;
+bool pat_mat(int i, int j) { return j <= i; }
+int act_mat(int i, int j) { return __builtin_popcount(i ^ j) == k; }
+bool used_line[MXN], used_col[MXN];
+int line[MXN], col[MXN];
+bool dfs(int cursz, int tgsz, int n) {
+    if (cursz == tgsz) {
+        cout << "OK" << endl;
+        for (int i = 1; i <= cursz; i++) cout << bitset<10>(line[i]) << " " << bitset<10>(col[i]) << endl;
+        return 1;
+    }
+    bool res = 0;
+    for (int i = 0; i < n; i++) {
+        if (used_line[i]) continue;
+        bool chk_newline = 1;
+        for (int j = 1; j <= cursz; j++) chk_newline &= pat_mat(cursz + 1, j) == act_mat(i, col[j]);
+        if (!chk_newline) continue;
+        used_line[i] = 1;
+        line[cursz + 1] = i;
+
+        for (int j = 0; j <n; j++) {
+            if (used_col[j]) continue;
+            bool chk_newcol = 1;
+            for (int k = 1; k <= cursz + 1; k++) chk_newcol &= pat_mat(k, cursz + 1) == act_mat(line[k], j);
+            if (!chk_newcol) continue;
+            used_col[j] = 1;
+            col[cursz + 1] = j;
+            res |= dfs(cursz + 1, tgsz, n);
+            // if (res) return res;
+            used_col[j] = 0;
+        }
+        used_line[i] = 0;
+    }
+    return res;
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    /*
-给定 n 个正整数  ，每次可以把不超过三个数合并成它们的和，代价为这些数的和，求把所有数合并成一个数的最小总代价。
-    * 思路：
-    * 用类似哈夫曼树的想法，每次合并三个最小的数
-    */
-    // input
-    cin >> n;
-    for (int i = 0; i < n; i++) {
-        cin >> arr[i];
+    // for (k = 0; k <= 1; k++) {
+    k = 1;
+    for (int i = 1; i <= 10; i++) {
+        if (dfs(0, k * 2 + 1, 1 << i)) {
+            cout << "k=" << k << " i=" << i << endl;
+            break;
+        }
     }
-    //process
-    priority_queue<pair<ll, int>> heap;
-    for (int i = 0; i < n; i++) {
-        heap.push({-arr[i], i});
-    }
-    while (heap.size() >= 3) {
-        auto x = heap.top();
-        heap.pop();
-        auto y = heap.top();
-        heap.pop();
-        auto z = heap.top();
-        heap.pop();
-        heap.push({x.fi + y.fi + z.fi, -1});
-    }
-    cout << -heap.top().fi << nl;
-
-    
+    // }
     return 0;
 }
 

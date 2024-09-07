@@ -107,35 +107,79 @@ const char nl = '\n';
 const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
-ll n, m, arr[MXN], cnt[MXN];
+ll n, m, arr[MXN], plc[MXN];
+ll pre[MXN], prepre[MXN], suf[MXN], sufsuf[MXN];
+ll delt[MXN];
+stack<ll> stk;
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
+
     ll t;
     cin >> t;
     while (t--) {
-        cin >> n >> m;
+        cin >> n;
         for (ll i = 1; i <= n; i++) {
             cin >> arr[i];
+            plc[arr[i]] = i;
+            delt[i] = 0;
         }
-        ll r = n;
-        ll sum = 0;
-        cnt[n + 1] = 0;
-        ll ans = 0;
-        for (ll i = n; i; i--) {
-            sum += arr[i];
-            while (sum - arr[r] > m) {
-                sum -= arr[r];
-                --r;
+        ll tot = 0;
+        set<ll> idx;
+        idx.insert(0);
+        idx.insert(n + 1);
+        for (ll i = 1; i <= n; i++) {
+            auto it = idx.insert(plc[i]).first;
+            auto pre_it = prev(it);
+            auto suf_it = next(it);
+            pre[plc[i]] = *pre_it;
+            suf[plc[i]] = *suf_it;
+            prepre[plc[i]] = sufsuf[plc[i]] = -1;
+            if (pre_it != idx.begin()) prepre[plc[i]] = *prev(pre_it);
+            if (next(suf_it) != idx.end()) sufsuf[plc[i]] = *next(suf_it);
+        }
+        for (ll i = 1; i <= n; i++) {
+            tot += (suf[i] - i) * (i - pre[i]) * arr[i];
+            delt[i] -= (suf[i] - i) * (i - pre[i]) * arr[i];
+            if (prepre[i] != -1) {
+                delt[pre[i]] += (pre[i] - prepre[i]) * (suf[i] - i) * arr[i];
             }
-            if (sum > m) {
-                cnt[i] = cnt[r + 1] + 1;
-            } else
-                cnt[i] = cnt[r + 1];
-            ans += (n - i + 1) - cnt[i];
-            // cerr << cnt[i] << " ";
+            if (sufsuf[i] != -1) {
+                delt[suf[i]] += (sufsuf[i] - suf[i]) * (i - pre[i]) * arr[i];
+            }
+            // cout << delt[8] << nl;
         }
-        cout << ans << nl;
+
+        arr[0] = arr[n + 1] = -INF;
+        ll sum = 0;
+        while (!stk.empty()) stk.pop();
+        stk.push(0);
+        for (ll i = 1; i <= n; i++) {
+            delt[i] -= sum;
+            while (arr[i] <= arr[stk.top()]) {
+                ll tmp = stk.top();
+                stk.pop();
+                sum -= (tmp - stk.top()) * arr[tmp];
+            }
+            sum += (i - stk.top()) * arr[i];
+            stk.push(i);
+        }
+        sum = 0;
+        while (!stk.empty()) stk.pop();
+        stk.push(n + 1);
+        for (ll i = n; i >= 1; i--) {
+            delt[i] -= sum;
+            while (arr[i] <= arr[stk.top()]) {
+                ll tmp = stk.top();
+                stk.pop();
+                sum -= (stk.top() - tmp) * arr[tmp];
+            }
+            sum += (stk.top() - i) * arr[i];
+            stk.push(i);
+        }
+
+        for (ll i = 1; i <= n; i++) cout << tot + delt[i] << " ";
+        cout << nl;
     }
     return 0;
 }

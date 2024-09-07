@@ -107,47 +107,48 @@ const char nl = '\n';
 const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
-ll n, m, arr[MXN], brr[MXN];
-// find inverse pairs
-ll tmp[MXN];
-ll inverse_pairs(ll l, ll r, ll *arr) {
-    if (l == r) return 0;
-    ll mid = (l + r) >> 1;
-    ll ans = inverse_pairs(l, mid, arr) + inverse_pairs(mid + 1, r, arr);
-    ll i = l, j = mid + 1, k = 0;
-    while (i <= mid && j <= r) {
-        if (arr[i] <= arr[j])
-            tmp[k++] = arr[i++];
-        else {
-            tmp[k++] = arr[j++];
-            ans += mid - i + 1;
+ll n, m, arr[MXN];
+ll fa[MXN];
+ll find(ll x) { return x == fa[x] ? x : fa[x] = find(fa[x]); }
+stack<pi> ans;
+void mrg(ll x, ll y) {
+    ans.push({x, y});
+    // cout << x << " " << y << nl;
+    x = find(x), y = find(y);
+    if (x == y) return;
+    fa[x] = y;
+}
+ll last[MXN];
+void solve(ll x) {
+    for (ll i = 0; i < x; i++) last[i] = -1;
+    for (ll i = 1; i <= n; i++) {
+        if (fa[i] == i) {
+            ll mod = arr[i] % x;
+            if (last[mod] != -1) {
+                mrg(last[mod], i);
+                return;
+            }
+            last[mod] = i;
         }
     }
-    while (i <= mid) tmp[k++] = arr[i++];
-    while (j <= r) tmp[k++] = arr[j++];
-    for (ll k = l; k <= r; k++) arr[k] = tmp[k - l];
-    return ans;
 }
-
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     ll t;
     cin >> t;
     while (t--) {
-        ll n;
         cin >> n;
+        for (ll i = 1; i <= n; i++) fa[i] = i;
         for (ll i = 1; i <= n; i++) cin >> arr[i];
-        for (ll i = 1; i <= n; i++) cin >> brr[i];
-        ll c1 = inverse_pairs(1, n, arr);
-        ll c2 = inverse_pairs(1, n, brr);
-        bool f = 1;
-        for (ll i = 1; i <= n; i++)
-            if (arr[i] != brr[i]) {
-                f = 0;
-            }
-        f&=(c1-c2)%2==0;
-        cout<<(f ? "YES" : "NO")<<nl;
+        cout << "YES" << nl;
+        for (ll i = n-1; i; i--) {
+            solve(i);
+        }
+        while(!ans.empty()){
+            cout << ans.top().first << " " << ans.top().second << nl;
+            ans.pop();
+        }
     }
     return 0;
 }

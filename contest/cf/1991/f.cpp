@@ -107,35 +107,54 @@ const char nl = '\n';
 const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
-ll n, m, arr[MXN], cnt[MXN];
+ll n, m, arr[MXN];
+ll tmp[MXN], idx;
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    ll t;
-    cin >> t;
-    while (t--) {
-        cin >> n >> m;
-        for (ll i = 1; i <= n; i++) {
-            cin >> arr[i];
-        }
-        ll r = n;
-        ll sum = 0;
-        cnt[n + 1] = 0;
-        ll ans = 0;
-        for (ll i = n; i; i--) {
-            sum += arr[i];
-            while (sum - arr[r] > m) {
-                sum -= arr[r];
-                --r;
+    cin >> n >> m;
+    for (ll i = 1; i <= n; i++) cin >> arr[i];
+    while (m--) {
+        ll l, r;
+        cin >> l >> r;
+        if (r - l >= 150)
+            cout << "YES" << nl;
+        else {
+            idx = 0;
+            for (ll i = l; i <= r; i++) {
+                tmp[++idx] = arr[i];
             }
-            if (sum > m) {
-                cnt[i] = cnt[r + 1] + 1;
-            } else
-                cnt[i] = cnt[r + 1];
-            ans += (n - i + 1) - cnt[i];
-            // cerr << cnt[i] << " ";
+            sort(tmp + 1, tmp + idx + 1);
+            ll last = 0;
+            bool f = 0;
+            for (ll i = 1; i <= idx; i++) {
+                if (i >= last + 3) {
+                    if (tmp[i - 1] + tmp[i - 2] > tmp[i]) {
+                        if (last) {
+                            f = 1;
+                            break;
+                        } else
+                            last = i;
+                    }
+                }
+            }
+            if (!f)
+                for (ll i = 6; i <= idx; i++) {
+                    if (tmp[i - 2] < tmp[i - 3] + tmp[i - 4] && tmp[i] < tmp[i - 1] + tmp[i - 5]) {
+                        f = 1;
+                        break;
+                    }
+                    if (tmp[i - 2] < tmp[i - 3] + tmp[i - 5] && tmp[i] < tmp[i - 1] + tmp[i - 4]) {
+                        f = 1;
+                        break;
+                    }
+                    if (tmp[i - 1] < tmp[i - 2] + tmp[i - 5] && tmp[i] < tmp[i - 3] + tmp[i - 4]) {
+                        f = 1;
+                        break;
+                    }
+                }
+            cout << (f ? "YES" : "NO") << nl;
         }
-        cout << ans << nl;
     }
     return 0;
 }

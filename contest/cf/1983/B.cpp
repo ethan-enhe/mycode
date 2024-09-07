@@ -105,9 +105,11 @@ struct mod {
 //}}}
 const char nl = '\n';
 const ll INF = 1e18;
-const ll MXN = 1e6 + 5;
+const ll MXN = 500 + 5;
 
-ll n, m, arr[MXN], cnt[MXN];
+ll n, m;
+char brr[MXN][MXN];
+char arr[MXN][MXN];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
@@ -115,27 +117,33 @@ int main() {
     cin >> t;
     while (t--) {
         cin >> n >> m;
-        for (ll i = 1; i <= n; i++) {
-            cin >> arr[i];
-        }
-        ll r = n;
-        ll sum = 0;
-        cnt[n + 1] = 0;
-        ll ans = 0;
-        for (ll i = n; i; i--) {
-            sum += arr[i];
-            while (sum - arr[r] > m) {
-                sum -= arr[r];
-                --r;
+        for (int i = 1; i <= n; i++) cin >> (arr[i] + 1);
+        for (int i = 1; i <= n; i++) cin >> (brr[i] + 1);
+        for (int i = 1; i <= n; i++)
+            for (int j = 1; j <= m; j++) {
+                arr[i][j] = (brr[i][j] - arr[i][j] + 3) % 3;
             }
-            if (sum > m) {
-                cnt[i] = cnt[r + 1] + 1;
-            } else
-                cnt[i] = cnt[r + 1];
-            ans += (n - i + 1) - cnt[i];
-            // cerr << cnt[i] << " ";
-        }
-        cout << ans << nl;
+        auto op = [&](int x, int y, int tp) {
+            arr[x][y] = (arr[x][y] + tp + 3) % 3;
+            arr[x + 1][y + 1] = (arr[x+1][y+1] + tp + 3) % 3;
+            arr[x][y + 1] = (arr[x][y+1] - tp + 3) % 3;
+            arr[x + 1][y] = (arr[x+1][y] - tp + 3) % 3;
+        };
+        // for (int i = 1; i <= n; i++, cout << nl)
+        //     for (int j = 1; j <= m; j++) {
+        //         cout << (int)arr[i][j];
+        //     }
+        for (int i = 1; i < n; i++)
+            for (int j = 1; j < m; j++) {
+                op(i, j, -arr[i][j]);
+            }
+        bool success = 1;
+        for (int i = 1; i <= n; i++)
+            for (int j = 1; j <= m; j++) {
+                success &= arr[i][j] == 0;
+                // cout << (int)arr[i][j];
+            }
+        cout << (success ? "YES" : "NO") << nl;
     }
     return 0;
 }

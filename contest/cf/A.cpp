@@ -107,19 +107,28 @@ const char nl = '\n';
 const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
-ll n, m, arr[MXN];
+ll n, m;
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     ll t;
-    cin>>t;
-    while(t--){
-        ll n;
-        cin>>n;
-        for(ll i=1;i<=n;i++)
-            cout<<i<<" ";
-        cout<<nl;
+    cin >> t;
+    while (t--) {
+        cin >> n >> m;
+        if (n == 1 && m == 1) {
+            ll x;
+            cin >> x;
+            cout << "-1" << nl;
+            continue;
+        }
+        ll x;
+        for (ll i = 1; i <= n; i++) {
+            for (ll j = 1; j <= m; j++) {
+                cin >> x;
+                cout <<  (x)%(n*m)+1 << " ";
+            }
+            cout << nl;
+        }
     }
     return 0;
 }
-

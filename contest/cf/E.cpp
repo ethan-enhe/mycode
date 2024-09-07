@@ -107,45 +107,36 @@ const char nl = '\n';
 const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
+const ll LG = 25;
 ll n, m, arr[MXN];
-// double f(ll i, ll j) {
-//     db ans = 1;
-//     if (j) ans += j * f(i, j - 1);
-//     if (i) ans += i * (1 - f(i - 1, j));
-//     return ans / (i + j + 1);
-// }
-
-mod inv2 = (mod(1) / mod(2));
-mod f(ll i, ll j) {
-    if (i & 1)
-        return inv2;
-    else
-        return (mod)(i / 2 + 1) / mod(i + 1);
-}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    // cin>>n;
-    // for (int i = 1; i <= n; i++) {
-    //     for (int j = 1; j <= n; j++) cout << f(i, j) << " ";
-    //     cout << nl;
-    // }
-    // cout << f(3, 1);
     ll t;
     cin >> t;
     while (t--) {
-        cin >> n >> m;
-        mod ans1 = 0, ans2 = 0;
+        cin >> n;
         for (ll i = 1; i <= n; i++) {
             cin >> arr[i];
-            ans2 += arr[i];
-            if (i <= m) {
-                ans1 += f(n - m, m - 1) * arr[i];
-            } else {
-                ans1 += f(n - m - 1, m) * arr[i];
+            for (ll j = 1; j < arr[i]; j++) {
+                ll t;
+                cin >> t;
             }
         }
-        cout << ans1 << " " << ans2 - ans1 << nl;
+        sort(arr + 1, arr + 1 + n, greater<ll>());
+        ll x = 0;
+        auto upd = [&](ll y) {
+            for (ll i = LG; ~i; i--)
+                if (((x >> i) & 1) == 0) {
+                    ll delt = 1 << i;
+                    if (delt <= y) {
+                        x |= delt;
+                        y -= delt;
+                    }
+                }
+        };
+        for (ll i = 1; i <= n; i++) upd(arr[i]);
+        cout << x << nl;
     }
     return 0;
 }

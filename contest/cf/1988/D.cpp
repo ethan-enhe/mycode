@@ -105,37 +105,44 @@ struct mod {
 //}}}
 const char nl = '\n';
 const ll INF = 1e18;
-const ll MXN = 1e6 + 5;
+const ll MXN = 3e5 + 5;
+const ll R = 30;
+const ll MXR = R + 5;
 
-ll n, m, arr[MXN], cnt[MXN];
+ll n, m, arr[MXN];
+vector<ll> g[MXN];
+ll dp[MXN][MXR], suf[MXN][MXR];
+void dfs(ll p, ll fa) {
+    dp[p][0] = suf[p][R + 1] = INF;
+    for (ll i = 1; i <= R; i++) dp[p][i] = arr[p] * i;
+    for (auto v : g[p]) {
+        if (v == fa) continue;
+        dfs(v, p);
+        for (ll i = 1; i <= R; i++) dp[p][i] += min(dp[v][i - 1], suf[v][i + 1]);
+    }
+    for (ll i = R; i > 0; i--) suf[p][i] = min(suf[p][i + 1], dp[p][i]);
+    for (ll i = 1; i <= R; i++) dp[p][i] = min(dp[p][i - 1], dp[p][i]);
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     ll t;
     cin >> t;
     while (t--) {
-        cin >> n >> m;
+        ll n;
+        cin >> n;
         for (ll i = 1; i <= n; i++) {
             cin >> arr[i];
+            g[i].clear();
         }
-        ll r = n;
-        ll sum = 0;
-        cnt[n + 1] = 0;
-        ll ans = 0;
-        for (ll i = n; i; i--) {
-            sum += arr[i];
-            while (sum - arr[r] > m) {
-                sum -= arr[r];
-                --r;
-            }
-            if (sum > m) {
-                cnt[i] = cnt[r + 1] + 1;
-            } else
-                cnt[i] = cnt[r + 1];
-            ans += (n - i + 1) - cnt[i];
-            // cerr << cnt[i] << " ";
+        for (ll i = 1; i < n; i++) {
+            ll u, v;
+            cin >> u >> v;
+            g[u].push_back(v);
+            g[v].push_back(u);
         }
-        cout << ans << nl;
+        dfs(1, 0);
+        cout << dp[1][R] << nl;
     }
     return 0;
 }

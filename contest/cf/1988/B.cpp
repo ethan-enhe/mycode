@@ -107,35 +107,31 @@ const char nl = '\n';
 const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
-ll n, m, arr[MXN], cnt[MXN];
+ll n, m, arr[MXN];
+char str[MXN];
+bool f;
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     ll t;
     cin >> t;
     while (t--) {
-        cin >> n >> m;
-        for (ll i = 1; i <= n; i++) {
-            cin >> arr[i];
-        }
-        ll r = n;
-        ll sum = 0;
-        cnt[n + 1] = 0;
-        ll ans = 0;
-        for (ll i = n; i; i--) {
-            sum += arr[i];
-            while (sum - arr[r] > m) {
-                sum -= arr[r];
-                --r;
+        cin >> n;
+        cin >> str;
+        ll c0 = 0, c1 = 0;
+        f = 0;
+        for (ll i = 0; i < n; i++) {
+            if (str[i] == '1') {
+                c0 += f;
+                f = 0;
+                c1++;
+            } else {
+                f = 1;
             }
-            if (sum > m) {
-                cnt[i] = cnt[r + 1] + 1;
-            } else
-                cnt[i] = cnt[r + 1];
-            ans += (n - i + 1) - cnt[i];
-            // cerr << cnt[i] << " ";
         }
-        cout << ans << nl;
+        c0 += f;
+        // cout<<c1<<" "<<c0<<nl;
+        cout << (c1 > c0 ? "Yes" : "No") << nl;
     }
     return 0;
 }

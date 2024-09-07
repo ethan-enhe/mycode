@@ -107,35 +107,91 @@ const char nl = '\n';
 const ll INF = 1e18;
 const ll MXN = 1e6 + 5;
 
-ll n, m, arr[MXN], cnt[MXN];
+ll n, m;
+vec<ll> g[MXN];
+ll t;
+ll color[MXN];
+stack<ll> st[2];
+bool dfs(ll p) { // check if g is a bipartite graph
+    st[color[p]].push(p);
+    for (auto i : g[p]) {
+        if (color[i] != -1) {
+            if (color[i] == color[p]) return 0;
+            continue;
+        }
+        color[i] = 1 - color[p];
+        if (!dfs(i)) return 0;
+    }
+    return 1;
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    ll t;
     cin >> t;
     while (t--) {
         cin >> n >> m;
+        // clear graph
+        for (ll i = 0; i <= n; i++) g[i].clear();
+        while (!st[0].empty()) st[0].pop();
+        while (!st[1].empty()) st[1].pop();
+        for (ll i = 0; i < m; i++) {
+            ll u, v;
+            cin >> u >> v;
+            g[u].push_back(v);
+            g[v].push_back(u);
+        }
+        for (ll i = 1; i <= n; i++) color[i] = -1;
+        bool isBob = 1;
         for (ll i = 1; i <= n; i++) {
-            cin >> arr[i];
-        }
-        ll r = n;
-        ll sum = 0;
-        cnt[n + 1] = 0;
-        ll ans = 0;
-        for (ll i = n; i; i--) {
-            sum += arr[i];
-            while (sum - arr[r] > m) {
-                sum -= arr[r];
-                --r;
+            if (color[i] == -1) {
+                color[i] = 0;
+                if (!dfs(i)) {
+                    isBob = 0;
+                    break;
+                }
             }
-            if (sum > m) {
-                cnt[i] = cnt[r + 1] + 1;
-            } else
-                cnt[i] = cnt[r + 1];
-            ans += (n - i + 1) - cnt[i];
-            // cerr << cnt[i] << " ";
         }
-        cout << ans << nl;
+        if (isBob) {
+            cout << "Bob" << endl;
+            cout.flush();
+            ll assign = 0;
+            for (ll i = 1; i <= n; i++) {
+                ll x, y;
+                cin >> x >> y;
+                if (x > y) swap(x, y);
+                --x;
+                --y;
+                if (!st[x].empty()) {
+                    // cout << x + 1 << " " << st[x].top() << endl;
+                    cout << st[x].top() << " " << x + 1 << endl;
+                    cout.flush();
+                    st[x].pop();
+                } else {
+                    if (y <= 1) {
+                        // cout << y + 1 << " " << st[y].top() << endl;
+                        cout << st[y].top() << " " << y + 1 << endl;
+                        cout.flush();
+                        st[y].pop();
+                    } else {
+                        assign = !x;
+                        // cout << y + 1 << " " << st[assign].top() << endl;
+                        cout << st[assign].top() << " " << y + 1 << endl;
+                        cout.flush();
+                        st[assign].pop();
+                    }
+                }
+            }
+
+        } else {
+            cout << "Alice" << endl;
+            cout.flush();
+            for (int i = 1; i <= n; i++) {
+                cout << "1 2" << endl;
+                cout.flush();
+                ll x, y;
+                cin >> x >> y;
+            }
+        }
     }
     return 0;
 }

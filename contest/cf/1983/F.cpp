@@ -105,37 +105,80 @@ struct mod {
 //}}}
 const char nl = '\n';
 const ll INF = 1e18;
-const ll MXN = 1e6 + 5;
+const ll MXN = 1e5 + 5;
+const ll LG = 31;
 
-ll n, m, arr[MXN], cnt[MXN];
+ll n, m, arr[MXN];
+
+// 01trie
+struct node {
+    int mxidx;
+    int nx[2];
+} t[MXN * (LG + 3)];
+ll nodecnt;
+ll newnode(ll x = 0) {
+    nodecnt++;
+    t[nodecnt].mxidx = x;
+    t[nodecnt].nx[0] = t[nodecnt].nx[1] = 0;
+    return nodecnt;
+}
+void clr() {
+    nodecnt = 0;
+    newnode();
+}
+void add(int x, int idx) {
+    ll p = 1;
+    t[p].mxidx = max(t[p].mxidx, idx);
+    for (int i = LG; i >= 0; i--) {
+        bool b = x >> i & 1;
+        if (!t[p].nx[b]) t[p].nx[b] = newnode();
+        p = t[p].nx[b];
+        t[p].mxidx = max(t[p].mxidx, idx);
+    }
+}
+int query(int x, int y) { // find max idx that <= y when xoring with x
+    int p = 1, ret = 0;
+    for (int i = LG; i >= 0; i--) {
+        bool b = x >> i & 1;
+        bool by = y >> i & 1;
+        if (by == 1) umx(ret, t[t[p].nx[b]].mxidx);
+        p = t[p].nx[b ^ by];
+        if (!p) break;
+    }
+    umx(ret, t[p].mxidx);
+    return ret;
+}
+
+bool chk(ll v) {
+    clr();
+    ll ans = 0;
+    int mx = 0;
+    for (ll i = 1; i <= n; i++) {
+        umx(mx, query(arr[i], v));
+        ans += mx;
+        // cout << ans << nl;
+        if (ans >= m) return 1;
+        add(arr[i], i);
+    }
+    return 0;
+}
+
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    ll t;
-    cin >> t;
+    // cerr << (1 << 30) << nl;
+    ll t = nxt();
     while (t--) {
-        cin >> n >> m;
-        for (ll i = 1; i <= n; i++) {
-            cin >> arr[i];
+        n = nxt(), m = nxt();
+        for (int i = 1; i <= n; i++) arr[i] = nxt();
+        // chk(3);
+        ll l = 0, r = 1 << 30;
+        while (l < r) {
+            ll mid = (l + r) >> 1;
+            if(chk(mid)) r = mid;
+            else l = mid + 1;
         }
-        ll r = n;
-        ll sum = 0;
-        cnt[n + 1] = 0;
-        ll ans = 0;
-        for (ll i = n; i; i--) {
-            sum += arr[i];
-            while (sum - arr[r] > m) {
-                sum -= arr[r];
-                --r;
-            }
-            if (sum > m) {
-                cnt[i] = cnt[r + 1] + 1;
-            } else
-                cnt[i] = cnt[r + 1];
-            ans += (n - i + 1) - cnt[i];
-            // cerr << cnt[i] << " ";
-        }
-        cout << ans << nl;
+        cout<<l<<nl;
     }
     return 0;
 }
