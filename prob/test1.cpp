@@ -1,6 +1,8 @@
 #include <bits/stdc++.h>
 using namespace std;
-const int MXN = 2e5 + 5, LG = 31 - __builtin_clz(MXN);
+const int MXN = 2e6 + 5, LG = 31 - __builtin_clz(MXN);
+int t, n, tot;
+char str[MXN];
 
 namespace SA {
 typedef int arrn[MXN];
@@ -33,8 +35,8 @@ inline void init(int n, int m, T *arr) {
         while (arr[i + lcp] == arr[sa[rk[i] - 1] + lcp]) ++lcp;
         h[0][rk[i]] = lcp;
     }
-    for (int i = 1; i <= LG; i++)
-        for (int w = 1 << (i - 1), j = n - (1 << i) + 1; j > 0; j--) h[i][j] = min(h[i - 1][j], h[i - 1][j + w]);
+    /*for (int i = 1; i <= LG; i++)
+        for (int w = 1 << (i - 1), j = n - (1 << i) + 1; j > 0; j--) h[i][j] = min(h[i - 1][j], h[i - 1][j + w]);*/
 }
 inline int lcp(int x, int y) {
     x = rk[x], y = rk[y];
@@ -45,3 +47,14 @@ inline int lcp(int x, int y) {
     return min(h[lg][x], h[lg][y - (1 << lg) + 1]);
 }
 } // namespace SA
+
+int main() {
+    ios::sync_with_stdio(0);
+        cin>>(str+1);
+        n=strlen(str+1);
+        SA::init(n, 130, str);
+        for(int i=1;i<=n;i++){
+            cout<<SA::sa[i]<<" ";
+        }
+    return 0;
+}
