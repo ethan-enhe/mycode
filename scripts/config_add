@@ -8,3 +8,4 @@ config add ~/.clang-format
 config add ~/.gitconfig
 config add ~/.config/nvim/init.lua
 config add ~/.config/nvim/lua/
+config add ~/.config/zathura/
