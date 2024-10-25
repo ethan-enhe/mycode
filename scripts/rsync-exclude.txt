@@ -1,0 +1,6 @@
+/.local/*
+/Downloads/*
+/VirtualBox\ VMs/*
+/.config/QQ/*
+/.cache/*
+/WeChat_Data/

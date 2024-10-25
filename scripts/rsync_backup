@@ -1,0 +1,6 @@
+#! /bin/bash
+sudo rsync -a --delete --exclude-from='/home/ethan/Documents/mycode/scripts/rsync-exclude.txt' --info=progress2 /home/ethan/ /media/Backup/home
+
+sudo rsync -a --delete --info=progress2 /media/D/document/ /media/Backup/Documents
+sudo rsync -a --delete --info=progress2 /media/D/Music/ /media/Backup/Music
+sudo rsync -a --delete --info=progress2 /media/D/picture/ /media/Backup/Pictures
