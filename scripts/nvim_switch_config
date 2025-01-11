@@ -1,0 +1,26 @@
+#!/bin/bash -i
+
+swap_dirs() {
+    local dir1="$1"
+    local dir2="$2"
+
+    if [ ! -d "$dir1" ] && [ ! -d "$dir2" ]; then
+        echo "Both directories do not exist: $dir1, $dir2"
+        return
+    fi
+
+    if [ -d "$dir1" ] && [ -d "$dir2" ]; then
+        mv "$dir1" "${dir1}.tmp"
+        mv "$dir2" "$dir1"
+        mv "${dir1}.tmp" "$dir2"
+    elif [ -d "$dir1" ]; then
+        mv "$dir1" "$dir2"
+    elif [ -d "$dir2" ]; then
+        mv "$dir2" "$dir1"
+    fi
+}
+
+swap_dirs ~/.config/nvim ~/.config/nvim.bak
+swap_dirs ~/.local/share/nvim ~/.local/share/nvim.bak
+swap_dirs ~/.local/state/nvim ~/.local/state/nvim.bak
+swap_dirs ~/.cache/nvim ~/.cache/nvim.bak

@@ -12,6 +12,7 @@ config add ~/.config/nvim/init.lua
 config add ~/.config/nvim/lua/
 
 
+config add ~/.config/sioyek/
 config add ~/.config/zathura/
 config add ~/.config/kitty/
 config add ~/.config/starship.toml
