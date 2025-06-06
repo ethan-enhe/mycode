@@ -235,7 +235,7 @@ int main() {
             sum += seg[i].se - seg[i].fi + 1;
             i++;
         }
-        cerr << sum << ' ' << seg[i].fi << ' ' << x << nl;
+        // cerr << sum << ' ' << seg[i].fi << ' ' << x << nl;
         prt(seg[i].fi + x - sum - 1);
         prt('\n');
     }

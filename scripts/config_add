@@ -17,6 +17,9 @@ config add ~/.config/zathura/
 config add ~/.config/kitty/
 config add ~/.config/starship.toml
 
+config add ~/indentconfig.yaml
+config add ~/indentsettings.yaml
+
 # config add ~/.xinitrc
 # config add ~/.gtkrc-2.0
 # config add ~/.config/*rc

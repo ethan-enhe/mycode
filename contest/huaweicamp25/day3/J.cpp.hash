@@ -1,0 +1,84 @@
+a2f9 |  #include <bits/stdc++.h>
+790b |  using namespace std;
+6798 |  template <const int MXN, typename T = int>
+f3fa |  struct raw_flow {
+bb6d |      const T INF = numeric_limits<T>::max();
+e67e |      struct edge {
+8664 |          int v, o;
+9095 |          T c, w;
+e9e5 |          edge(int _v, T _c, T _w, int _o) : v(_v), o(_o), c(_c), w(_w) {}
+df39 |      };
+9054 |      vector<edge> g[MXN];
+c98c |      queue<int> q;
+98f2 |      int s, t, cure[MXN];
+c1dd |      bool vis[MXN];
+962d |      T dis[MXN];
+2034 |      void addedge(int u, int v, T c, T w) {
+8c8d |          g[u].push_back(edge(v, c, w, g[v].size()));
+ecbb |          g[v].push_back(edge(u, 0, -w, g[u].size() - 1));
+d10b |      }
+f933 |      bool spfa() {
+0050 |          for (int i = 0; i < MXN; i++) dis[i] = INF, cure[i] = 0;
+94f2 |          dis[s] = 0;
+dc94 |          q.push(s);
+e1b4 |          while (!q.empty()) {
+2abc |              int p = q.front();
+d22c |              q.pop();
+b5f3 |              vis[p] = 0;
+99eb |              for (edge &nx : g[p])
+2b43 |                  if (nx.c && dis[nx.v] > dis[p] + nx.w) {
+a54f |                      dis[nx.v] = dis[p] + nx.w;
+c0e0 |                      if (!vis[nx.v]) {
+a7bf |                          vis[nx.v] = 1;
+538e |                          q.push(nx.v);
+d10b |                      }
+d10b |                  }
+d10b |          }
+3e48 |          return dis[t] != INF;
+d10b |      }
+2403 |      T dinic(int p, T fi) {
+b642 |          if (p == t) return fi;
+e49f |          T fo = 0;
+82e7 |          vis[p] = 1;
+c2d6 |          for (int &i = cure[p]; i < (int)g[p].size(); i++) {
+ba9a |              edge &nx = g[p][i];
+a132 |              if (dis[nx.v] == dis[p] + nx.w && !vis[nx.v] && nx.c) {
+eb12 |                  T delt = dinic(nx.v, min(fi - fo, nx.c));
+7238 |                  if (delt) {
+f447 |                      nx.c -= delt;
+2350 |                      g[nx.v][nx.o].c += delt;
+991d |                      fo += delt;
+435a |                      if (fi == fo) return vis[p] = 0, fo;
+7a6d |                  } else
+b122 |                      dis[nx.v] = -1;
+d10b |              }
+d10b |          }
+42e1 |          return vis[p] = 0, fo;
+d10b |      }
+a3a8 |      pair<T, T> run(int _s, int _t) {
+a55e |          s = _s, t = _t;
+9a6a |          pair<T, T> res = {0, 0};
+9976 |          while (spfa()) {
+85de |              T delt = dinic(s, INF);
+3b0b |              res.first += delt, res.second += delt * dis[t];
+d10b |          }
+f4f0 |          return res;
+d10b |      }
+df39 |  };
+e3b0 |  // template <const int MXN,typename T=int>
+e3b0 |  // struct lim_flow{
+e3b0 |  //     const T INF=numeric_limits<T>::max();
+e3b0 |  //     raw_flow<MXN,T>f;
+e3b0 |  //     T deg[MXN];
+e3b0 |  //     pair<T,T> res;
+e3b0 |  //     void addedge(int u,int v,T l,T r, T w, bool cycle){}
+e3b0 |  // }
+ad5a |  const int MXN = 500;
+34aa |  raw_flow<MXN> f;
+565c |  int main() {
+87a7 |      f.addedge(1, 2, 3, 4);
+a639 |      auto res = f.run(1, 1);
+ac47 |      cout << res.first << " " << res.second;
+e3b0 |  
+7145 |      return 0;
+d10b |  }
