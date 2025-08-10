@@ -1,3 +1,4 @@
+<<<<<<< HEAD
  20
  AddNode 1 S 100 0 0
  AddNode 2 S 1 1 1 0
@@ -19,3 +20,6 @@
  Ask 2
  DeleteEdge 1 2
  Ask 3
+=======
+_0_0_
+>>>>>>> 1d40f61214deac98f1e86db46f169f347f734980

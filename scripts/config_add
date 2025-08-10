@@ -1,10 +1,24 @@
 #! /bin/bash -i
 config add ~/.p10k.zsh
 config add ~/.zshrc
+config add ~/.zshenv
 config add ~/.bashrc
 config add ~/.bash_profile
 config add ~/.bash_logout
 config add ~/.clang-format
 config add ~/.gitconfig
+config add ~/.latexmkrc
 config add ~/.config/nvim/init.lua
 config add ~/.config/nvim/lua/
+
+
+config add ~/.config/sioyek/
+config add ~/.config/zathura/
+config add ~/.config/kitty/
+config add ~/.config/starship.toml
+
+# config add ~/.xinitrc
+# config add ~/.gtkrc-2.0
+# config add ~/.config/*rc
+# config add ~/.config/enviroment.d/
+

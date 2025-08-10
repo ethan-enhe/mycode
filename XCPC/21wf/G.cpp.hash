@@ -1,0 +1,73 @@
+a2f9| #include <bits/stdc++.h>
+790b| using namespace std;
+e8d7| const int mod = 998244353, R = 3;
+1a0a| int qpow(int x, int y) {
+34cc|     int ans = 1;
+4aed|     while (y) {
+61b0|         if (y & 1) ans = ans * 1ll * x % mod;
+b44f|         x = x * 1ll * x % mod;
+b6dc|         y >>= 1;
+d10b|     }
+44e6|     return ans;
+d10b| }
+44a3| int _(int x) { return x >= mod ? x - mod : x; }
+4f9d| const int L2 = 20;
+55c2| struct NTT {
+9105|     int L = -1;
+355b|     vector<int> rev, rt;
+ee2f|     void init(int l) {
+1fc0|         int t = L;
+dd7b|         L = l;
+d3b7|         rev.resize(2 << L);
+620a|         rt.resize(2 << L);
+4e71|         for (int i = t + 1; i <= L; i++) {
+4a6a|             int *w = rt.data() + (1 << i);
+3a8d|             w[0] = 1;
+f3df|             int w1 = qpow(R, (mod - 1) >> i);
+7e5f|             for (int j = 1; j < 1 << i; j++)
+8bc0|                 w[j] = w[j - 1] * 1ll * w1 % mod;
+b340|             int *r = rev.data() + (1 << i);
+7e5f|             for (int j = 1; j < 1 << i; j++)
+4155|                 r[j] = (r[j >> 1] >> 1) | ((j & 1) << (i - 1));
+d10b|         }
+d10b|     }
+f9a5|     void operator()(int *a, int lgn, int d = 1) {
+8c67|         if (L < lgn) init(lgn);
+cc84|         int n = 1 << lgn;
+9d3d|         int *r = rev.data() + (1 << lgn);
+ed6c|         for (int i = 0; i < n; i++)
+8b0e|             if (r[i] < i) swap(a[i], a[r[i]]);
+564e|         for (int i = 1; i < n; i <<= 1) {
+bfed|             int *w = rt.data() + (i << 1);
+91fd|             for (int j = 0; j < n; j += i << 1) {
+1926|                 for (int k = 0; k < i; k++) {
+1a35|                     int y = w[k] * 1ll * a[i + j + k] % mod;
+4af1|                     a[i + j + k] = _(a[j + k] + mod - y);
+da00|                     a[j + k] = _(a[j + k] + y);
+d10b|                 }
+d10b|             }
+d10b|         }
+a080|         if (d == -1) {
+6817|             reverse(a + 1, a + n);
+ee73|             int inv = qpow(n, mod - 2);
+15d8|             for (int i = 0; i < n; i++) a[i] = a[i] * 1ll * inv % mod;
+d10b|         }
+d10b|     }
+5f7a| } ntt;
+7df1| const int MXN = 2100;
+b081| int n;
+e3d6| int pat[MXN][MXN];
+560e| int mat[MXN][MXN];
+e80a| int x[MXN];
+565c| int main() {
+c8ff|     ios::sync_with_stdio(0);
+6f27|     cin.tie(0);
+8e9e|     x[1] = x[0] = 1;
+b8cf|     ntt(x, 2);
+b597|     for (int i = 0; i < 4; i++) x[i] = x[i] * 1ll * x[i] % mod;
+3764|     for (int i = 0; i < 4; i++) cout << x[i] << " ";
+229d|     cout<<endl;
+0449|     ntt(x, 2, -1);
+3764|     for (int i = 0; i < 4; i++) cout << x[i] << " ";
+7145|     return 0;
+d10b| }

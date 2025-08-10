@@ -1,8 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 const int MXN = 2e5 + 5, LG = 31 - __builtin_clz(MXN);
-int t, n, tot;
-char str[MXN];
 
 namespace SA {
 typedef int arrn[MXN];
@@ -47,27 +45,3 @@ inline int lcp(int x, int y) {
     return min(h[lg][x], h[lg][y - (1 << lg) + 1]);
 }
 } // namespace SA
-
-int main() {
-    scanf("%d", &t);
-    while (t--) {
-        scanf("%d", &n);
-        tot = n * 2 + 2;
-        for (int i = 1; i <= n; i++) {
-            char x;
-            do
-                x = getchar();
-            while (x != 'a' && x != 'b');
-            str[i] = str[tot - i] = x;
-        }
-        str[n + 1] = '#';
-        str[tot] = 0;
-        SA::init(tot - 1, 130, str);
-        int ans = 0;
-        for (int i = 1; i <= n; i++)
-            for (int j = i << 1; j <= n; j += i)
-                ans = max(ans, (SA::lcp(tot - j, tot - j + i) + SA::lcp(j, j - i) + i - 1) / i);
-        printf("%d\n", ans);
-    }
-    return 0;
-}

@@ -1,0 +1,60 @@
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+const ll MXN = 1e5 + 5;
+ll n, m, s;
+
+const ll lim = 400;
+vector<ll> g[MXN], inv[MXN];
+bool mrk[MXN];
+ll e_cnt[lim][lim];
+ll id[MXN], idc;
+ll cnt() {
+    ll res = 0;
+    ll small3 = 0;
+    ll big3 = 0;
+    for (ll u = 1; u <= n; u++) {
+        for (ll v : inv[u]) mrk[v] = 1;
+        if (g[u].size() <= lim) {
+            for (ll v : g[u]) {
+                if (v == u) continue;
+                if (g[v].size() > lim) continue;
+                for (ll w : g[v]) small3 += (g[w].size() <= lim && w != v && w != u && mrk[w]);
+            }
+        } else {
+            id[u] = ++idc;
+            for (ll v : g[u]) {
+                if (v == u) continue;
+                for (ll w : g[v]) {
+                    res += (w != v && w != u && mrk[w]);
+                }
+            }
+        }
+        for (ll v : inv[u]) mrk[v] = 0;
+    }
+    for (ll u = 1; u <= n; u++)
+        if (g[u].size() > lim) {
+            for (ll v : g[u])
+                if (g[v].size() > lim) ++e_cnt[id[u]][id[v]];
+        }
+
+    for (ll i = 1; i <= idc; i++)
+        for (ll j = 1; j <= idc; j++)
+            for (ll k = 1; k <= idc; k++) big3 += e_cnt[i][j] * e_cnt[j][k] * e_cnt[k][i];
+
+    return res + small3 / 3 + big3 / 3;
+}
+void ae(ll u, ll v) {
+    g[u].push_back(v);
+    inv[v].push_back(u);
+}
+
+int main() {
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    ae(1, 2);
+    ae(2, 3);
+    ae(3,1);
+    cout<<cnt();
+    return 0;
+}

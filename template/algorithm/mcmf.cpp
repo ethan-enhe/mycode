@@ -1,8 +1,3 @@
-// File:             mcmf.cpp
-// Author:           ethan
-// Created:          01/07/22
-// Description:      mcmf
-
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -111,11 +106,11 @@ struct lim_flow {
         T all = 0;
         for (int i = 0; i < MXN; i++) {
             if (deg[i] > 0)
-                f.addedge(super_s, i, deg[i], 0), all += deg[i];
+                f.addedge(super_s, i, deg[i], 0), all += deg[i]; // 如果跑最大流，把这三行 addedge 改成 adduedge
             else if (deg[i] < 0)
-                f.addedge(i, super_t, -deg[i], 0);
+                f.addedge(i, super_t, -deg[i], 0); //
         }
-        f.addedge(t, s, INF, 0);
+        f.addedge(t, s, INF, 0); // 如果无源汇，这行删掉
         pair<T, T> tres = f.run(super_s, super_t);
         if (tres.first != all) return {-1, -1};
         res.second += tres.second;
@@ -134,6 +129,4 @@ struct lim_flow {
 };
 // }}}
 
-int main() {
-    return 0;
-}
+int main() { return 0; }
