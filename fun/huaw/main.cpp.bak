@@ -1,12 +1,3 @@
-// #pragma GCC optimize("O3,unroll-loops")
-// #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
-// #pragma GCC target("sse,sse2,sse3,ssse3,sse4.1,sse4.2,avx,avx2,bmi,bmi2,lzcnt,popcnt")
-#ifdef LOCAL
-#define dbg(x) cerr << #x << " = " << (x) << endl
-#else
-#define dbg(...) 42
-#define NDEBUG
-#endif
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -107,128 +98,134 @@ const char nl = '\n';
 const ll INF = 1e18;
 const ll MXN = 1e5 + 5;
 
-ll n, m, arr[MXN];
+ll n, m;
 
 bitset<MXN> reach[MXN];
-set<ll> g[MXN], _g[MXN];
+set<ll> g[MXN],_g[MXN];
 bool tp[MXN];
 ll w[MXN];
-void upd(int p) {
-    queue<int> q;
-    q.push(p);
-    while (!q.empty()) {
-        int p = q.front();
-        q.pop();
-        bitset<MXN> nxreach;
-        nxreach.reset();
-        nxreach[p] = 1;
-        for (auto v : g[p]) nxreach |= reach[v];
-        if (nxreach != reach[p]) {
-            reach[p] = nxreach;
-            for (auto v : _g[p]) q.push(v);
-        }
-    }
+void upd(int p){
+	return;
+	queue<int> q;
+	q.push(p);
+	while(!q.empty()){
+		int p=q.front();
+		q.pop();
+		bitset<MXN> nxreach;
+		nxreach.reset();
+		nxreach[p]=1;
+		for(auto v:g[p])nxreach|=reach[v];
+		if(nxreach!=reach[p]){
+			reach[p]=nxreach;
+			for(auto v:_g[p])q.push(v);
+		}
+	}
 }
-void ae(int s, int t, int tp = 1) {
-    if (tp == 1) {
-        g[s].insert(t);
-        _g[t].insert(s);
-    } else {
-        g[s].erase(t);
-        _g[t].erase(s);
-    }
+void ae(int s,int t,int tp=1){
+	if(tp==1){
+		g[s].insert(t);
+		_g[t].insert(s);
+	}
+	else{
+		g[s].erase(t);
+		_g[t].erase(s);
+	}
 }
 bitset<MXN> dead;
 bitset<MXN> msk;
-void prt(int x) {
-    cerr << x << ": ";
-    for (int i = 0; i < MXN; i++)
-        if (msk[i] && reach[x][i]) cerr << i << " ";
-    cerr << endl;
+void prt(int x){
+	cerr<<x<<": ";
+	for(int i=0;i<MXN;i++)
+		if(msk[i] && reach[x][i])
+			cerr<<i<<" ";
+	cerr<<endl;
 }
 
-void printedge() {
-    cerr << "---" << endl;
-    for (int i = 0; i < MXN; i++)
-        if (msk[i])
-            for (auto &j : g[i]) cerr << i << " " << j << endl;
-    cerr << "---" << endl;
+void printedge(){
+	cerr<<"---"<<endl;
+	for(int i=0;i<MXN;i++)
+		if(msk[i])
+			for(auto &j:g[i])
+				cerr<<i<<" "<<j<<endl;
+	cerr<<"---"<<endl;
 }
 int main() {
-    freopen("test.in", "r", stdin);
-    ios::sync_with_stdio(0);
-    cin.tie(0);
-    for (int i = 0; i < MXN; i++) reach[i][i] = 1;
-    cin >> m;
-    while (m--) {
-        string op;
-        cin >> op;
-        if (op == "AddNode") {
-            int id, c, p;
-            char x;
-            cin >> id;
-            msk[id] = 1;
-            cin >> x;
-            tp[id] = x == 'S';
-            cin >> w[id];
-            cin >> c;
-            while (c--) {
-                cin >> p;
-                ae(p, id);
-                upd(p);
-            }
-            cin >> c;
-            while (c--) {
-                cin >> p;
-                ae(id, p);
-            }
-            upd(id);
-        }
-        if (op == "SetRoot") {
-            for (auto v : g[0]) {
-                _g[v].erase(0);
-            }
-            g[0].clear();
+	for(int i=0;i<MXN;i++)
+		reach[i][i]=1;
+	cin>>m;
+	while(m--){
+		string op;
+		cin>>op;
+		if(op=="AddNode"){
+			int id,c,p;char x;
+			cin>>id;
+			msk[id]=1;
+			cin>>x;tp[id]=x=='S';
+			cin>>w[id];
+			cin>>c;
+			while(c--){
+				cin>>p;
+				ae(p,id);
+				upd(p);
+			}
+			cin>>c;
+			while(c--){
+				cin>>p;
+				ae(id,p);
+			}
+			upd(id);
+		}
+		else if(op=="SetRoot"){
+			for(auto v:g[0]){
+				_g[v].erase(0);
+			}
+			g[0].clear();
 
-            int c;
-            cin >> c;
-            while (c--) {
-                int x;
-                cin >> x;
-                ae(0, x);
-            }
-            upd(0);
-            // prt(0);
-        }
-        if (op == "AddEdge") {
-            int x, y;
-            cin >> x >> y;
-            ae(x, y);
-            upd(x);
-        }
-        if (op == "DeleteEdge") {
-            int x, y;
-            cin >> x >> y;
-            ae(x, y, -1);
-            upd(x);
-        }
-        if (op == "Ask") {
-            // printedge();
-            int x;
-            cin >> x;
-            bitset<MXN> curdead = msk & (~reach[0]);
-            curdead &= ~dead;
-            dead |= curdead;
-            vector<int> ans;
-            while (curdead.any()) {
-                int i = curdead._Find_first();
-                ans.push_back(i);
-                curdead[i] = 0;
-            }
-            cout << ans.size() << nl;
-            for (auto i : ans) cout << i << " ";
-            cout << nl;
-        }
-    }
+			int c;
+			cin>>c;
+			while(c--){
+				int x;
+				cin>>x;
+				ae(0,x);
+			}
+			upd(0);
+			//prt(0);
+		}
+		else if(op=="AddEdge"){
+			int x,y;
+			cin>>x>>y;
+			ae(x,y);
+			upd(x);
+		}
+		else if(op=="DeleteEdge"){
+			int x,y;
+			cin>>x>>y;
+			ae(x,y,-1);
+			upd(x);
+		}
+		else if(op=="Ask"){
+			//printedge();
+			int x;
+			cin>>x;
+			vector<int> ans;
+			/*
+			bitset<MXN> curdead=msk&(~reach[0]);
+			curdead&=~dead;
+			dead|=curdead;
+			while(curdead.any()){
+				int i=curdead._Find_first();
+				ans.push_back(i);
+				curdead[i]=0;
+			}
+			*/
+			cout<<ans.size()<<nl;
+			for(auto i:ans)cout<<i<<" ";
+			cout<<nl;
+			cout.flush();
+			fflush(stdout);
+		}
+		else assert(0);
+	}
     return 0;
 }
+
