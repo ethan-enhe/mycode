@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 5
 5
 3 2 5 3 1
@@ -9,3 +10,30 @@
 4 2 3 1
 5
 1 2 3 4 5
+=======
+<<<<<<< HEAD
+ 20
+ AddNode 1 S 100 0 0
+ AddNode 2 S 1 1 1 0
+ AddNode 3 S 10 1 2 0
+ AddNode 4 S 5 0 3 1 2 3
+ AddNode 5 S 30 0 3 2 3 4
+ AddNode 6 L 15 0 0
+ AddNode 7 L 100 0 0
+ AddNode 8 L 90 0 1 6
+ AddNode 9 L 83 1 8 1 8
+ AddNode 10 L 50 2 6 7 0
+ AddNode 11 L 77 0 0
+ AddNode 12 L 6 1 11 3 5 7 10
+ AddNode 13 L 15 2 10 11 1 4
+ SetRoot 3 1 6 7
+ Ask 1
+ DeleteEdge 7 10
+ DeleteEdge 6 10
+ Ask 2
+ DeleteEdge 1 2
+ Ask 3
+=======
+_0_0_
+>>>>>>> 1d40f61214deac98f1e86db46f169f347f734980
+>>>>>>> 447a43931dc5b5223a2316be1a3de3117478e8c4
