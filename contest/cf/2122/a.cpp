@@ -105,29 +105,20 @@ struct mod {
 //}}}
 const char nl = '\n';
 const ll INF = 1e18;
-const ll MXN = 15;
+const ll MXN = 1e6 + 5;
 
 ll n, m, arr[MXN];
-struct course {
-    string id;
-    ll ddl, work;
-};
-ll dp[1 << MXN], sum[1 << MXN];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     ll t;
     cin >> t;
     while (t--) {
-        cin >> n;
-        vec<course> courses(n);
-        for (auto &[i, d, w] : courses) {
-            cin >> i >> d >> w;
+        cin >> n >> m;
+        if (n > m) {
+            swap(n, m);
         }
-        for (ll i = 1; i < (1 << n); i++) {
-            ll lbt = (-i) & i;
-            sum[i] = sum[i ^ lbt] + courses[__builtin_ctzll(lbt)].work;
-        }
+        cout << (n >= 2 && m >= 3 ? "YES" : "NO") << nl;
     }
     return 0;
 }

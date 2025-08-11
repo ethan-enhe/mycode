@@ -105,29 +105,59 @@ struct mod {
 //}}}
 const char nl = '\n';
 const ll INF = 1e18;
-const ll MXN = 15;
+const ll MXN = 3e6 + 5;
 
-ll n, m, arr[MXN];
-struct course {
-    string id;
-    ll ddl, work;
-};
-ll dp[1 << MXN], sum[1 << MXN];
+ll n, m;
+bool iscop[MXN];
+ll sum[MXN];
+ll gets(ll i) {
+    if (i < 0) i = -i;
+    return sum[i];
+}
+ll mn[MXN], mx[MXN];
 int main() {
+    freopen("test.out", "w", stdout);
     ios::sync_with_stdio(0);
     cin.tie(0);
-    ll t;
-    cin >> t;
-    while (t--) {
-        cin >> n;
-        vec<course> courses(n);
-        for (auto &[i, d, w] : courses) {
-            cin >> i >> d >> w;
-        }
-        for (ll i = 1; i < (1 << n); i++) {
-            ll lbt = (-i) & i;
-            sum[i] = sum[i ^ lbt] + courses[__builtin_ctzll(lbt)].work;
+    for (ll i = 2; i < MXN; i++) {
+        sum[i] = sum[i - 1];
+        if (!iscop[i]) {
+            for (ll j = 2 * i; j < MXN; j += i) {
+                iscop[j] = 1;
+            }
+            // cerr << i << endl;
+            sum[i]++;
         }
     }
+    ll mxgap = -1;
+
+    ll gap = 1e6;
+    for (ll i = 1; i <= gap; i++) {
+        ll tmp = gets(i + gap) - gets(i);
+        if (!mn[tmp]) mn[tmp] = i;
+        mxgap = max(mxgap, i - mn[tmp]);
+    }
+    cout << mxgap;
+    // for (ll i = 1;;) {
+    //     double v = (double)gap / tmp;
+    //     double esm = (sqrtl(4 * expl(2 * v) + gap * gap) - gap) / 2;
+    //     cout << i << " " << v << " " << exp(v) << " " << esm << endl;
+    //     cerr << i << endl;
+    //     if (i < 10)
+    //         i++;
+    //     else if (i < 100)
+    //         i += 10;
+    //     else if (i < 1000)
+    //         i += 100;
+    //     else if (i < 10000)
+    //         i += 1000;
+    //     else if (i < 100000)
+    //         i += 10000;
+    //     else if (i < 1000000)
+    //         i += 100000;
+    //     else
+    //         break;
+    // }
+
     return 0;
 }

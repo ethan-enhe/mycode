@@ -105,14 +105,13 @@ struct mod {
 //}}}
 const char nl = '\n';
 const ll INF = 1e18;
-const ll MXN = 15;
+const ll MXN = 1e6 + 5;
 
-ll n, m, arr[MXN];
-struct course {
-    string id;
-    ll ddl, work;
-};
-ll dp[1 << MXN], sum[1 << MXN];
+ll n, m;
+pi arr[MXN];
+ll sx[MXN], sy[MXN];
+bool tx[MXN], ty[MXN];
+stack<ll> tp[2][2];
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
@@ -120,13 +119,33 @@ int main() {
     cin >> t;
     while (t--) {
         cin >> n;
-        vec<course> courses(n);
-        for (auto &[i, d, w] : courses) {
-            cin >> i >> d >> w;
+        for (ll i = 1; i <= n; i++) {
+            cin >> arr[i];
+            sx[i] = i, sy[i] = i;
+            tx[i] = ty[i] = 0;
         }
-        for (ll i = 1; i < (1 << n); i++) {
-            ll lbt = (-i) & i;
-            sum[i] = sum[i ^ lbt] + courses[__builtin_ctzll(lbt)].work;
+        sort(sx + 1, sx + n + 1, [](const ll &a, const ll &b) { return arr[a].fi < arr[b].fi; });
+        sort(sy + 1, sy + n + 1, [](const ll &a, const ll &b) { return arr[a].se < arr[b].se; });
+        for (ll i = 1; i * 2 <= n; i++) {
+            tx[sx[i]] = 1;
+            ty[sy[i]] = 1;
+        }
+        for (ll i = 1; i <= n; i++) {
+            tp[tx[i]][ty[i]].push(i);
+        }
+        while (!tp[0][0].empty()) {
+            ll x = tp[0][0].top();
+            tp[0][0].pop();
+            ll y = tp[1][1].top();
+            tp[1][1].pop();
+            cout << x << " " << y << nl;
+        }
+        while (!tp[0][1].empty()) {
+            ll x = tp[0][1].top();
+            tp[0][1].pop();
+            ll y = tp[1][0].top();
+            tp[1][0].pop();
+            cout << x << " " << y << nl;
         }
     }
     return 0;

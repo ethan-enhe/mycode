@@ -75,7 +75,7 @@ mt19937_64 mr(chrono::system_clock::now().time_since_epoch().count());
 ll ri(const ll &l, const ll &r) { return uniform_int_distribution<ll>(l, r)(mr); }
 ld rd(const ld &l, const ld &r) { return uniform_real_distribution<ld>(l, r)(mr); }
 //}}}
-const ll P = 1e9 + 7;
+const ll P = 998244353;
 //{{{ Type
 inline int redu(const int &x) { return x >= P ? x - P : x; }
 inline int incr(const int &x) { return x + ((x >> 31) & P); }
@@ -105,29 +105,80 @@ struct mod {
 //}}}
 const char nl = '\n';
 const ll INF = 1e18;
-const ll MXN = 15;
+const ll MXN = 505;
+const ll ZERO = MXN;
+const ll NR = ZERO * 2;
 
-ll n, m, arr[MXN];
-struct course {
-    string id;
-    ll ddl, work;
-};
-ll dp[1 << MXN], sum[1 << MXN];
+ll n, k, arr[MXN][2];
+mod dp[NR], nxdp[NR];
+
+void prt() {
+    for (ll i = 0; i < NR; i++) {
+        if (dp[i] != 0) cerr << "dp[" << i - ZERO << "] = " << dp[i] << nl;
+    }
+}
+void upd(ll i) {
+    // cerr << "upd " << i << nl;
+    auto upddp = [](ll cdiff, mod ways) {
+        for (ll _prediff = 0; _prediff < NR; _prediff++) {
+            ll prediff = _prediff - ZERO;
+            if (dp[_prediff] == 0) continue;
+
+            if (cdiff > 0) { // turns down
+                if (cdiff + prediff >= 0) nxdp[ZERO] += dp[_prediff] * ways;
+            } else {
+                nxdp[max(0ll, min(prediff + cdiff, cdiff) + ZERO)] += dp[_prediff] * ways;
+            }
+        }
+    };
+    if (arr[i + 1][0] == -1 && arr[i][1] == -1)
+        for (ll cdiff = 1 - k; cdiff <= k - 1; cdiff++) {
+            mod ways = k - abs(cdiff);
+            upddp(cdiff, ways);
+        }
+    else if (arr[i + 1][0] == -1) {
+        for (ll v = 1; v <= k; v++) {
+            ll cdiff = arr[i][1] - v;
+            upddp(cdiff, mod(1));
+        }
+    } else if (arr[i][1] == -1) {
+        for (ll v = 1; v <= k; v++) {
+            ll cdiff = v - arr[i + 1][0];
+            upddp(cdiff, mod(1));
+        }
+    } else {
+        ll cdiff = arr[i][1] - arr[i + 1][0];
+        upddp(cdiff, mod(1));
+    }
+    for (ll i = 0; i < NR; i++) {
+        dp[i] = nxdp[i];
+        nxdp[i] = 0;
+    }
+    // prt();
+}
+
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     ll t;
     cin >> t;
     while (t--) {
-        cin >> n;
-        vec<course> courses(n);
-        for (auto &[i, d, w] : courses) {
-            cin >> i >> d >> w;
+        cin >> n >> k;
+        for (ll i = 1; i <= n; i++) {
+            cin >> arr[i][0];
         }
-        for (ll i = 1; i < (1 << n); i++) {
-            ll lbt = (-i) & i;
-            sum[i] = sum[i ^ lbt] + courses[__builtin_ctzll(lbt)].work;
+        for (ll i = 1; i <= n; i++) {
+            cin >> arr[i][1];
         }
+        fill(dp, dp + NR, mod(0));
+        dp[ZERO] = (arr[1][0] == -1 ? k : 1) * (arr[n][1] == -1 ? k : 1);
+        // prt();
+        for (ll i = n - 1; i; i--) upd(i);
+        mod ans = 0;
+        for (ll i = 0; i < NR; i++) {
+            ans += dp[i];
+        }
+        cout << ans << nl;
     }
     return 0;
 }

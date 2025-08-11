@@ -1,6 +1,7 @@
 // #pragma GCC optimize("O3,unroll-loops")
 // #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
 // #pragma GCC target("sse,sse2,sse3,ssse3,sse4.1,sse4.2,avx,avx2,bmi,bmi2,lzcnt,popcnt")
+#include <deque>
 #ifdef LOCAL
 #define dbg(x) cerr << #x << " = " << (x) << endl
 #else
@@ -18,7 +19,7 @@ using namespace std;
 #define unq(x) (x).erase(unique(all(x)), (x).end())
 #define tpl template <typename T>
 
-using ll = long long;
+using ll = int;
 using ull = unsigned long long;
 using db = double;
 using ld = long double;
@@ -75,59 +76,89 @@ mt19937_64 mr(chrono::system_clock::now().time_since_epoch().count());
 ll ri(const ll &l, const ll &r) { return uniform_int_distribution<ll>(l, r)(mr); }
 ld rd(const ld &l, const ld &r) { return uniform_real_distribution<ld>(l, r)(mr); }
 //}}}
-const ll P = 1e9 + 7;
-//{{{ Type
-inline int redu(const int &x) { return x >= P ? x - P : x; }
-inline int incr(const int &x) { return x + ((x >> 31) & P); }
-struct mod {
-    int v;
-    mod() {}
-    tpl mod(const T &_v) : v(_v) { assert(_v >= 0 && _v < P); }
-    explicit operator ll() const { return v; }
-    explicit operator int() const { return v; }
-    mod &operator+=(const mod &y) { return v = redu(v + y.v), *this; }
-    mod &operator-=(const mod &y) { return v = incr(v - y.v), *this; }
-    mod &operator*=(const mod &y) { return v = (ll)v * y.v % P, *this; }
-    mod &operator/=(const mod &y) { return v = (ll)v * qpow(y, P - 2).v % P, *this; }
-    mod operator+(const mod &y) const { return mod(*this) += y; }
-    mod operator-(const mod &y) const { return mod(*this) -= y; }
-    mod operator*(const mod &y) const { return mod(*this) *= y; }
-    mod operator/(const mod &y) const { return mod(*this) /= y; }
-    bool operator==(const mod &y) const { return v == y.v; }
-    bool operator!=(const mod &y) const { return v != y.v; }
-    friend istream &operator>>(istream &is, mod &y) {
-        ll x;
-        is >> x;
-        return y.v = incr(x % P), is;
-    }
-    friend ostream &operator<<(ostream &os, const mod &y) { return os << y.v; }
-};
-//}}}
 const char nl = '\n';
-const ll INF = 1e18;
-const ll MXN = 15;
+const ll MXN = 1e6 + 5;
+const ll LG = 63 - __builtin_clzll(MXN);
 
-ll n, m, arr[MXN];
-struct course {
-    string id;
-    ll ddl, work;
+ll n, m, q, arr[MXN];
+
+set<ll> col[MXN], row[MXN];
+ll p[MXN];
+ll true_h(ll x) {
+    ll s = 0;
+    for (; x; x -= (x & (-x))) s += p[x];
+    return s;
+}
+ll virtual_h(ll x) {
+    ll idx = 0;
+    for (ll i = 1 << LG; i; i >>= 1) {
+        if (p[i + idx] < x) {
+            x -= p[i + idx];
+            idx += i;
+        }
+    }
+    return idx + 1;
+}
+void add(ll x, ll y) {
+    for (; x < MXN; x += (x & (-x))) {
+        p[x] += y;
+    }
+}
+
+struct block {
+    ll x, y[3];
 };
-ll dp[1 << MXN], sum[1 << MXN];
+void ins(ll x, ll vh) {
+    // cerr << "ins: " << x << ' ' << vh << nl;
+    col[x].insert(vh);
+    row[vh].insert(x);
+    if ((ll)row[vh].size() >= m) {
+        for (auto i : row[vh]) {
+            col[i].erase(vh);
+        }
+        row[vh].clear();
+        add(vh, -1);
+    }
+}
+bool drop(const block &b) {
+    ll bh = -1;
+    // cerr << "drop: " << b.x << ' ' << b.y[0] << ' ' << b.y[1] << ' ' << b.y[2] << nl;
+    for (ll i = 0; i < 3; i++) {
+        ll xi = b.x + i;
+        ll vhi = col[xi].empty() ? 0 : *col[xi].rbegin();
+        ll hi = true_h(vhi);
+        bh = max(bh, hi + b.y[i]);
+    }
+    // cerr << "bh: " << bh << nl;
+    if (bh > n) {
+        return false;
+    }
+    ll vh[3] = {virtual_h(bh), virtual_h(bh - 1), virtual_h(bh - 2)};
+    for (ll i = 0; i < 3; i++) {
+        ll xi = b.x + i;
+        for (ll j = 0; j < b.y[i]; j++) {
+            ins(xi, vh[j]);
+            // cerr << "ins: " << xi << ' ' << bh - j << nl;
+        }
+    }
+    return true;
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    ll t;
-    cin >> t;
-    while (t--) {
-        cin >> n;
-        vec<course> courses(n);
-        for (auto &[i, d, w] : courses) {
-            cin >> i >> d >> w;
-        }
-        for (ll i = 1; i < (1 << n); i++) {
-            ll lbt = (-i) & i;
-            sum[i] = sum[i ^ lbt] + courses[__builtin_ctzll(lbt)].work;
+    for (ll i = 1; i < MXN; i++) {
+        add(i, 1);
+        // col[i].insert(0);
+    }
+    cin >> n >> m >> q;
+    for (ll i = 1; i <= q; i++) {
+        block b;
+        cin >> b.x >> b.y[0] >> b.y[1] >> b.y[2];
+        if (!drop(b)) {
+            cout << i << nl;
+            return 0;
         }
     }
+    cout << -1 << nl;
     return 0;
 }

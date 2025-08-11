@@ -1,6 +1,7 @@
 // #pragma GCC optimize("O3,unroll-loops")
 // #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
 // #pragma GCC target("sse,sse2,sse3,ssse3,sse4.1,sse4.2,avx,avx2,bmi,bmi2,lzcnt,popcnt")
+#include <queue>
 #ifdef LOCAL
 #define dbg(x) cerr << #x << " = " << (x) << endl
 #else
@@ -105,28 +106,63 @@ struct mod {
 //}}}
 const char nl = '\n';
 const ll INF = 1e18;
-const ll MXN = 15;
+const ll MXN = 1e6 + 5;
 
 ll n, m, arr[MXN];
-struct course {
-    string id;
-    ll ddl, work;
+vector<ll> g[MXN];
+
+struct node {
+    ll v;
+    pi t;
+    bool operator<(const node &o) const { return t > o.t; }
 };
-ll dp[1 << MXN], sum[1 << MXN];
+priority_queue<node> pq;
+pi dis[MXN];
+bool vis[MXN];
+pi dij() {
+    fill(dis + 1, dis + n + 1, pi(INF, INF));
+    pq.push({1, dis[1] = {0, 0}});
+    auto nxdis = [](pi cdis, ll deg, ll ce) {
+        ll rem = cdis.fi % deg + 1;
+        ll delt = ce - rem;
+        if (delt < 0) delt += deg;
+        return pi(cdis.fi + delt + 1, cdis.se + delt);
+    };
+    while (!pq.empty()) {
+        ll cur = pq.top().v;
+        pq.pop();
+        if (vis[cur]) continue;
+        vis[cur] = 1;
+        for (ll i = 0; i < g[cur].size(); i++) {
+            ll v = g[cur][i];
+            pi nd = nxdis(dis[cur], g[cur].size(), i + 1);
+            if (nd < dis[v]) pq.push({v, dis[v] = nd});
+        }
+    }
+    return dis[n];
+}
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     ll t;
     cin >> t;
     while (t--) {
-        cin >> n;
-        vec<course> courses(n);
-        for (auto &[i, d, w] : courses) {
-            cin >> i >> d >> w;
+        cin >> n >> m;
+        for (ll i = 1; i <= n; i++) {
+            g[i].clear();
+            vis[i] = 0;
         }
-        for (ll i = 1; i < (1 << n); i++) {
-            ll lbt = (-i) & i;
-            sum[i] = sum[i ^ lbt] + courses[__builtin_ctzll(lbt)].work;
+        while (m--) {
+            ll u, v;
+            cin >> u >> v;
+            g[u].push_back(v);
+            g[v].push_back(u);
+        }
+        auto ans = dij();
+        if (ans.fi == INF) {
+            cout << "-1\n";
+        } else {
+            cout << ans.fi << " " << ans.se << nl;
         }
     }
     return 0;
